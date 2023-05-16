@@ -1,0 +1,16 @@
+{
+	"liferayDir": "/Users/albert.mas/liferay-ce-portal-7.4.3.75-ga75",
+	"webpack": {
+		"rules": [
+			{
+				"test": "src\\/.*\\.ts$",
+				"use": "ts-loader"
+			}
+		],
+		"extensions": [
+			".ts",
+			".js"
+		],
+		"mainModule": "index.ts"
+	}
+}
