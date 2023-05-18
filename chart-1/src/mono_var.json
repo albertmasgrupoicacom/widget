@@ -1,0 +1,8 @@
+{"success":true,
+"ficha":{"id":2976,
+"codigo":"A.1.02.04.007",
+"titulo":"OPINIÓN ACERCA DEL PRÍNCIPE FELIPE"
+,"multiVariable":false,"filas":["Muy buena","Buena","Regular","Mala","Muy mala","N.S.","N.C.","(N)"],"serie_temporal":[{"estudio":"1558/0","fecha":"11-1986","codigo":"P35","datos":["24.3","52.1","9.4","0.8","0.4","10.7","2.3","(2491)"]},{"estudio":"1764/0","fecha":"09-1988","codigo":"P32","datos":["23.7","54.1","8.5","1.2","0.3","10.0","2.3","(2485)"]},{"estudio":"1851/0","fecha":"12-1989","codigo":"P29","datos":["22.6","55.5","9.7","1.0","0.4","8.7","2.0","(2492)"]},{"estudio":"1908/0","fecha":"12-1990","codigo":"P29","datos":["22.4","56.6","10.5","1.6","0.6","6.4","1.9","(2381)"]},{"estudio":"2309/0","fecha":"12-1998","codigo":"P15","datos":["23.8","55.1","12.0","1.7","0.8","4.8","1.8","(4976)"]}] 
+},
+"info":null
+}
