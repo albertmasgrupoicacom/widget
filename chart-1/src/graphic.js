@@ -28,48 +28,17 @@ export class Graphic {
   
       const result = await response.json();
       console.log("Success:", result);
+      return result;
     } catch (error) {
       console.error("Error:", error);
     }
   }
 
   async getJSONData(url) {
-    // const response = await fetch(url, {
-    //   method: "GET", // *GET, POST, PUT, DELETE, etc.
-    //   mode: "no-cors", // no-cors, *cors, same-origin
-    //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    //   credentials: "same-origin", // include, *same-origin, omit
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     // 'Content-Type': 'application/x-www-form-urlencoded',
-    //   },
-    //   redirect: "follow", // manual, *follow, error
-    //   referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    //   // body: JSON.stringify(data), // body data type must match "Content-Type" header
-    // });
     const response = await fetch(url);
-    const jsonData = await response.json();
-    console.log(jsonData);
-    return jsonData;
+    const result = await response.json();
+    return result;
   }
-
-
-
-  // formBody = [];
-  // for (var property in details) {
-  //   var encodedKey = encodeURIComponent(property);
-  //   var encodedValue = encodeURIComponent(details[property]);
-  //   formBody.push(encodedKey + "=" + encodedValue);
-  // }
-  // formBody = formBody.join("&");
-
-  // fetch('https://example.com/login', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-  //   },
-  //   body: formBody
-  // })
 
   mountUrl(base_url,type, details) {
     let url = base_url;
@@ -91,7 +60,9 @@ export class Graphic {
       });
     } else if ( type === 'PREGUNTA' ) {
       const data = details;
-      this.postJSON(url,data);
+      this.postJSON(url,data).then( graphicData => {
+        console.log(graphicData);
+      } )
     }
    
   }
