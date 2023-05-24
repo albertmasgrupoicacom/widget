@@ -4,9 +4,96 @@ const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56'
 
 export class Graphic {
 
-  constructor(graphicData){
-    this.addTable(graphicData);
-    this.paint(graphicData);
+
+  async postJSON(url,data) {
+
+    let formBody = [];
+    for (let property in data) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(data[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
+    try {
+      const response = await fetch(url, {
+        method: "POST", // or 'PUT'
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          // "Content-Type": "application/json",
+        },
+        // body: JSON.stringify(data),
+        body: formBody,
+      });
+  
+      const result = await response.json();
+      console.log("Success:", result);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  async getJSONData(url) {
+    // const response = await fetch(url, {
+    //   method: "GET", // *GET, POST, PUT, DELETE, etc.
+    //   mode: "no-cors", // no-cors, *cors, same-origin
+    //   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    //   credentials: "same-origin", // include, *same-origin, omit
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     // 'Content-Type': 'application/x-www-form-urlencoded',
+    //   },
+    //   redirect: "follow", // manual, *follow, error
+    //   referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    //   // body: JSON.stringify(data), // body data type must match "Content-Type" header
+    // });
+    const response = await fetch(url);
+    const jsonData = await response.json();
+    console.log(jsonData);
+    return jsonData;
+  }
+
+
+
+  // formBody = [];
+  // for (var property in details) {
+  //   var encodedKey = encodeURIComponent(property);
+  //   var encodedValue = encodeURIComponent(details[property]);
+  //   formBody.push(encodedKey + "=" + encodedValue);
+  // }
+  // formBody = formBody.join("&");
+
+  // fetch('https://example.com/login', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  //   },
+  //   body: formBody
+  // })
+
+  mountUrl(base_url,type, details) {
+    let url = base_url;
+    if( type === 'SERIE' ){
+      url = url + '/serie/' + details.id;
+    } else if ( type === 'PREGUNTA' ) {
+      url = url + '/resultados';
+    }
+    return url;
+  }
+
+  constructor(base_url,type,details) {
+    let url = this.mountUrl(base_url,type, details);
+
+    if( type === 'SERIE' ){
+      this.getJSONData(url).then( graphicData => {
+        this.addTable(graphicData);
+        this.paint(graphicData);
+      });
+    } else if ( type === 'PREGUNTA' ) {
+      const data = details;
+      this.postJSON(url,data);
+    }
+   
   }
 
   addTable(data){

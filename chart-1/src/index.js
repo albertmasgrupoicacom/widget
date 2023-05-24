@@ -1,7 +1,8 @@
 import { Graphic } from './graphic';
-import * as data from './mono_var.json';
+// import * as data from './mono_var.json';
 export default function main({portletNamespace, contextPath, portletElementId}) {
-
+      
+    
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
     <div id="graph_container">
@@ -9,7 +10,29 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         <canvas id="graph_chart"></canvas>
     </div>
     `;
+    // new Graphic(data.default, 2776)
 
-    new Graphic(data.default)
-    
+    const call = {
+        type: '',
+        details: {}
+    };
+
+    const tipo = 'PREGUNTA';
+
+    if(tipo === 'SERIE'){
+        call.type = tipo;
+        call.details.id = 2976;
+    }
+    else if ( tipo === 'PREGUNTA'){
+        call.type = tipo;
+        call.details = {
+            'id_cuestionario': 3400,
+            'id_pregunta': 406338,
+            'id_variable': 36501,
+            'id_muestra': 6994,
+            'id_cruce1': 36505
+        }
+    }
+   
+    new Graphic('http://77.227.0.28:8180/cis/apijds',call.type,call.details)
 }
