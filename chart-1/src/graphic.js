@@ -88,20 +88,20 @@ export class Graphic {
       }
       tblBody.appendChild(row);
 
-      for (let i = 0; i < data.ficha.tabla[tabla].cruce.length; i++) {
+      for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
         const row = document.createElement('tr');
         const cell = document.createElement('td');
-        const contenido = data.ficha.tabla[tabla].cruce[i];
+        const contenido = data.ficha.tabla[tabla].etiqVar[i].etiqueta;
         const cellText = document.createTextNode(contenido);
         cell.appendChild(cellText);
         row.appendChild(cell);
-        // for (let j = 0; j < data.ficha.serie_temporal.length; j++) {
-        //   const cell = document.createElement('td');
-        //   const contenido = data.ficha.serie_temporal[j].datos[i];
-        //   const cellText = document.createTextNode(contenido);
-        //   cell.appendChild(cellText);
-        //   row.appendChild(cell);
-        // }
+        for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
+          const cell = document.createElement('td');
+          const contenido = data.ficha.tabla[tabla].cruce[i][j];
+          const cellText = document.createTextNode(contenido);
+          cell.appendChild(cellText);
+          row.appendChild(cell);
+        }
         tblBody.appendChild(row);
       }
       tbl.appendChild(tblBody);
