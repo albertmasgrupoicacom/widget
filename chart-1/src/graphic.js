@@ -17,6 +17,7 @@ export class Graphic {
       this.postJSON(url,data).then( graphicData => {
         console.log(graphicData);
         this.addTableCRUCE(graphicData);
+        this.paintCruce1(graphicData);
       } )
     }
   }
@@ -183,6 +184,70 @@ export class Graphic {
     new Chart(ctx, {
       type: "line",
       data: this.getData(data),
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: data.titulo,
+            position: 'top'
+          },
+          legend: {
+            display: true,
+            position: 'bottom',
+        }
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            beginAtZero: true,
+            stacked: false,
+            type: 'linear',
+          },
+        },
+      },
+    });
+  };
+
+  getDataCruce1(data){
+
+    let newData = {};
+    let estudios = [];
+    newData.datasets = [];
+    newData.titulo = data.ficha.titulo;
+    
+    const filas = data.ficha.tabla[0].etiqVar;
+    
+    let newArray = [];
+    let colorIndex = 0;
+    filas.map (fila => {
+      let color = colors[colorIndex];
+      let element = { label: fila, data: [], backgroundColor: color, borderColor: color};
+      newArray.push(element);
+      colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+    })
+
+    data.ficha.tabla[0].cruce.map(x => {
+      
+      filas.map ( (fila, index) => {
+        newArray[index].data.push(x);
+      });
+      estudios.push(x);
+     
+    })
+    newData.labels = estudios;
+    newData.datasets = newArray;
+    console.log(newData);
+    return newData;
+  }
+
+  paintCruce1(data){
+    const ctx = document.getElementById("graph_chart");
+    new Chart(ctx, {
+      type: "bar",
+      data: this.getDataCruce1(data),
       options: {
         plugins: {
           title: {
