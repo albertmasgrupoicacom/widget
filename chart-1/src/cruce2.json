@@ -1,0 +1,62 @@
+{"success":true,
+"ficha":{"variable":{
+"id":36501,
+"id_pregunta":406338,
+"variable":"P22",
+"tipo":"N",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"filtro":""
+},"pregunta":{
+"id":406338,
+"id_cuestionario":3400,
+"id_estudio":3229,
+"codigo":"0022",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"texto":"\u003cp\u003eCuando se habla de política se utilizan normalmente las expresiones izquierda y derecha. En esta tarjeta hay una\u003c/p\u003e\r\n\r\n\u003cp\u003eserie de casillas que van de izquierda a derecha. \u0026iquest;En qué casilla se colocaría Ud.? --\u0026nbsp;\u003cstrong\u003e(PEDIR AL ENTREVISTADO QUE INDIQUE LA CASILLA EN LA QUE SE COLOCARÍA Y REDONDEAR EL\u003c/strong\u003e\u0026nbsp;\u003cstrong\u003eNÚMERO CORRESPONDIENTE)\u003c/strong\u003e. (\u003cu\u003eMOSTRAR TARJETA ESCALA\u003c/u\u003e).\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:5pt\"\u003e\u0026nbsp;\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:40px\"\u003e\u003cu\u003eIzda.\u003c/u\u003e\u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp;\u0026nbsp;\u003cu\u003eDcha.\u003c/u\u003e\u0026nbsp; \u0026nbsp;\u003cu\u003eN.S.\u003c/u\u003e\u0026nbsp; \u0026nbsp;\u003cu\u003eN.C.\u003c/u\u003e\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:40px\"\u003e\u0026nbsp; \u0026nbsp; \u0026nbsp;01\u0026nbsp; 02\u0026nbsp; 03\u0026nbsp; 04\u0026nbsp; 05\u0026nbsp; 06\u0026nbsp; 07\u0026nbsp; 08\u0026nbsp; 09\u0026nbsp; 10\u003c/p\u003e",
+"texto_marginales":"",
+"descriptores":[{"codigo":"003_001","descriptor":"Ciencia"},{"codigo":"003_003_004_001_001_002","descriptor":"Escala de identificación política persona entrevistada"}],
+"series":[{"id":5356,"variable":"A.3.06.01.004","titulo":"ESCALA DE AUTOUBICACIÓN IDEOLÓGICA (1-10) (I)"}] 
+},"variables":[],
+"muestras":[] 
+,
+"tabla":[{"tipo_resultado":"cruce2",
+"tipo_variable":"",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"tituloCruce1":"Sexo del entrevistado",
+"tituloCruce2":"Edad del entrevistado",
+"N":2473,
+"ponderado":false,
+"baseFiltrada":2473.0,
+"haymediaVariable":true,
+"etiqVar":[
+{"categoria":"[1-2]","etiqueta":"Izquierda (1-2) ","etiqueta_abrev":"Izq.","esMissing":false},
+{"categoria":"[3-4]","etiqueta":"(3-4) ","etiqueta_abrev":"3-4","esMissing":false},
+{"categoria":"[5-6]","etiqueta":"(5-6) ","etiqueta_abrev":"5-6","esMissing":false},
+{"categoria":"[7-8]","etiqueta":"(7-8) ","etiqueta_abrev":"7-8","esMissing":false},
+{"categoria":"[9-10]","etiqueta":"Derecha (9-10) ","etiqueta_abrev":"Dcha.","esMissing":false},
+{"categoria":"98","etiqueta":"N.S.","etiqueta_abrev":"N.S.","esMissing":true},
+{"categoria":"99","etiqueta":"N.C.","etiqueta_abrev":"N.C.","esMissing":true}
+],
+"etiqCruce1":[
+{"categoria":"1","etiqueta":"Hombre","etiqueta_abrev":"Hombre","esMissing":false},
+{"categoria":"2","etiqueta":"Mujer","etiqueta_abrev":"Mujer","esMissing":false}
+],
+"etiqCruce2":[
+{"categoria":"[18-24]","etiqueta":"De 18 a 24 años ","etiqueta_abrev":"18-24","esMissing":false},
+{"categoria":"[25-34]","etiqueta":"De 25 a 34 años ","etiqueta_abrev":"25-34","esMissing":false},
+{"categoria":"[35-44]","etiqueta":"De 35 a 44 años ","etiqueta_abrev":"35-44","esMissing":false},
+{"categoria":"[45-54]","etiqueta":"De 45 a 54 años ","etiqueta_abrev":"45-54","esMissing":false},
+{"categoria":"[55-64]","etiqueta":"De 55 a 64 años ","etiqueta_abrev":"55-64","esMissing":false},
+{"categoria":"[65-98]","etiqueta":"65 y más años ","etiqueta_abrev":"65 y +","esMissing":false},
+{"categoria":"99","etiqueta":"N.C.","etiqueta_abrev":"N.C.","esMissing":false}
+],
+"cruce":[
+[[14.0,24.0,18.0,11.0,10.0,6.0,0.0,83.0],[9.0,16.0,11.0,5.0,5.0,9.0,0.0,55.0],[23.0,40.0,29.0,16.0,15.0,15.0,0.0,138.0]],[[39.0,73.0,78.0,60.0,38.0,47.0,0.0,335.0],[43.0,64.0,62.0,60.0,39.0,49.0,0.0,317.0],[82.0,137.0,140.0,120.0,77.0,96.0,0.0,652.0]],[[56.0,86.0,72.0,62.0,55.0,70.0,0.0,401.0],[46.0,86.0,75.0,58.0,52.0,79.0,0.0,396.0],[102.0,172.0,147.0,120.0,107.0,149.0,0.0,797.0]],[[13.0,19.0,25.0,16.0,18.0,30.0,0.0,121.0],[10.0,20.0,21.0,21.0,19.0,37.0,0.0,128.0],[23.0,39.0,46.0,37.0,37.0,67.0,0.0,249.0]],[[2.0,3.0,4.0,1.0,2.0,8.0,0.0,20.0],[2.0,1.0,7.0,2.0,4.0,10.0,0.0,26.0],[4.0,4.0,11.0,3.0,6.0,18.0,0.0,46.0]],[[24.0,23.0,14.0,7.0,13.0,16.0,0.0,97.0],[39.0,29.0,23.0,24.0,18.0,61.0,0.0,194.0],[63.0,52.0,37.0,31.0,31.0,77.0,0.0,291.0]],[[16.0,29.0,19.0,24.0,13.0,38.0,0.0,139.0],[14.0,31.0,20.0,21.0,19.0,56.0,0.0,161.0],[30.0,60.0,39.0,45.0,32.0,94.0,0.0,300.0]],[[164.0,257.0,230.0,181.0,149.0,215.0,0.0,1196.0],[163.0,247.0,219.0,191.0,156.0,301.0,0.0,1277.0],[327.0,504.0,449.0,372.0,305.0,516.0,0.0,2473.0]]
+]
+,"mediasVariable":[
+[[{"base":124.0,"media":4.588709677419355,"desvEstandar":1.6821013608573858},{"base":205.0,"media":4.424390243902439,"desvEstandar":1.729328965377203},{"base":197.0,"media":4.563451776649746,"desvEstandar":1.7991733543886859},{"base":150.0,"media":4.6,"desvEstandar":1.638463841038081},{"base":123.0,"media":4.861788617886178,"desvEstandar":1.6709926531121049},{"base":161.0,"media":5.273291925465839,"desvEstandar":1.833669741392079},{"base":0.0,"media":0.0,"desvEstandar":0.0},{"base":960.0,"media":4.7,"desvEstandar":1.7537684733697347}],[{"base":110.0,"media":4.545454545454546,"desvEstandar":1.571748069293477},{"base":187.0,"media":4.609625668449198,"desvEstandar":1.6371077857408434},{"base":176.0,"media":4.846590909090909,"desvEstandar":1.7416871205741937},{"base":146.0,"media":4.890410958904109,"desvEstandar":1.6278748052820824},{"base":119.0,"media":5.067226890756302,"desvEstandar":1.725831130832943},{"base":184.0,"media":5.380434782608695,"desvEstandar":1.8691770276650557},{"base":0.0,"media":0.0,"desvEstandar":0.0},{"base":922.0,"media":4.9045553145336225,"desvEstandar":1.727845924636296}],[{"base":234.0,"media":4.568376068376068,"desvEstandar":1.6278240339279313},{"base":392.0,"media":4.512755102040816,"desvEstandar":1.686364925245785},{"base":373.0,"media":4.697050938337801,"desvEstandar":1.7755559147878435},{"base":296.0,"media":4.743243243243243,"desvEstandar":1.6369530257245526},{"base":242.0,"media":4.962809917355372,"desvEstandar":1.6977716531163147},{"base":345.0,"media":5.3304347826086955,"desvEstandar":1.850777990705443},{"base":0.0,"media":0.0,"desvEstandar":0.0},{"base":1882.0,"media":4.8002125398512225,"desvEstandar":1.7436571335424769}]]
+]
+}]
+},
+"info":null
+}

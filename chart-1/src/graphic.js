@@ -4,6 +4,22 @@ const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56'
 
 export class Graphic {
 
+  constructor(base_url,type,details) {
+    let url = this.mountUrl(base_url,type, details);
+
+    if( type === 'SERIE' ){
+      this.getJSONData(url).then( graphicData => {
+        this.addTable(graphicData);
+        this.paint(graphicData);
+      });
+    } else if ( type === 'PREGUNTA' ) {
+      const data = details;
+      this.postJSON(url,data).then( graphicData => {
+        console.log(graphicData);
+        this.addTableCRUCE(graphicData);
+      } )
+    }
+  }
 
   async postJSON(url,data) {
 
@@ -50,21 +66,47 @@ export class Graphic {
     return url;
   }
 
-  constructor(base_url,type,details) {
-    let url = this.mountUrl(base_url,type, details);
 
-    if( type === 'SERIE' ){
-      this.getJSONData(url).then( graphicData => {
-        this.addTable(graphicData);
-        this.paint(graphicData);
-      });
-    } else if ( type === 'PREGUNTA' ) {
-      const data = details;
-      this.postJSON(url,data).then( graphicData => {
-        console.log(graphicData);
-      } )
+  addTableCRUCE(data){
+
+    const tbl = document.getElementById("graph_table");
+    const tblBody = document.createElement('tbody');
+    const row = document.createElement('tr');
+    const headerCell = document.createElement('th');
+    const cellText = document.createTextNode('');
+    headerCell.appendChild(cellText);
+    row.appendChild(headerCell);
+
+    for (let tabla = 0; tabla < data.ficha.tabla.length; tabla++) {
+
+      for (let k = 0; k < data.ficha.tabla[tabla].etiqCruce1.length; k++) {
+        const headerCell = document.createElement('th');
+        const contenido = data.ficha.tabla[tabla].etiqCruce1[k].etiqueta;
+        const cellText = document.createTextNode(contenido);
+        headerCell.appendChild(cellText);
+        row.appendChild(headerCell);
+      }
+      tblBody.appendChild(row);
+
+      for (let i = 0; i < data.ficha.filas.length; i++) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        const contenido = data.ficha.filas[i];
+        const cellText = document.createTextNode(contenido);
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+        for (let j = 0; j < data.ficha.serie_temporal.length; j++) {
+          const cell = document.createElement('td');
+          const contenido = data.ficha.serie_temporal[j].datos[i];
+          const cellText = document.createTextNode(contenido);
+          cell.appendChild(cellText);
+          row.appendChild(cell);
+        }
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+      document.body.appendChild(tbl);
     }
-   
   }
 
   addTable(data){

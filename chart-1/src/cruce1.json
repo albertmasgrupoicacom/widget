@@ -1,0 +1,56 @@
+{"success":true,
+"ficha":{"variable":{
+"id":36501,
+"id_pregunta":406338,
+"variable":"P22",
+"tipo":"N",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"filtro":""
+},"pregunta":{
+"id":406338,
+"id_cuestionario":3400,
+"id_estudio":3229,
+"codigo":"0022",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"texto":"\u003cp\u003eCuando se habla de política se utilizan normalmente las expresiones izquierda y derecha. En esta tarjeta hay una\u003c/p\u003e\r\n\r\n\u003cp\u003eserie de casillas que van de izquierda a derecha. \u0026iquest;En qué casilla se colocaría Ud.? --\u0026nbsp;\u003cstrong\u003e(PEDIR AL ENTREVISTADO QUE INDIQUE LA CASILLA EN LA QUE SE COLOCARÍA Y REDONDEAR EL\u003c/strong\u003e\u0026nbsp;\u003cstrong\u003eNÚMERO CORRESPONDIENTE)\u003c/strong\u003e. (\u003cu\u003eMOSTRAR TARJETA ESCALA\u003c/u\u003e).\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:5pt\"\u003e\u0026nbsp;\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:40px\"\u003e\u003cu\u003eIzda.\u003c/u\u003e\u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp; \u0026nbsp;\u0026nbsp;\u003cu\u003eDcha.\u003c/u\u003e\u0026nbsp; \u0026nbsp;\u003cu\u003eN.S.\u003c/u\u003e\u0026nbsp; \u0026nbsp;\u003cu\u003eN.C.\u003c/u\u003e\u003c/p\u003e\r\n\r\n\u003cp style\u003d\"margin-left:40px\"\u003e\u0026nbsp; \u0026nbsp; \u0026nbsp;01\u0026nbsp; 02\u0026nbsp; 03\u0026nbsp; 04\u0026nbsp; 05\u0026nbsp; 06\u0026nbsp; 07\u0026nbsp; 08\u0026nbsp; 09\u0026nbsp; 10\u003c/p\u003e",
+"texto_marginales":"",
+"descriptores":[{"codigo":"003_001","descriptor":"Ciencia"},{"codigo":"003_003_004_001_001_002","descriptor":"Escala de identificación política persona entrevistada"}],
+"series":[{"id":5356,"variable":"A.3.06.01.004","titulo":"ESCALA DE AUTOUBICACIÓN IDEOLÓGICA (1-10) (I)"}] 
+},"variables":[],
+"muestras":[] 
+,
+"tabla":[{"tipo_resultado":"cruce1",
+"tipo_variable":"",
+"titulo":"Escala de autoubicación ideológica (1-10)",
+"tituloCruce":"Sexo del entrevistado",
+"N":2473,
+"ponderado":false,
+"baseFiltrada":2473.0,
+"hayMediaVar":true,
+"hayMediaCruce":false,
+"etiqVar":[
+{"categoria":"[1-2]","etiqueta":"Izquierda (1-2) ","etiqueta_abrev":"Izq.","esMissing":false},
+{"categoria":"[3-4]","etiqueta":"(3-4) ","etiqueta_abrev":"3-4","esMissing":false},
+{"categoria":"[5-6]","etiqueta":"(5-6) ","etiqueta_abrev":"5-6","esMissing":false},
+{"categoria":"[7-8]","etiqueta":"(7-8) ","etiqueta_abrev":"7-8","esMissing":false},
+{"categoria":"[9-10]","etiqueta":"Derecha (9-10) ","etiqueta_abrev":"Dcha.","esMissing":false},
+{"categoria":"98","etiqueta":"N.S.","etiqueta_abrev":"N.S.","esMissing":true},
+{"categoria":"99","etiqueta":"N.C.","etiqueta_abrev":"N.C.","esMissing":true}
+],
+"etiqCruce1":[
+{"categoria":"1","etiqueta":"Hombre","etiqueta_abrev":"Hombre","esMissing":false},
+{"categoria":"2","etiqueta":"Mujer","etiqueta_abrev":"Mujer","esMissing":false}
+],
+"cruce":[
+[83.0,55.0,138.0],[335.0,317.0,652.0],[401.0,396.0,797.0],[121.0,128.0,249.0],[20.0,26.0,46.0],[97.0,194.0,291.0],[139.0,161.0,300.0],[1196.0,1277.0,2473.0]
+],
+"mediasVariable":[
+{"base":960.0,"media":4.7,"desvEstandar":1.7537684733697347},{"base":922.0,"media":4.9045553145336225,"desvEstandar":1.727845924636296},{"base":1882.0,"media":4.8002125398512225,"desvEstandar":1.7436571335424769}
+],
+"mediasCruce":[
+
+]
+}],"correlacion":{"r":0.096}
+},
+"info":null
+}
