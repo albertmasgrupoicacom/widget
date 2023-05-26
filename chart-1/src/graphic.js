@@ -17,6 +17,7 @@ export class Graphic {
       this.postJSON(url,data).then( graphicData => {
         console.log(graphicData);
         this.addTableCRUCE(graphicData);
+        // this.paintCruceEx();
         this.paintCruce1(graphicData);
       } )
     }
@@ -214,34 +215,80 @@ export class Graphic {
   getDataCruce1(data){
 
     let newData = {};
-    let estudios = [];
+    let labels = [];
     newData.datasets = [];
-    newData.titulo = data.ficha.titulo;
+    newData.titulo = data.ficha.pregunta.titulo;
     
-    const filas = data.ficha.tabla[0].etiqVar;
+    const filas = data.ficha.tabla[0].etiqCruce1;
+    labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
     
-    let newArray = [];
+    let datasets = [];
     let colorIndex = 0;
     filas.map (fila => {
       let color = colors[colorIndex];
-      let element = { label: fila, data: [], backgroundColor: color, borderColor: color};
-      newArray.push(element);
+      let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+      datasets.push(element);
       colorIndex == 6 ? colorIndex = 0 : colorIndex++;
     })
 
-    data.ficha.tabla[0].cruce.map(x => {
+    data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
       
       filas.map ( (fila, index) => {
-        newArray[index].data.push(x);
+        datasets[index].data.push(x[index]);
       });
-      estudios.push(x);
-     
     })
-    newData.labels = estudios;
-    newData.datasets = newArray;
+    newData.labels = labels;
+    newData.datasets = datasets;
     console.log(newData);
     return newData;
   }
+
+  paintCruceEx(){
+    const data = {
+      labels: ["Izquierda (1-2)", "(3-4)", "(5-6)", "(7-8)", "Derecha (9-10)", "N.S.", "N.C."],
+      datasets: [
+        {
+          label: "Hombre",
+          backgroundColor: ["#aa95cd",],
+          data: [83,335,401,121,20,97,139]
+        },
+        {
+          label: "Mujer",
+          backgroundColor: ["#4395cd",],
+          data: [55,317,396,128,26,194,161]
+        }
+      ]
+    };
+    const ctx = document.getElementById("graph_chart");
+    new Chart(ctx, {
+      type: "bar",
+      data: data,
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: data.titulo,
+            position: 'top'
+          },
+          legend: {
+            display: true,
+            position: 'bottom',
+        }
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: false,
+          },
+          y: {
+            beginAtZero: true,
+            stacked: false,
+            type: 'linear',
+          },
+        },
+      },
+    });
+  };
 
   paintCruce1(data){
     const ctx = document.getElementById("graph_chart");
@@ -263,7 +310,7 @@ export class Graphic {
         responsive: true,
         scales: {
           x: {
-            stacked: true,
+            stacked: false,
           },
           y: {
             beginAtZero: true,
