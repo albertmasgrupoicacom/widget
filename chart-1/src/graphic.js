@@ -279,14 +279,15 @@ export class Graphic {
 
   paintCruce1(data){
     const ctx = document.getElementById("graph_chart");
+    const dataReto = this.getDataCruce1(data);
     new Chart(ctx, {
       type: "bar",
-      data: this.getDataCruce1(data),
+      data: dataReto,
       options: {
         plugins: {
           title: {
             display: true,
-            text: data.titulo,
+            text: dataReto.titulo,
             position: 'top'
           },
           legend: {
