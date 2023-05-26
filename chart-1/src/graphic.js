@@ -206,6 +206,7 @@ export class Graphic {
     newData.titulo = data.ficha.pregunta.titulo;
     
     const filas = data.ficha.tabla[0].etiqCruce1;
+    filas.push({etiqueta:'Total'});
     labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
     
     let datasets = [];

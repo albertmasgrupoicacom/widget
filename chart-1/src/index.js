@@ -17,7 +17,7 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         details: {}
     };
 
-    const tipo = 'SERIE';
+    const tipo = 'PREGUNTA';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
 
     if(tipo === 'SERIE'){
