@@ -69,40 +69,40 @@ export class Graphic {
   }
 
 
-  addTableCRUCE(data){
 
+  addHeaderCell(row,contenido) {
+      const headerCell = document.createElement('th');
+      // const contenido = data.ficha.tabla[tabla].etiqCruce1[k].etiqueta;
+      const cellText = document.createTextNode(contenido);
+      headerCell.appendChild(cellText);
+      row.appendChild(headerCell);
+  }
+
+  addCell(row,contenido) {
+    const cell = document.createElement('td');
+    const cellText = document.createTextNode(contenido);
+    cell.appendChild(cellText);
+    row.appendChild(cell);
+  }
+
+  addTableCRUCE(data){
     const tbl = document.getElementById("graph_table");
     const tblBody = document.createElement('tbody');
     const row = document.createElement('tr');
-    const headerCell = document.createElement('th');
-    const cellText = document.createTextNode('');
-    headerCell.appendChild(cellText);
-    row.appendChild(headerCell);
+    this.addHeaderCell(row,'');
 
     for (let tabla = 0; tabla < data.ficha.tabla.length; tabla++) {
-
       for (let k = 0; k < data.ficha.tabla[tabla].etiqCruce1.length; k++) {
-        const headerCell = document.createElement('th');
-        const contenido = data.ficha.tabla[tabla].etiqCruce1[k].etiqueta;
-        const cellText = document.createTextNode(contenido);
-        headerCell.appendChild(cellText);
-        row.appendChild(headerCell);
+        this.addHeaderCell(row,data.ficha.tabla[tabla].etiqCruce1[k].etiqueta);   
       }
+      this.addHeaderCell(row,'Total');
       tblBody.appendChild(row);
 
       for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
         const row = document.createElement('tr');
-        const cell = document.createElement('td');
-        const contenido = data.ficha.tabla[tabla].etiqVar[i].etiqueta;
-        const cellText = document.createTextNode(contenido);
-        cell.appendChild(cellText);
-        row.appendChild(cell);
+        this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
         for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
-          const cell = document.createElement('td');
-          const contenido = data.ficha.tabla[tabla].cruce[i][j];
-          const cellText = document.createTextNode(contenido);
-          cell.appendChild(cellText);
-          row.appendChild(cell);
+          this.addCell(row,data.ficha.tabla[tabla].cruce[i][j]);
         }
         tblBody.appendChild(row);
       }
@@ -115,32 +115,17 @@ export class Graphic {
     const tbl = document.getElementById("graph_table");
     const tblBody = document.createElement('tbody');
     const row = document.createElement('tr');
-    const headerCell = document.createElement('th');
-    const cellText = document.createTextNode('');
-    headerCell.appendChild(cellText);
-    row.appendChild(headerCell);
+    this.addHeaderCell(row,'');
 
     for (let k = 0; k < data.ficha.serie_temporal.length; k++) {
-      const headerCell = document.createElement('th');
-      const contenido = data.ficha.serie_temporal[k].fecha;
-      const cellText = document.createTextNode(contenido);
-      headerCell.appendChild(cellText);
-      row.appendChild(headerCell);
+      this.addHeaderCell(row,data.ficha.serie_temporal[k].fecha);
     }
     tblBody.appendChild(row);
     for (let i = 0; i < data.ficha.filas.length; i++) {
       const row = document.createElement('tr');
-      const cell = document.createElement('td');
-      const contenido = data.ficha.filas[i];
-      const cellText = document.createTextNode(contenido);
-      cell.appendChild(cellText);
-      row.appendChild(cell);
+      this.addCell(row,data.ficha.filas[i]);
       for (let j = 0; j < data.ficha.serie_temporal.length; j++) {
-        const cell = document.createElement('td');
-        const contenido = data.ficha.serie_temporal[j].datos[i];
-        const cellText = document.createTextNode(contenido);
-        cell.appendChild(cellText);
-        row.appendChild(cell);
+        this.addCell(row,data.ficha.serie_temporal[j].datos[i]);
       }
       tblBody.appendChild(row);
     }
@@ -214,6 +199,7 @@ export class Graphic {
 
   getDataCruce1(data){
 
+    console.log(data);
     let newData = {};
     let labels = [];
     newData.datasets = [];
