@@ -7,6 +7,7 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
     node.innerHTML =`
     <div id="graph_container">
         <div id="graph_table"></div>
+        <button id="but_pie" class="btn"></button>
         <canvas id="graph_chart"></canvas>
     </div>
     `;
@@ -36,5 +37,5 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         }
     }
    
-    new Graphic(url_basse,call.type,call.details)
+    new Graphic(url_basse,call.type,call.details,null)
 }

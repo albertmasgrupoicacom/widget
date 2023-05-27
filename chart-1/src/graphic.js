@@ -7,6 +7,9 @@ export class Graphic {
   constructor(base_url,type,details) {
     let url = this.mountUrl(base_url,type, details);
 
+    const element1 = document.getElementById('but_pie');
+    element1.addEventListener('click', this.toPie);
+
     if( type === 'SERIE' ){
       this.getJSONData(url).then( graphicData => {
         this.addTable(graphicData);
@@ -17,10 +20,23 @@ export class Graphic {
       this.postJSON(url,data).then( graphicData => {
         console.log(graphicData);
         this.addTableCRUCE(graphicData);
-        // this.paintCruceEx();
-        this.paintCruce1(graphicData);
+        this.pintarCruce1(graphicData);
+        
       } )
     }
+  }
+
+  toPie() {
+    console.log('toPie');
+    console.log(this.chart);
+    // this.chart.update();
+  }
+
+  pintarCruce1(data) {
+    const ctx = document.getElementById("graph_chart");
+    const dataReto = this.getDataCruce1(data);
+    const tipo = 'bar';
+    this.paintCruce1(ctx,dataReto,tipo);
   }
 
   async postJSON(url,data) {
@@ -134,7 +150,6 @@ export class Graphic {
   }
 
   getData(data){
-
     let newData = {};
     let estudios = [];
     newData.datasets = [];
@@ -277,23 +292,21 @@ export class Graphic {
     });
   };
 
-  paintCruce1(data){
-    const ctx = document.getElementById("graph_chart");
-    const dataReto = this.getDataCruce1(data);
-    new Chart(ctx, {
-      type: "bar",
-      data: dataReto,
+  paintCruce1(ctx,data,tipo){
+    this.chart = new Chart(ctx, {
+      type: tipo,
+      data: data,
       options: {
         plugins: {
           title: {
             display: true,
-            text: dataReto.titulo,
+            text: data.titulo,
             position: 'top'
           },
           legend: {
             display: true,
             position: 'bottom',
-        }
+          }
         },
         responsive: true,
         scales: {
