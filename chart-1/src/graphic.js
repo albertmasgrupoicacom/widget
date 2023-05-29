@@ -1,8 +1,11 @@
 import Chart from 'chart.js/auto';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
-
+let chart = null;
 export class Graphic {
+
+  // static chart = null;
+  // chart = null;
 
   constructor(base_url,type,details) {
     let url = this.mountUrl(base_url,type, details);
@@ -27,9 +30,28 @@ export class Graphic {
   }
 
   toPie() {
-    console.log('toPie');
-    console.log(this.chart);
-    // this.chart.update();
+    // console.log('toPie');
+    // console.log(chart);
+    // chart.type = 'pie';
+    // chart.data.title = 'HOLA';
+    // chart.update();
+    const texto_actual = chart.options.plugins.title.text;
+
+    if( chart.config.type === 'bar') {
+      const text = texto_actual.includes('BAR_') ? chart.options.plugins.title.text.slice(4): chart.options.plugins.title.text;
+      chart.options.plugins.title.text = 'LIN_' + text;
+      chart.config.type = 'line';
+    }
+    else {
+      const text = texto_actual.includes('LIN_') ? chart.options.plugins.title.text.slice(4): chart.options.plugins.title.text;
+      chart.options.plugins.title.text = 'BAR_' +  text;
+      chart.config.type = 'bar';
+    }
+    
+    chart.update();
+
+    // chart.config.type = 'pie';
+    // chart.update();
   }
 
   pintarCruce1(data) {
@@ -83,8 +105,6 @@ export class Graphic {
     }
     return url;
   }
-
-
 
   addHeaderCell(row,contenido) {
       const headerCell = document.createElement('th');
@@ -293,7 +313,7 @@ export class Graphic {
   };
 
   paintCruce1(ctx,data,tipo){
-    this.chart = new Chart(ctx, {
+    chart = new Chart(ctx, {
       type: tipo,
       data: data,
       options: {
@@ -309,6 +329,7 @@ export class Graphic {
           }
         },
         responsive: true,
+        indexAxis: 'x',   // to change orientation bars??
         scales: {
           x: {
             stacked: false,
