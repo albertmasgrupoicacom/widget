@@ -19,6 +19,8 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
     };
 
     const tipo = 'PREGUNTA';
+    // https://webserver-cis-dev.lfr.cloud/o/cis
+    // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
 
     if(tipo === 'SERIE'){
