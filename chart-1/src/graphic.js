@@ -6,6 +6,7 @@ export class Graphic {
 
   constructor(base_url,type,details) {
     let url = this.mountUrl(base_url,type, details);
+    let cruce2 = false;
 
     const element1 = document.getElementById('but_pie');
     element1.addEventListener('click', this.toPie);
@@ -17,10 +18,15 @@ export class Graphic {
       });
     } else if ( type === 'PREGUNTA' ) {
       const data = details;
+      if ( data.id_cruce2) { cruce2 = true;};
       this.postJSON(url,data).then( graphicData => {
-        console.log(graphicData);
-        this.addTableCRUCE(graphicData);
-        this.pintarCruce1(graphicData);
+        if( !cruce2 ) {
+          this.addTableCRUCE(graphicData);
+          this.pintarCruce1(graphicData);
+        } else {
+          this.addSelector(graphicData);
+          this.addTableCRUCE2(graphicData,0);
+        }
         
       } )
     }
@@ -322,5 +328,56 @@ export class Graphic {
       },
     });
   };
+
+  addSelector(data) {
+    const selector = document.createElement('select');
+    selector.id = 'variableCruce';
+    document.body.appendChild(selector);
+
+    const array = data.ficha.tabla[0].etiqCruce2;
+    for (var i = 0; i < array.length; i++) {
+      var option = document.createElement("option");
+      option.value = i; //array[i].categoria;
+      option.text = array[i].etiqueta;
+      selector.appendChild(option);
+    }
+    selector.addEventListener("change", e => {
+      console.log(e.target.value);
+      this.removeTable();
+      this.addTableCRUCE2(data,e.target.value);
+   })
+  }
+
+  removeTable() {
+    const element = document.getElementById("graph_table");
+    element.innerHTML = '';
+  }
+
+  addTableCRUCE2(data,etiqCruce2_index){
+    const tbl = document.getElementById("graph_table");
+    const tblBody = document.createElement('tbody');
+    const row = document.createElement('tr');
+    this.addHeaderCell(row,'');
+    // const etiqCruce2_index = 0;
+
+    for (let tabla = 0; tabla < data.ficha.tabla.length; tabla++) {
+      for (let k = 0; k < data.ficha.tabla[tabla].etiqCruce1.length; k++) {
+        this.addHeaderCell(row,data.ficha.tabla[tabla].etiqCruce1[k].etiqueta);   
+      }
+      this.addHeaderCell(row,'Total');
+      tblBody.appendChild(row);
+
+      for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
+        const row = document.createElement('tr');
+        this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
+        for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
+          this.addCell(row,data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index]);
+        }
+        tblBody.appendChild(row);
+      }
+      tbl.appendChild(tblBody);
+      document.body.appendChild(tbl);
+    }
+  }
 
 }
