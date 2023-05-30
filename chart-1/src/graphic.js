@@ -14,7 +14,7 @@ export class Graphic {
     if( type === 'SERIE' ){
       this.getJSONData(url).then( graphicData => {
         this.addTable(graphicData);
-        this.paint(graphicData);
+        this.pintarSerie(graphicData);
       });
     } else if ( type === 'PREGUNTA' ) {
       const data = details;
@@ -50,7 +50,6 @@ export class Graphic {
     const ctx = document.getElementById("graph_chart");
     const dataReto = this.getDataCruce2(data,etiqCruce2_index);
     const tipo = 'bar';
-    console.log(this.chart);
     if (!this.chart) {
       this.paintCruce1(ctx,dataReto,tipo);
     }
@@ -58,6 +57,13 @@ export class Graphic {
       this.chart.data = dataReto;
       this.chart.update();
     }
+  }
+
+  pintarSerie(data) {
+    const ctx = document.getElementById("graph_chart");
+    console.log(data);
+    const dataReto =  this.getData(data);
+    this.paint(ctx,dataReto,'line');
   }
 
   async postJSON(url,data) {
@@ -197,15 +203,13 @@ export class Graphic {
     })
     newData.labels = estudios;
     newData.datasets = newArray;
-    console.log(newData);
     return newData;
   }
 
-  paint(data){
-    const ctx = document.getElementById("graph_chart");
-    new Chart(ctx, {
-      type: "line",
-      data: this.getData(data),
+  paint(ctx,data,tipo){
+    this.chart = new Chart(ctx, {
+      type: tipo,
+      data: data,
       options: {
         plugins: {
           title: {

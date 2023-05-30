@@ -18,7 +18,7 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         details: {}
     };
 
-    const tipo = 'PREGUNTA';
+    const tipo = 'SERIE';
     // https://webserver-cis-dev.lfr.cloud/o/cis
     // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
@@ -26,6 +26,7 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
     if(tipo === 'SERIE'){
         call.type = tipo;
         call.details.id = 2976;
+        // call.details.id = 16393; // más columnas
     }
     else if ( tipo === 'PREGUNTA'){
         call.type = tipo;
