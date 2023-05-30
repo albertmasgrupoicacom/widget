@@ -26,6 +26,7 @@ export class Graphic {
         } else {
           this.addSelector(graphicData);
           this.addTableCRUCE2(graphicData,0);
+          this.pintarCruce2(graphicData,0);
         }
         
       } )
@@ -43,6 +44,20 @@ export class Graphic {
     const dataReto = this.getDataCruce1(data);
     const tipo = 'bar';
     this.paintCruce1(ctx,dataReto,tipo);
+  }
+
+  pintarCruce2(data,etiqCruce2_index) {
+    const ctx = document.getElementById("graph_chart");
+    const dataReto = this.getDataCruce2(data,etiqCruce2_index);
+    const tipo = 'bar';
+    console.log(this.chart);
+    if (!this.chart) {
+      this.paintCruce1(ctx,dataReto,tipo);
+    }
+    else {
+      this.chart.data = dataReto;
+      this.chart.update();
+    }
   }
 
   async postJSON(url,data) {
@@ -251,52 +266,38 @@ export class Graphic {
     return newData;
   }
 
-  paintCruceEx(){
-    const data = {
-      labels: ["Izquierda (1-2)", "(3-4)", "(5-6)", "(7-8)", "Derecha (9-10)", "N.S.", "N.C."],
-      datasets: [
-        {
-          label: "Hombre",
-          backgroundColor: ["#aa95cd",],
-          data: [83,335,401,121,20,97,139]
-        },
-        {
-          label: "Mujer",
-          backgroundColor: ["#4395cd",],
-          data: [55,317,396,128,26,194,161]
-        }
-      ]
-    };
-    const ctx = document.getElementById("graph_chart");
-    new Chart(ctx, {
-      type: "bar",
-      data: data,
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: data.titulo,
-            position: 'top'
-          },
-          legend: {
-            display: true,
-            position: 'bottom',
-        }
-        },
-        responsive: true,
-        scales: {
-          x: {
-            stacked: false,
-          },
-          y: {
-            beginAtZero: true,
-            stacked: false,
-            type: 'linear',
-          },
-        },
-      },
-    });
-  };
+  getDataCruce2(data,etiqCruce2_index){
+    console.log(data);
+    let newData = {};
+    let labels = [];
+    newData.datasets = [];
+    newData.titulo = data.ficha.pregunta.titulo;
+    
+    // const filas = data.ficha.tabla[0].etiqCruce1;
+    const filas = JSON.parse(JSON.stringify(data.ficha.tabla[0].etiqCruce1));
+    filas.push({etiqueta:'Total'});
+    labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
+    
+    let datasets = [];
+    let colorIndex = 0;
+    filas.map (fila => {
+      let color = colors[colorIndex];
+      let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+      datasets.push(element);
+      colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+    })
+
+    data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
+      
+      filas.map ( (fila, index) => {
+        datasets[index].data.push(x[index][etiqCruce2_index]);
+      });
+    })
+    newData.labels = labels;
+    newData.datasets = datasets;
+    console.log(newData);
+    return newData;
+  }
 
   paintCruce1(ctx,data,tipo){
     this.chart = new Chart(ctx, {
@@ -337,20 +338,28 @@ export class Graphic {
     const array = data.ficha.tabla[0].etiqCruce2;
     for (var i = 0; i < array.length; i++) {
       var option = document.createElement("option");
-      option.value = i; //array[i].categoria;
+      option.value = parseInt(i); //array[i].categoria;
       option.text = array[i].etiqueta;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
       console.log(e.target.value);
       this.removeTable();
-      this.addTableCRUCE2(data,e.target.value);
+      this.addTableCRUCE2(data,parseInt(e.target.value));
+      this.removeChart();
+      this.pintarCruce2(data,parseInt(e.target.value));
    })
   }
 
   removeTable() {
     const element = document.getElementById("graph_table");
     element.innerHTML = '';
+  }
+
+  removeChart() {
+    const element = document.getElementById("graph_chart");
+    element.innerHTML = '';
+
   }
 
   addTableCRUCE2(data,etiqCruce2_index){
