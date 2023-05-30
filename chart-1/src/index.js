@@ -6,8 +6,8 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
     <div id="graph_container">
-        <div id="graph_table"></div>
-        <button id="but_pie" class="btn"></button>
+        <div id="graph_table" class="table"></div>
+        <button id="but_pie" class="graphic_btn"></button>
         <canvas id="graph_chart"></canvas>
     </div>
     `;
@@ -18,7 +18,7 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         details: {}
     };
 
-    const tipo = 'SERIE';
+    const tipo = 'PREGUNTA';
     // https://webserver-cis-dev.lfr.cloud/o/cis
     // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';

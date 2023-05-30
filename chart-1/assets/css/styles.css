@@ -1,31 +1,31 @@
-.graphic_container {
-	display: flex;
-	flex-direction: column;
+  .graphic_container {
+    display: flex;
+    flex-direction: column;
   }
   
   #graphic_table {
-	padding: 1rem 1rem 1rem 1rem;
+	  padding: 1rem 1rem 1rem 1rem;
   }
   
   
-  table,
-  th,
-  tr,
-  td {
-	border: 1px solid;
-	width: 1%;
+  .table,
+  .th,
+  .tr,
+  .td {
+    border: 1px solid;
+    width: 1%;
   }
   
-  table {
-	width: 100%;
-	margin: 0 auto;
-	display: block;
-	overflow-x: auto;
-	border-spacing: 0;
+  .table {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    overflow-x: auto;
+    border-spacing: 0;
   } 
 
   /* Style buttons */
-  .btn {
+  .graphic_btn {
     background-color: DodgerBlue; /* Blue background */
     background: url(../imgs/pie_chart_icon.png) no-repeat;
     border: none; /* Remove borders */
@@ -36,6 +36,6 @@
   }
 
   /* Darker background on mouse-over */
-  .btn:hover {
+  .graphic_btn:hover {
     background-color: RoyalBlue;
   }
