@@ -124,163 +124,151 @@ export class Graphic {
 
 
 
-  // exportToExcel() {
-  //   const workbook = new ExcelJS.Workbook();
-  //   const ws1 = workbook.addWorksheet('Ficha de serie');
-  //   const tbl = document.getElementById('demo');
-  //   this.addTableToWorksheet(tbl, ws1);
-  //   this.addImageToWorkbook(workbook).then(() => {
-  //     workbook.xlsx.writeBuffer().then(buffer => {
-  //       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  //       FileSaver.saveAs(blob, 'output.xlsx');
-  //     });
-  //   });
-  // }
   
-  // addTableToWorksheet(table, worksheet) {
-  //   const rows = table.getElementsByTagName('tr');
-  //   let headerHeight = 30; // Altura de la cabecera
   
-  //   for (let i = 0; i < rows.length; i++) {
-  //     const row = rows[i];
-  //     const cells = i === 0 ? row.getElementsByTagName('th') : row.getElementsByTagName('td');
-  //     const rowData = Array.from(cells).map(cell => cell.innerText);
-  //     let rowAdded = worksheet.addRow(rowData);
-  
-  //     // Si es la cabecera poner en negrita
-  //     if (i === 0) {
-  //       rowAdded.eachCell((cell) => {
-  //         cell.font = { bold: true };
-  //       });
-  //       rowAdded.height = headerHeight; // Ajustar la altura de la cabecera
-  //     } else {
-  //       rowAdded.height = headerHeight / 2; // Ajustar la altura de las otras filas
-  //     }
-  //     worksheet.getColumn('A').width = 40; // Ajusta el ancho al valor que quieras
-  //     worksheet.getColumn('B').width = 20; 
-  //     worksheet.getColumn('C').width = 20; 
-  //     worksheet.getColumn('D').width = 20; 
-  //     worksheet.getColumn('E').width = 20; 
-  //     worksheet.getColumn('F').width = 20; 
-  //   }
-  // }
- 
-  // async addImageToWorkbook(workbook) {
-  //   const base64Image = this.chart.toBase64Image();
-  //   const base64Data = base64Image.split(',')[1];
-  //   const blob = this.b64toBlob(base64Data, 'image/png');
-  //   const buffer = await this.blobToArrayBuffer(blob);
-  
-  //   const imageId = workbook.addImage({
-  //     buffer: buffer,
-  //     extension: 'png',
-  //   });
-  
-  //   const ws = workbook.getWorksheet('Ficha de serie');
-  //   ws.addImage(imageId, {
-  //     tl: { col: 0, row: 11 }, 
-  //     br: { col: 6, row: 40 }, 
-  //     editAs: 'absolute',
-  //   });
-  // }
-  
-  // b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-  //   const byteCharacters = atob(b64Data);
-  //   const byteArrays = [];
-  
-  //   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-  //     const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
-  //     const byteNumbers = new Array(slice.length);
-  //     for (let i = 0; i < slice.length; i++) {
-  //       byteNumbers[i] = slice.charCodeAt(i);
-  //     }
-  
-  //     const byteArray = new Uint8Array(byteNumbers);
-  //     byteArrays.push(byteArray);
-  //   }
-  
-  //   const blob = new Blob(byteArrays, { type: contentType });
-  //   return blob;
-  // }
-  
-  // blobToArrayBuffer(blob) {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.addEventListener('loadend', (e) => {
-  //       resolve(reader.result);
-  //     });
-  //     reader.addEventListener('error', reject);
-  //     reader.readAsArrayBuffer(blob);
-  //   });
-  // }
-  
-
   exportToExcel() {
     const workbook = new ExcelJS.Workbook();
     const ws1 = workbook.addWorksheet('Ficha de serie');
-
+  
     // Añade el título
     const title = 'FICHA DE SERIE';
-    ws1.mergeCells('A1:F1'); 
-    const titleCell = ws1.getCell('A1'); 
-    titleCell.value = title; 
-    titleCell.font = { bold: true, size: 16 }; 
-    titleCell.alignment = { horizontal: 'center', vertical: 'middle' }; 
-    ws1.getRow(1).height = 40; // Ajusta la altura de la fila del título
-    const tbl = document.getElementById('demo');
-    this.addTableToWorksheet(tbl, ws1, 2); 
+    ws1.mergeCells('A4:F4');
+    const titleCell = ws1.getCell('A4');
+    titleCell.value = title;
+    titleCell.font = { bold: true, size: 16 };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    ws1.getRow(4).height = 40; 
   
-    this.addImageToWorkbook(workbook).then(() => {
-      workbook.xlsx.writeBuffer().then(buffer => {
-        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        FileSaver.saveAs(blob, 'output.xlsx');
+    // Añadimos texto
+    ws1.getCell('A6').value = 'Muestra:';
+    ws1.getCell('B6').value = 'Nacional Población española ambos sexos 18 y más años';
+    ws1.getCell('A6').font = { bold: true };
+  
+    ws1.getCell('A7').value = 'Pregunta:';
+    ws1.getCell('B7').value = 'El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución. En general, ¿cree Ud. que los/as españoles/as conocemos bien la Constitución, la conocemos por encima, la conocemos muy poco o casi nada?:N: :N:';
+    ws1.getCell('A7').font = { bold: true };
+  
+    ws1.getCell('A8').value = 'Notas:';
+    ws1.getCell('B8').value = '(*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
+    ws1.getCell('A8').font = { bold: true };
+  
+    const tbl = document.getElementById('demo');
+    const startRow = 14;
+    const tableEndRow = this.addTableToWorksheet(tbl, ws1, startRow);
+  
+    this.addLogoToWorkbook(workbook).then(() => {
+      this.addImageToWorkbook(workbook, tableEndRow).then(() => {
+        workbook.xlsx.writeBuffer().then(buffer => {
+          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          FileSaver.saveAs(blob, 'output.xlsx');
+        });
       });
     });
   }
   
-  addTableToWorksheet(table, worksheet, startRow = 1) { 
+  getLogoAsBase64() {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+
+     img.src = 'https://i.imgur.com/77syx2k.png';
+     // img.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+     // img.src = 'assets/LOGO_CIS_NUEVO.png'; // Ruta de la imagen local
+    // img.src = 'localhost:8080/assets/LOGO_CIS_NUEVO.png';
+  
+      img.onload = () => {
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        canvas.height = img.naturalHeight;
+        canvas.width = img.naturalWidth;
+        ctx.drawImage(img, 0, 0);
+        let base64Image = canvas.toDataURL('image/png');
+        resolve(base64Image);
+      };
+  
+      img.onerror = error => {
+        reject(error);
+      };
+    });
+  }
+  
+  async addLogoToWorkbook(workbook) {
+    const base64Logo = await this.getLogoAsBase64();
+    const base64Data = base64Logo.split(',')[1];
+    const blob = this.b64toBlob(base64Data, 'image/png');
+    const buffer = await this.blobToArrayBuffer(blob);
+  
+    const logoId = workbook.addImage({
+      buffer: buffer,
+      extension: 'png',
+    });
+  
+    const ws = workbook.getWorksheet('Ficha de serie');
+    ws.addImage(logoId, {
+      tl: { col: 0, row: 0 },
+      br: { col: 1, row: 3 },
+      editAs: 'absolute',
+    });
+  }
+  
+  addTableToWorksheet(table, worksheet, startRow = 14) {
     const rows = table.getElementsByTagName('tr');
-    let headerHeight = 30; // Altura de la cabecera
+    const headerHeight = 30; // Altura de la cabecera
+    const dataHeight = 20; // Altura de las filas de datos
   
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const cells = i === 0 ? row.getElementsByTagName('th') : row.getElementsByTagName('td');
       const rowData = Array.from(cells).map(cell => cell.innerText);
-      let rowAdded = worksheet.addRow(rowData);
+      const rowAdded = worksheet.addRow(rowData);
       rowAdded.eachCell((cell) => {
         if (cell.row.number === startRow) {
           cell.font = { bold: true };
           rowAdded.height = headerHeight;
         } else {
-          rowAdded.height = headerHeight / 2;
+          cell.font = { bold: false };
+          rowAdded.height = dataHeight;
         }
       });
   
-      worksheet.getColumn('A').width = 40;
+      if (i === 0) { // Cabecera
+        rowAdded.eachCell((cell) => {
+          cell.font = { bold: true };
+        });
+      }
+  
+      worksheet.getColumn('A').width = 30;
       worksheet.getColumn('B').width = 20;
       worksheet.getColumn('C').width = 20;
       worksheet.getColumn('D').width = 20;
       worksheet.getColumn('E').width = 20;
       worksheet.getColumn('F').width = 20;
     }
+  
+    return startRow + rows.length;
   }
   
-  async addImageToWorkbook(workbook) {
+  async addImageToWorkbook(workbook, startRow) {
+    
+    const ws = workbook.getWorksheet('Ficha de serie');
+  
+    const rows = document.getElementById('demo').getElementsByTagName('tr');
     const base64Image = this.chart.toBase64Image();
     const base64Data = base64Image.split(',')[1];
     const blob = this.b64toBlob(base64Data, 'image/png');
     const buffer = await this.blobToArrayBuffer(blob);
-  
+    
     const imageId = workbook.addImage({
       buffer: buffer,
       extension: 'png',
     });
+    
+    const startRowChart = 18; // Cambio: Siempre comienza en la fila 20
+    const endRowChart = startRowChart + 19;
   
-    const ws = workbook.getWorksheet('Ficha de serie');
     ws.addImage(imageId, {
-      tl: { col: 0, row: 11 }, 
-      br: { col: 6, row: 40 }, 
+      tl: { col: 0, row: startRowChart },
+      br: { col: 6, row: endRowChart },
       editAs: 'absolute',
     });
   }
@@ -316,64 +304,100 @@ export class Graphic {
     });
   }
   
+
 exportToPDF() {
-  const pdf = new jsPDF('p', 'pt', 'a3'); //A3 en lugar de A4
+  const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
   const tbl = document.getElementById('demo');
   const originalCanvas = document.getElementById("graph_chart");
   let inMemoryCanvas = document.createElement('canvas');
   let ctx = inMemoryCanvas.getContext('2d');
   inMemoryCanvas.width = originalCanvas.width;
   inMemoryCanvas.height = originalCanvas.height;
-  ctx.fillStyle = 'rgb(255,255,255)'; 
+  ctx.fillStyle = 'rgb(255,255,255)';
   ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
   ctx.drawImage(originalCanvas, 0, 0);
   const base64Image = inMemoryCanvas.toDataURL("image/png");
 
-// Título
-const title = 'FICHA DE SERIE';
-pdf.setFont('helvetica', 'bold'); 
-pdf.setFontSize(24);
-const textWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-const textOffset = (pdf.internal.pageSize.width - textWidth) / 2; 
-pdf.text(title, textOffset, 50); // Título centrado y arriba
-pdf.line(textOffset, 55, textWidth + textOffset, 55); // Subraya el título
+  // Logo
+  const logoWidth = 100;
+  const logoHeight = 100;
+  const logoX = 20;
+  const logoY = 70;
+  const logoUrl = 'https://i.imgur.com/77syx2k.png';
+  //const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+  pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
-  // Dibuja la tabla segundo
-  const styles = { 
-    fontStyle: 'normal',
-    cellPadding: 1,
-    fontSize: 8,
-    cellHeight: 16, 
-  };
-  autoTable(pdf, {
-    html: tbl,
-    startY: 100, 
-    styles: styles,
-    headStyles: { 
-      fontStyle: 'bold', 
-      fillColor: [0, 0, 0], 
-      textColor: [255, 255, 255] 
-    },
-    didDrawPage: (data) => {
-      pdf.setFontSize(20);
-    },
-  });
+  // Título
+  const title = 'FICHA DE SERIE';
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(24);
+  const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+  const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
+  pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
 
-  const rowCount = tbl.rows.length;
-  const totalTableHeight = styles.cellHeight * rowCount;
+// Texto
+const text = 'Muestra:   Nacional Población española ambos sexos 18 y más años';
+const note = 'Pregunta:  El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución.';
+const question = 'Notas:  (*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
+const textX = 50;
+const textY = logoY + logoHeight + 70;
+const textFontSize = 10;
+const textWidth = pdf.getStringUnitWidth(text) * textFontSize / pdf.internal.scaleFactor;
+const textOffset = textX;
+pdf.setFontSize(textFontSize);
+pdf.setFont('helvetica', 'bold');
+pdf.text('Muestra:', textOffset, textY);
+pdf.setFont('helvetica', 'normal');
+pdf.text(text.substr(9), textOffset + pdf.getStringUnitWidth('Muestra:') * textFontSize, textY);
 
-  // Dibuja el gráfico
-  const imagePosition = { x: 15, y: totalTableHeight + 120, width: 800, height: 400 }; 
-  pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+const noteX = textOffset;
+const noteY = textY + 20;
+pdf.setFont('helvetica', 'bold');
+pdf.text('Pregunta:', noteX, noteY);
+pdf.setFont('helvetica', 'normal');
+pdf.text(note.substr(9), noteX + pdf.getStringUnitWidth('Pregunta:') * textFontSize, noteY);
 
-  // Dibuja un borde en el gráfico
-  pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+const questionX = textOffset;
+const questionY = noteY + 20;
+pdf.setFont('helvetica', 'bold');
+pdf.text('Notas:', questionX, questionY);
+pdf.setFont('helvetica', 'normal');
+pdf.text(question.substr(6), questionX + pdf.getStringUnitWidth('Notas:') * textFontSize, questionY);
 
-  pdf.save('fichaDeSerie.pdf');
+// Tabla
+const styles = {
+  fontStyle: 'normal',
+  cellPadding: 1,
+  fontSize: 8,
+  cellHeight: 16,
+};
+autoTable(pdf, {
+  html: tbl,
+  startY: questionY + 30, 
+  styles: styles,
+  headStyles: {
+    fontStyle: 'bold',
+    fillColor: [0, 0, 0],
+    textColor: [255, 255, 255]
+  },
+  didDrawPage: (data) => {
+    pdf.setFontSize(20);
+  },
+});
+
+const rowCount = tbl.rows.length;
+const totalTableHeight = styles.cellHeight * rowCount;
+
+// Gráfico
+const imagePosition = { x: 15, y: questionY + totalTableHeight + 60, width: 800, height: 400 };
+pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+
+// Borde gráfico
+pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+
+pdf.save('fichaDeSerie.pdf');
+
 }
-
-
-
 
 }
 
