@@ -6,12 +6,15 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
 
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
+    
     <div id="graph_container">
-        <div id="graph_table"></div>
-        <canvas id="graph_chart"></canvas>
+    <div id="graph_table"></div>
+    <canvas id="graph_chart"></canvas>
+    <div id="buttons_container">
         <button type="button" id="exportBtn"> Exportar a Excel </button>
         <button type="button" id="exportBtnPDF"> Exportar a PDF </button>
     </div>
+    </div>  
     `;
 
     let graphic =new Graphic(data.default)
