@@ -96,6 +96,12 @@ export class Graphic {
   }
 
   async getJSONData(url) {
+    // const response = await fetch(url, {
+    //   headers: {
+    //     'Authorization': 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ',
+    //     'Access-Control-Allow-Origin': '*',
+    //   }
+    // });
     const response = await fetch(url);
     const result = await response.json();
     return result;

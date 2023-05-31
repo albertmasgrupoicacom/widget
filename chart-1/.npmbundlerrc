@@ -3,7 +3,8 @@
 		"output-dir": "dist",
 		"features": {
 			"js-extender": true,
-			"web-context": "/chart-1"
+			"web-context": "/chart-1",
+			"configuration": "features/configuration.json"
 		}
 	},
 	"dump-report": true

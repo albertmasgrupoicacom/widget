@@ -1,6 +1,17 @@
 import { Graphic } from './graphic';
 // import * as data from './mono_var.json';
-export default function main({portletNamespace, contextPath, portletElementId}) {
+
+/**
+ * This is the main entry point of the portlet.
+ *
+ * See https://tinyurl.com/js-ext-portlet-entry-point for the most recent 
+ * information on the signature of this function.
+ *
+ * @param  {Object} params a hash with values of interest to the portlet
+ * @return {void}
+ */
+
+export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
       
     
     const node = document.getElementById(portletElementId);
@@ -10,6 +21,23 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         <button id="but_pie" class="graphic_btn"></button>
         <canvas id="graph_chart"></canvas>
     </div>
+    <div>
+        <span class="tag">Portlet Namespace:</span>
+        <span class="value">${portletNamespace}</span>
+    </div>
+    <div>
+        <span class="tag">Context Path:</span>
+        <span class="value">${contextPath}</span>
+    </div>
+    <div>
+        <span class="tag">Portlet Element Id:</span>
+        <span class="value">${portletElementId}</span>
+    </div>
+
+    <div>
+        <span class="tag">Configuration:</span>
+        <span class="value pre">${JSON.stringify(configuration, null, 2)}</span>
+    </div>
     `;
     // new Graphic(data.default, 2776)
 
@@ -18,15 +46,15 @@ export default function main({portletNamespace, contextPath, portletElementId}) 
         details: {}
     };
 
-    const tipo = 'PREGUNTA';
-    // https://webserver-cis-dev.lfr.cloud/o/cis
+    const tipo = 'SERIE';
+    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
 
     if(tipo === 'SERIE'){
         call.type = tipo;
-        call.details.id = 2976;
-        // call.details.id = 16393; // más columnas
+        // call.details.id = 2976;
+        call.details.id = 16393; // más columnas
     }
     else if ( tipo === 'PREGUNTA'){
         call.type = tipo;
