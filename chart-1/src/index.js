@@ -13,6 +13,9 @@ import { Graphic } from './graphic';
 
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
       
+    // console.log('liferay->',Liferay.ThemeDisplay.getPathContext());
+    // console.log('attri->',Liferay.Util.getAttributes());
+    // console.log('portlet->',Liferay.Portlet);
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
@@ -29,6 +32,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         <span class="tag">Context Path:</span>
         <span class="value">${contextPath}</span>
     </div>
+    <div>AB</div>
     <div>
         <span class="tag">Portlet Element Id:</span>
         <span class="value">${portletElementId}</span>
@@ -46,8 +50,8 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         details: {}
     };
 
-    const tipo = 'SERIE';
-    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    const tipo = 'PREGUNTA';
+    //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
 
@@ -64,7 +68,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             'id_variable': 36501,
             'id_muestra': 6994,
             'id_cruce1': 36505,
-            'id_cruce2': 36506
+            // 'id_cruce2': 36506
         }
     }
    

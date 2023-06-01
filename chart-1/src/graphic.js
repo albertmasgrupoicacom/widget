@@ -21,10 +21,12 @@ export class Graphic {
       if ( data.id_cruce2) { cruce2 = true;};
       this.postJSON(url,data).then( graphicData => {
         if( !cruce2 ) {
+          this.addSelectorValues(graphicData,'operaciones');
           this.addTableCRUCE(graphicData);
           this.pintarCruce1(graphicData);
         } else {
-          this.addSelector(graphicData);
+          this.addSelector(graphicData,'variableCruce');
+          this.addSelectorValues(graphicData,'operaciones');
           this.addTableCRUCE2(graphicData,0);
           this.pintarCruce2(graphicData,0);
         }
@@ -99,7 +101,7 @@ export class Graphic {
     // const response = await fetch(url, {
     //   headers: {
     //     'Authorization': 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ',
-    //     'Access-Control-Allow-Origin': '*',
+    //     // 'Access-Control-Allow-Origin': '*',
     //   }
     // });
     const response = await fetch(url);
@@ -213,13 +215,13 @@ export class Graphic {
     ctx.appendChild(tbl);
   }
 
-  addSelector(data) {
+  addSelector(data,name,tabla_index=0) {
     const ctx = document.getElementById("graph_container");
     const selector = document.createElement('select');
-    selector.id = 'variableCruce';
+    selector.id = name;
     ctx.appendChild(selector);
 
-    const array = data.ficha.tabla[0].etiqCruce2;
+    const array = data.ficha.tabla[tabla_index].etiqCruce2;
     for (var i = 0; i < array.length; i++) {
       var option = document.createElement("option");
       option.value = parseInt(i); //array[i].categoria;
@@ -227,12 +229,48 @@ export class Graphic {
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
-      console.log(e.target.value);
       this.removeTable();
       this.addTableCRUCE2(data,parseInt(e.target.value));
-      this.removeChart();
+      // this.removeChart();
       this.pintarCruce2(data,parseInt(e.target.value));
    })
+  }
+
+  addSelectorValues(data,name,tabla_index=0) {
+    const ctx = document.getElementById("graph_container");
+    const selector = document.createElement('select');
+    selector.id = name;
+    ctx.appendChild(selector);
+
+    const array = [{id: 0, etiqueta:'Valores Absolutos'},
+                  {id: 1, etiqueta:'Mostrar % (columna)'},
+                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)'},
+                  {id: 3, etiqueta:'Mostrar % (fila)'},
+                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)'},
+                  {id: 5, etiqueta:'Mostrar % (total)'},
+                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)'}];
+    for (var i = 0; i < array.length; i++) {
+      var option = document.createElement("option");
+      option.value = parseInt(i); //array[i].categoria;
+      option.text = array[i].etiqueta;
+      selector.appendChild(option);
+    }
+    selector.addEventListener("change", e => {
+      let newData = this.calculate(data,parseInt(e.target.value));
+      this.removeTable();
+      this.addTableCRUCE2(newData,parseInt(e.target.value));
+      this.pintarCruce2(newData,parseInt(e.target.value));
+   })
+  }
+
+  calculate(data,type_value_index){
+    let newdata;
+    const cloneData = JSON.parse(JSON.stringify(data));
+    if ( type_value_index == 0) { newdata = data}; // Valores absolutos
+    if ( type_value_index == 1) {
+      
+    }
+    return newdata;
   }
 
   getData(data){
