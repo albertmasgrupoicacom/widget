@@ -26,7 +26,7 @@ export class Graphic {
       row.appendChild(headerCell);
   
       for (let k = 0; k < data.ficha.serie_temporal.length; k++) {
-        const headerCell = document.createElement('th'); // aquí utilizamos 'th' en lugar de 'td'
+        const headerCell = document.createElement('th'); 
         const contenido = data.ficha.serie_temporal[k].fecha;
         const cellText = document.createTextNode(contenido);
         headerCell.appendChild(cellText);
@@ -130,7 +130,7 @@ export class Graphic {
     const workbook = new ExcelJS.Workbook();
     const ws1 = workbook.addWorksheet('Ficha de serie');
   
-    // Añade el título
+    // Título
     const title = 'FICHA DE SERIE';
     ws1.mergeCells('A4:F4');
     const titleCell = ws1.getCell('A4');
@@ -139,7 +139,7 @@ export class Graphic {
     titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
     ws1.getRow(4).height = 40; 
   
-    // Añadimos texto
+    // Texto
     ws1.getCell('A6').value = 'Muestra:';
     ws1.getCell('B6').value = 'Nacional Población española ambos sexos 18 y más años';
     ws1.getCell('A6').font = { bold: true };
@@ -213,8 +213,8 @@ export class Graphic {
   
   addTableToWorksheet(table, worksheet, startRow = 14) {
     const rows = table.getElementsByTagName('tr');
-    const headerHeight = 30; // Altura de la cabecera
-    const dataHeight = 20; // Altura de las filas de datos
+    const headerHeight = 30; 
+    const dataHeight = 20; 
   
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -263,7 +263,7 @@ export class Graphic {
       extension: 'png',
     });
     
-    const startRowChart = 18; // Cambio: Siempre comienza en la fila 20
+    const startRowChart = 18; 
     const endRowChart = startRowChart + 19;
   
     ws.addImage(imageId, {
