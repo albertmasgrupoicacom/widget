@@ -170,11 +170,11 @@ export class Graphic {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
+  
 
-     img.src = 'https://i.imgur.com/77syx2k.png';
-     // img.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
-     // img.src = 'assets/LOGO_CIS_NUEVO.png'; // Ruta de la imagen local
-    // img.src = 'localhost:8080/assets/LOGO_CIS_NUEVO.png';
+     //  img.src = 'https://i.imgur.com/77syx2k.png';
+     img.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+    //img.src = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
   
       img.onload = () => {
         let canvas = document.createElement('canvas');
@@ -323,8 +323,9 @@ exportToPDF() {
   const logoHeight = 100;
   const logoX = 20;
   const logoY = 70;
-  const logoUrl = 'https://i.imgur.com/77syx2k.png';
-  //const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+  //const logoUrl = 'https://i.imgur.com/77syx2k.png';
+  const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+  //const logoUrl = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
   pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
   // Título
@@ -334,6 +335,7 @@ exportToPDF() {
   const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
   const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
   pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
+  
 
 // Texto
 const text = 'Muestra:   Nacional Población española ambos sexos 18 y más años';
