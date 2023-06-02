@@ -296,7 +296,7 @@ export class Graphic {
    })
   }
 
-  calculate(data,type_value_index){
+  calculate(data,type_value_index,indexTabla=0){
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
     if ( type_value_index == 0) { 
@@ -304,6 +304,18 @@ export class Graphic {
       newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
       console.log('Mostrar % (columna)');
+
+      let valor = 0;
+      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j])
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+
 
     }
     return newdata;
