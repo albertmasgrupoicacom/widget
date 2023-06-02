@@ -267,6 +267,7 @@ export class Graphic {
       let newData = this.calculate(data,parseInt(e.target.value));
       this.removeTable();
       if ( type_var === 0){
+        this.printTable('PREGUNTA', newData, parseInt(e.target.value))
         // this.addTableCRUCE(newData,parseInt(e.target.value));
         // this.pintarCruce1(newData,parseInt(e.target.value));
       } else {
@@ -276,7 +277,7 @@ export class Graphic {
    })
   }
 
-  calculate(data,type_value_index){
+  calculate(data,type_value_index,indexTabla=0){
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
     if ( type_value_index == 0) { 
