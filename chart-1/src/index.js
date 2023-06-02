@@ -49,22 +49,19 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         <span class="value pre">${JSON.stringify(configuration, null, 2)}</span>
     </div>
     `;
-    // new Graphic(data.default, 2776)
 
     const call = {
         type: '',
         details: {}
     };
 
-    const tipo = 'PREGUNTA';
+    const tipo = 'SERIE';
     //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
-    // Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
 
     if(tipo === 'SERIE'){
         call.type = tipo;
-        // call.details.id = 2976;
-        call.details.id = 16393; // más columnas
+        call.details.id = 16393; // 2976 -> más columnas
     }
     else if ( tipo === 'PREGUNTA'){
         call.type = tipo;
@@ -78,5 +75,5 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         }
     }
    
-    new Graphic(url_basse,call.type,call.details,null)
+    new Graphic(url_basse, call.type, call.details, null)
 }
