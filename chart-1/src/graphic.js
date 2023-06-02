@@ -110,7 +110,12 @@ export class Graphic {
   
         for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
           const row = document.createElement('tr');
-          this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
+          if( i >= data.ficha.tabla[tabla].etiqVar.length) {
+            this.addCell(row,'(N)');
+          }else {
+            this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
+          }
+          // this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
           for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
             if( etiqCruce2_index != null) {
               this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index]);
@@ -118,8 +123,33 @@ export class Graphic {
               this.addCell(row, data.ficha.tabla[tabla].cruce[i][j]);
             }
           }
+          
           tblBody.appendChild(row);
         }
+
+          // MEDIA
+        if(data.ficha.tabla[tabla].hayMediaVar){
+          let row = document.createElement('tr');
+          this.addCell(row,'Media');
+          for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+            this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].media.toFixed(2));
+          }
+          tblBody.appendChild(row);
+          row = document.createElement('tr');
+          this.addCell(row,'Desviación típica');
+          for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+            this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].desvEstandar.toFixed(2));
+          }
+          tblBody.appendChild(row);
+          row = document.createElement('tr');
+          this.addCell(row,'N');
+          for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+            this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].base);
+          }
+          tblBody.appendChild(row);
+        }
+
+
       }
     }else{
       for (let k = 0; k < data.ficha.serie_temporal.length; k++) {

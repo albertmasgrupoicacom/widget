@@ -71,7 +71,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             'id_variable': 36501,
             'id_muestra': 6994,
             'id_cruce1': 36505,
-            'id_cruce2': 36506
+            // 'id_cruce2': 36506
         }
     }
    
