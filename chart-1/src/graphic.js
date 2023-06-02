@@ -9,9 +9,14 @@ export class Graphic {
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
 
     this.getData(type, url, details).then(data => {
-      console.log('Success', data);
-      this.printTable(type,data);
-      this.printChart(type, this.getParsedData(type,data), 'line');
+      let cruce2 = null;
+      if ( type !== 'SERIE') {
+        cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
+        this.addSelectorOperaciones(data,'operaciones',cruce2);
+        if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
+      }
+      this.printTable(type,data,cruce2);
+      this.printChart(type, this.getParsedData(type,data,cruce2), type==='SERIE'?'line':'bar');
     }).catch(error => {
       console.error('Error', error);
     });;
@@ -38,11 +43,10 @@ export class Graphic {
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
     let response = await fetch(url,{method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
-    console.log(result);
     return result;
   }
 
-  getParsedData(type, data){
+  getParsedData(type, data, etiqCruce2_index){
     let labels = [];
     let newData = {
       datasets: [],
@@ -67,7 +71,11 @@ export class Graphic {
     if(type == 'PREGUNTA'){
       data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
         filas.map ((fila, index) => {
-          datasets[index].data.push(x[index]);
+          if( etiqCruce2_index != null) {
+            datasets[index].data.push(x[index][etiqCruce2_index]);
+          } else {
+            datasets[index].data.push(x[index]);
+          } 
         });
       })
     }else{
@@ -84,7 +92,7 @@ export class Graphic {
     return newData;
   }
 
-  printTable(type, data){
+  printTable(type, data, etiqCruce2_index){
     console.log(data);
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
@@ -104,8 +112,8 @@ export class Graphic {
           const row = document.createElement('tr');
           this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
           for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
-            if( data.ficha.tabla[tabla].etiqCruce2) {
-              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][0]);
+            if( etiqCruce2_index != null) {
+              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index]);
             } else {
               this.addCell(row, data.ficha.tabla[tabla].cruce[i][j]);
             }
@@ -152,7 +160,7 @@ export class Graphic {
         responsive: true,
         scales: {
           x: {
-            stacked: true,
+            stacked: false,
           },
           y: {
             beginAtZero: true,
@@ -185,7 +193,7 @@ export class Graphic {
     row.appendChild(cell);
   }
 
-  addSelector(type, data, name, tabla_index=0) {
+  addSelector(data,name,tabla_index=0) {
     const ctx = document.getElementById("graph_container");
     const selector = document.createElement('select');
     selector.id = name;
@@ -200,12 +208,13 @@ export class Graphic {
     }
     selector.addEventListener("change", e => {
       this.removeTable();
-      this.printTable(type, data, parseInt(e.target.value));
-      this.printChart(type, data, parseInt(e.target.value));
+      this.addTableCRUCE2(data,parseInt(e.target.value));
+      // this.removeChart();
+      this.pintarCruce2(data,parseInt(e.target.value));
    })
   }
 
-  addSelectorValues(type, data, name) {
+  addSelectorOperaciones(data,name,type_var,tabla_index=0) {
     const ctx = document.getElementById("graph_container");
     const selector = document.createElement('select');
     selector.id = name;
@@ -227,17 +236,37 @@ export class Graphic {
     selector.addEventListener("change", e => {
       let newData = this.calculate(data,parseInt(e.target.value));
       this.removeTable();
-      this.printTable(type, newData, parseInt(e.target.value));
-      this.printChart(type, newData, parseInt(e.target.value));
+      if ( type_var === 0){
+        // this.addTableCRUCE(newData,parseInt(e.target.value));
+        // this.pintarCruce1(newData,parseInt(e.target.value));
+      } else {
+        // this.addTableCRUCE2(newData,parseInt(e.target.value));
+        // this.pintarCruce2(newData,parseInt(e.target.value));
+      }
    })
   }
 
   calculate(data,type_value_index){
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
-    if ( type_value_index == 0) { newdata = data}; // Valores absolutos
+    if ( type_value_index == 0) { 
+      console.log('Valores Absolutos)');
+      newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
-      
+      console.log('Mostrar % (columna)');
+
+      let valor = 0;
+      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j])
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+
+
     }
     return newdata;
   }
@@ -251,5 +280,197 @@ export class Graphic {
     const element = document.getElementById("graph_chart");
     element.innerHTML = '';
   }
+
+
+  // ********************************************************************************
+
+  // getDataCruce2(data,etiqCruce2_index){
+  //   console.log(data);
+  //   let newData = {};
+  //   let labels = [];
+  //   newData.datasets = [];
+  //   newData.titulo = data.ficha.pregunta.titulo;
+    
+  //   // const filas = data.ficha.tabla[0].etiqCruce1;
+  //   const filas = JSON.parse(JSON.stringify(data.ficha.tabla[0].etiqCruce1));
+  //   filas.push({etiqueta:'Total'});
+  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
+    
+  //   let datasets = [];
+  //   let colorIndex = 0;
+  //   filas.map (fila => {
+  //     let color = colors[colorIndex];
+  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+  //     datasets.push(element);
+  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+  //   })
+
+  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
+      
+  //     filas.map ( (fila, index) => {
+  //       datasets[index].data.push(x[index][etiqCruce2_index]);
+  //     });
+  //   })
+  //   newData.labels = labels;
+  //   newData.datasets = datasets;
+  //   console.log(newData);
+  //   return newData;
+  // }
+
+  // paintCruce1(ctx,data,tipo){
+  //   this.chart = new Chart(ctx, {
+  //     type: tipo,
+  //     data: data,
+  //     options: {
+  //       plugins: {
+  //         title: {
+  //           display: true,
+  //           text: data.titulo,
+  //           position: 'top'
+  //         },
+  //         legend: {
+  //           display: true,
+  //           position: 'bottom',
+  //         }
+  //       },
+  //       responsive: true,
+  //       scales: {
+  //         x: {
+  //           stacked: false,
+  //         },
+  //         y: {
+  //           beginAtZero: true,
+  //           stacked: false,
+  //           type: 'linear',
+  //         },
+  //       },
+  //     },
+  //   });
+  // };
+
+
+  // pintarCruce1(data) {
+  //   const ctx = document.getElementById("graph_chart");
+  //   const dataReto = this.getDataCruce1(data);
+  //   const tipo = 'bar';
+  //   this.paintCruce1(ctx,dataReto,tipo);
+  // }
+
+  // pintarCruce2(data,etiqCruce2_index) {
+  //   const ctx = document.getElementById("graph_chart");
+  //   const dataReto = this.getDataCruce2(data,etiqCruce2_index);
+  //   const tipo = 'bar';
+  //   if (!this.chart) {
+  //     this.paintCruce1(ctx,dataReto,tipo);
+  //   }
+  //   else {
+  //     this.chart.data = dataReto;
+  //     this.chart.update();
+  //   }
+  // }
+
+  // pintarSerie(data) {
+  //   const ctx = document.getElementById("graph_chart");
+  //   console.log(data);
+  //   const dataReto =  this.getData(data);
+  //   this.paint(ctx,dataReto,'line');
+  // }
+
+  // paint(ctx,data,tipo){
+  //   this.chart = new Chart(ctx, {
+  //     type: tipo,
+  //     data: data,
+  //     options: {
+  //       plugins: {
+  //         title: {
+  //           display: true,
+  //           text: data.titulo,
+  //           position: 'top'
+  //         },
+  //         legend: {
+  //           display: true,
+  //           position: 'bottom',
+  //       }
+  //       },
+  //       responsive: true,
+  //       scales: {
+  //         x: {
+  //           stacked: true,
+  //         },
+  //         y: {
+  //           beginAtZero: true,
+  //           stacked: false,
+  //           type: 'linear',
+  //         },
+  //       },
+  //     },
+  //   });
+  // };
+
+  // getDataCruce1(data){
+
+  //   console.log(data);
+  //   let newData = {};
+  //   let labels = [];
+  //   newData.datasets = [];
+  //   newData.titulo = data.ficha.pregunta.titulo;
+    
+  //   const filas = data.ficha.tabla[0].etiqCruce1;
+  //   filas.push({etiqueta:'Total'});
+  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
+    
+  //   let datasets = [];
+  //   let colorIndex = 0;
+  //   filas.map (fila => {
+  //     let color = colors[colorIndex];
+  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+  //     datasets.push(element);
+  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+  //   })
+
+  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
+      
+  //     filas.map ( (fila, index) => {
+  //       datasets[index].data.push(x[index]);
+  //     });
+  //   })
+  //   newData.labels = labels;
+  //   newData.datasets = datasets;
+  //   console.log(newData);
+  //   return newData;
+  // }
+
+  // getDataCruce2(data,etiqCruce2_index){
+  //   console.log(data);
+  //   let newData = {};
+  //   let labels = [];
+  //   newData.datasets = [];
+  //   newData.titulo = data.ficha.pregunta.titulo;
+    
+  //   // const filas = data.ficha.tabla[0].etiqCruce1;
+  //   const filas = JSON.parse(JSON.stringify(data.ficha.tabla[0].etiqCruce1));
+  //   filas.push({etiqueta:'Total'});
+  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
+    
+  //   let datasets = [];
+  //   let colorIndex = 0;
+  //   filas.map (fila => {
+  //     let color = colors[colorIndex];
+  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+  //     datasets.push(element);
+  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+  //   })
+
+  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
+      
+  //     filas.map ( (fila, index) => {
+  //       datasets[index].data.push(x[index][etiqCruce2_index]);
+  //     });
+  //   })
+  //   newData.labels = labels;
+  //   newData.datasets = datasets;
+  //   console.log(newData);
+  //   return newData;
+  // }
 
 }
