@@ -10,8 +10,8 @@ export class Graphic {
 
     this.getData(type, url, details).then(data => {
       console.log('Success', data);
-      this.printTable(type, this.getParsedData(data));
-      this.printChart(type, this.getParsedData(data), 'bar');
+      this.printTable(type,data);
+      this.printChart(type, this.getParsedData(type,data), 'line');
     }).catch(error => {
       console.error('Error', error);
     });;
@@ -34,14 +34,18 @@ export class Graphic {
         body += `${index != 0 ? '&' : ''}${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
       });
     }
-    return await fetch(url, {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}).json();
+    // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
+    let response = await fetch(url);
+    let result = await response.json();
+    console.log(result);
+    return result;
   }
 
   getParsedData(type, data){
     let labels = [];
     let newData = {
       datasets: [],
-      titulo: data.ficha.pregunta.titulo
+      titulo: (type === 'PREGUNTA')? data.ficha.pregunta.titulo: data.ficha.titulo
     };
     
     const filas = type == 'PREGUNTA' ? data.ficha.tabla[0].etiqCruce1 : data.ficha.filas.slice(0, -1);
@@ -122,7 +126,7 @@ export class Graphic {
     ctx.appendChild(tbl);
   }
 
-  printChart(data, chartType){
+  printChart(type, data, chartType){
     const ctx = document.getElementById("graph_chart");
     this.chart = new Chart(ctx, {
       type: chartType,
