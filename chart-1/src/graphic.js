@@ -30,12 +30,13 @@ export class Graphic {
     if(type == 'PREGUNTA'){
       method = 'POST';
       //headers = new Headers({'Authorization': 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ'});
+      headers = new Headers({'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'});
       Object.entries(params).forEach(([key, value], index) => {
         body += `${index != 0 ? '&' : ''}${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
       });
     }
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
-    let response = await fetch(url);
+    let response = await fetch(url,{method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
     console.log(result);
     return result;
@@ -58,7 +59,7 @@ export class Graphic {
     let colorIndex = 0;
     filas.map (fila => {
       let color = colors[colorIndex];
-      let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+      let element = { label: (type==='SERIE')?fila: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
       datasets.push(element);
       colorIndex == 6 ? colorIndex = 0 : colorIndex++;
     })
@@ -84,6 +85,7 @@ export class Graphic {
   }
 
   printTable(type, data){
+    console.log(data);
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
     const tblBody = document.createElement('tbody');
@@ -102,7 +104,11 @@ export class Graphic {
           const row = document.createElement('tr');
           this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
           for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
-            this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][cruce_2]);
+            if( data.ficha.tabla[tabla].etiqCruce2) {
+              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][0]);
+            } else {
+              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j]);
+            }
           }
           tblBody.appendChild(row);
         }
