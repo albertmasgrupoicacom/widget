@@ -16,6 +16,12 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // console.log('liferay->',Liferay.ThemeDisplay.getPathContext());
     // console.log('attri->',Liferay.Util.getAttributes());
     // console.log('portlet->',Liferay.Portlet);
+    // console.log(id);
+
+    // buttonPass = document.getElementById("buttonPass");
+    // buttonPass.addEventListener("click", ()=> {
+    //    console.log('Dispatch');
+    // });
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`

@@ -18,15 +18,16 @@ export class Graphic {
       });
     } else if ( type === 'PREGUNTA' ) {
       const data = details;
-      if ( data.id_cruce2) { cruce2 = true;};
+      let type_var = 0;
+      if ( data.id_cruce2) { type_var = 1;};
       this.postJSON(url,data).then( graphicData => {
-        if( !cruce2 ) {
-          this.addSelectorValues(graphicData,'operaciones');
+        if( type_var === 0 ) {
+          this.addSelectorOperaciones(graphicData,'operaciones',type_var);
           this.addTableCRUCE(graphicData);
           this.pintarCruce1(graphicData);
         } else {
           this.addSelector(graphicData,'variableCruce');
-          this.addSelectorValues(graphicData,'operaciones');
+          this.addSelectorOperaciones(graphicData,'operaciones',type_var);
           this.addTableCRUCE2(graphicData,0);
           this.pintarCruce2(graphicData,0);
         }
@@ -151,14 +152,41 @@ export class Graphic {
       this.addHeaderCell(row,'Total');
       tblBody.appendChild(row);
 
-      for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
+      for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length +1; i++) {
         const row = document.createElement('tr');
-        this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
+        if( i >= data.ficha.tabla[tabla].etiqVar.length) {
+          this.addCell(row,'(N)');
+        }else {
+          this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
+        }
         for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
           this.addCell(row,data.ficha.tabla[tabla].cruce[i][j]);
         }
         tblBody.appendChild(row);
       }
+
+      // MEDIA
+      if(data.ficha.tabla[tabla].hayMediaVar){
+        let row = document.createElement('tr');
+        this.addCell(row,'Media');
+        for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+          this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].media.toFixed(2));
+        }
+        tblBody.appendChild(row);
+        row = document.createElement('tr');
+        this.addCell(row,'Desviación típica');
+        for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+          this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].desvEstandar.toFixed(2));
+        }
+        tblBody.appendChild(row);
+        row = document.createElement('tr');
+        this.addCell(row,'N');
+        for (let k = 0; k < data.ficha.tabla[tabla].mediasVariable.length; k++) {
+          this.addCell(row,data.ficha.tabla[tabla].mediasVariable[k].base);
+        }
+        tblBody.appendChild(row);
+      }
+
       tbl.appendChild(tblBody);
       ctx.appendChild(tbl);
     }
@@ -236,7 +264,7 @@ export class Graphic {
    })
   }
 
-  addSelectorValues(data,name,tabla_index=0) {
+  addSelectorOperaciones(data,name,type_var,tabla_index=0) {
     const ctx = document.getElementById("graph_container");
     const selector = document.createElement('select');
     selector.id = name;
@@ -258,17 +286,25 @@ export class Graphic {
     selector.addEventListener("change", e => {
       let newData = this.calculate(data,parseInt(e.target.value));
       this.removeTable();
-      this.addTableCRUCE2(newData,parseInt(e.target.value));
-      this.pintarCruce2(newData,parseInt(e.target.value));
+      if ( type_var === 0){
+        this.addTableCRUCE(newData,parseInt(e.target.value));
+        this.pintarCruce1(newData,parseInt(e.target.value));
+      } else {
+        this.addTableCRUCE2(newData,parseInt(e.target.value));
+        this.pintarCruce2(newData,parseInt(e.target.value));
+      }
    })
   }
 
   calculate(data,type_value_index){
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
-    if ( type_value_index == 0) { newdata = data}; // Valores absolutos
+    if ( type_value_index == 0) { 
+      console.log('Valores Absolutos)');
+      newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
-      
+      console.log('Mostrar % (columna)');
+
     }
     return newdata;
   }
