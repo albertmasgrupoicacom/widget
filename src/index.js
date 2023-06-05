@@ -57,7 +57,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
-    const call = {type: 'SERIE', details: {}};
+    const call = {type: 'PREGUNTA', details: {}};
 
     let graphic = null;
 

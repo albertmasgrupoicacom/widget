@@ -45,7 +45,7 @@ export class Graphic {
       });
     }
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
-    let response = await fetch(url,{method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined});
+    let response = await fetch(url,{method: method,headers: headers, body: body ? body : undefined});
     let result = await response.json();
     return result;
   }
