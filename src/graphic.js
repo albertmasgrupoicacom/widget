@@ -47,6 +47,7 @@ export class Graphic {
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
     let response = await fetch(url,{method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
+    console.log(result);
     return result;
   }
 
@@ -97,7 +98,6 @@ export class Graphic {
   }
 
   printTable(type, data, etiqCruce2_index){
-    console.log(data);
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
     const tblBody = document.createElement('tbody');
@@ -113,7 +113,7 @@ export class Graphic {
         this.addHeaderCell(row, 'Total');
         tblBody.appendChild(row);
   
-        for (let i = 0; i < data.ficha.tabla[tabla].etiqVar.length; i++) {
+        for (let i = 0; i <= data.ficha.tabla[tabla].etiqVar.length; i++) {
           const row = document.createElement('tr');
           if( i >= data.ficha.tabla[tabla].etiqVar.length) {
             this.addCell(row,'(N)');
@@ -123,9 +123,9 @@ export class Graphic {
           // this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
           for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
             if( etiqCruce2_index != null) {
-              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index]);
+              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index].toFixed(2));
             } else {
-              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j]);
+              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j].toFixed(2));
             }
           }
           
@@ -176,6 +176,7 @@ export class Graphic {
   }
 
   printChart(type, data, chartType){
+    console.log(data);
     const ctx = document.getElementById("graph_chart");
     this.chart = new Chart(ctx, {
       type: chartType,
@@ -270,9 +271,11 @@ export class Graphic {
     }
     selector.addEventListener("change", e => {
       let newData = this.calculate(data,parseInt(e.target.value));
+      console.log('newDAta return ->',newData);
       this.removeTable();
       // if ( type_var === 0){
-        this.printTable('PREGUNTA', newData, parseInt(e.target.value))
+        const cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
+        this.printTable('PREGUNTA', newData, cruce2);
         // this.addTableCRUCE(newData,parseInt(e.target.value));
         // this.pintarCruce1(newData,parseInt(e.target.value));
       // } else {
@@ -283,10 +286,10 @@ export class Graphic {
   }
 
   calculate(data,type_value_index,indexTabla=0){
+    console.log('opcion',type_value_index);
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
     if ( type_value_index == 0) { 
-      console.log('Valores Absolutos)');
       newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
       console.log('Mostrar % (columna)');
@@ -301,8 +304,28 @@ export class Graphic {
         }
       }
       newdata = cloneData;
-
-
+    }
+    if ( type_value_index == 2) {
+      console.log('Mostrar % (columna - NS/NC)');
+      let valor = 0;
+      let positionsToRemove = []; 
+      cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
+        if (x.esMissing) { positionsToRemove.push(index); }
+      });
+      // positionsToRemove.map( position => {
+        cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
+      // })
+      
+      cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
+      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j])
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
     }
     return newdata;
   }
