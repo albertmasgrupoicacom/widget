@@ -266,14 +266,14 @@ export class Graphic {
     selector.addEventListener("change", e => {
       let newData = this.calculate(data,parseInt(e.target.value));
       this.removeTable();
-      if ( type_var === 0){
+      // if ( type_var === 0){
         this.printTable('PREGUNTA', newData, parseInt(e.target.value))
         // this.addTableCRUCE(newData,parseInt(e.target.value));
         // this.pintarCruce1(newData,parseInt(e.target.value));
-      } else {
+      // } else {
         // this.addTableCRUCE2(newData,parseInt(e.target.value));
         // this.pintarCruce2(newData,parseInt(e.target.value));
-      }
+      // }
    })
   }
 
