@@ -336,7 +336,7 @@ export class Graphic {
       for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
         for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
           valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length-1;
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
           valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
           cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
         }
@@ -355,7 +355,7 @@ export class Graphic {
       for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
         for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
           valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length-1;
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
           valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
           cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
         }
