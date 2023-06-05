@@ -1,4 +1,8 @@
 import Chart from 'chart.js/auto';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+import * as FileSaver from 'file-saver';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
 
