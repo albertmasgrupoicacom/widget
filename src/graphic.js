@@ -312,16 +312,50 @@ export class Graphic {
       cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
         if (x.esMissing) { positionsToRemove.push(index); }
       });
-      // positionsToRemove.map( position => {
-        cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
-      // })
-      
+      cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
       cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
       for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
         for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
           valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
           const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
-          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j])
+
+          let totalnsnc = 0; 
+          positionsToRemove.map( cell => {
+            totalnsnc += data.ficha.tabla[indexTabla].cruce[cell][j];
+          })
+          valor = (valor * 100)/(parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j]) - parseFloat(totalnsnc));
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+    }
+    if ( type_value_index == 3) {
+      console.log('Mostrar % (fila)');
+      let valor = 0;
+      for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length-1;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+    }
+    if ( type_value_index == 4) {
+      console.log('Mostrar % (fila - NS/NC)');
+      let valor = 0;
+      let positionsToRemove = []; 
+      cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
+        if (x.esMissing) { positionsToRemove.push(index); }
+      });
+      cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
+      cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
+      for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length-1;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
           cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
         }
       }
