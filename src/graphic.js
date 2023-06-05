@@ -14,13 +14,13 @@ export class Graphic {
 
     this.getData(type, url, details).then(data => {
       let cruce2 = null;
-      if ( type !== 'SERIE') {
+      if ( type == 'PREGUNTA') {
         cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
         this.addSelectorOperaciones(data,'operaciones',cruce2);
         if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
       }
-      this.printTable(type,data,cruce2);
-      this.printChart(type, this.getParsedData(type,data,cruce2), type==='SERIE'?'line':'bar');
+      this.printTable(type, data, cruce2);
+      this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
     }).catch(error => {
       console.error('Error', error);
     });;
@@ -45,7 +45,7 @@ export class Graphic {
       });
     }
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
-    let response = await fetch(url,{method: method, headers: headers, body: body ? body : undefined});
+    let response = await fetch(url,{method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined});
     let result = await response.json();
     return result;
   }
@@ -54,7 +54,7 @@ export class Graphic {
     let labels = [];
     let newData = {
       datasets: [],
-      titulo: (type === 'PREGUNTA')? data.ficha.pregunta.titulo: data.ficha.titulo
+      titulo: (type === 'PREGUNTA') ? data.ficha.pregunta.titulo : data.ficha.titulo
     };
     
     const filas = type == 'PREGUNTA' ? data.ficha.tabla[0].etiqCruce1 : data.ficha.filas.slice(0, -1);
@@ -67,7 +67,7 @@ export class Graphic {
     let colorIndex = 0;
     filas.map (fila => {
       let color = colors[colorIndex];
-      let element = { label: (type==='SERIE')?fila: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
+      let element = { label: (type==='SERIE') ? fila: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
       datasets.push(element);
       colorIndex == 6 ? colorIndex = 0 : colorIndex++;
     })

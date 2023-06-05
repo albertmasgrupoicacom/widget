@@ -1,3 +1,4 @@
+import { HomeChart } from './home-chart';
 import { Graphic } from './graphic';
 // import * as data from './mono_var.json';
 
@@ -54,32 +55,36 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     </div>
     `;
 
-    const call = {
-        type: '',
-        details: {}
-    };
-
-    const tipo = 'PREGUNTA';
     //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
+    const call = {type: 'SERIE', details: {}};
 
-    if(tipo === 'SERIE'){
-        call.type = tipo;
-        call.details.id = 16393; // 2976 -> más columnas
-    }
-    else if ( tipo === 'PREGUNTA'){
-        call.type = tipo;
-        call.details = {
-            'id_cuestionario': 3400,
-            'id_pregunta': 406338, // ?
-            'id_variable': 36501,
-            'id_muestra': 6994,
-            'id_cruce1': 36505,
-            // 'id_cruce2': 36506
-        }
+    let graphic = null;
+
+    switch (call.type) {
+        case 'SERIE':
+            call.details = {'id': 16393};
+            break;
+        case 'PREGUNTA':
+            call.details = {
+                'id_cuestionario': 3400,
+                'id_pregunta': 406338,
+                'id_variable': 36501,
+                'id_muestra': 6994,
+                'id_cruce1': 36505,
+                // 'id_cruce2': 36506
+            }
+            break;
     }
    
-    let graphic =  new Graphic(url_basse, call.type, call.details, null);
+    switch (call.type) {
+        case 'HOME':
+            graphic = new HomeChart(url_basse, call.details);
+            break;
+        default:
+            graphic = new Graphic(url_basse, call.type, call.details);
+            break;
+    }
 
     document.getElementById('exportBtn').addEventListener('click', () => {
         graphic.exportToExcel();
