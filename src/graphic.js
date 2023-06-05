@@ -23,7 +23,7 @@ export class Graphic {
       this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
     }).catch(error => {
       console.error('Error', error);
-    });;
+    });
 
     const element1 = document.getElementById('but_pie');
     element1.addEventListener('click', this.toPie);
@@ -45,7 +45,7 @@ export class Graphic {
       });
     }
     // {method: method, mode: 'no-cors', headers: headers, body: body ? body : undefined}
-    let response = await fetch(url,{method: method,headers: headers, body: body ? body : undefined});
+    let response = await fetch(url,{method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
     return result;
   }
@@ -181,6 +181,7 @@ export class Graphic {
       type: chartType,
       data: data,
       options: {
+        indexAxis: 'x',
         plugins: {
           title: {
             display: true,
@@ -200,7 +201,6 @@ export class Graphic {
           y: {
             beginAtZero: true,
             stacked: false,
-            type: 'linear',
           },
         },
       },
