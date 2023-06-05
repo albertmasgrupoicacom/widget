@@ -53,15 +53,16 @@ export class Graphic {
 
   getParsedData(type, data, etiqCruce2_index){
     let labels = [];
+    const cloneData = JSON.parse(JSON.stringify(data));
     let newData = {
       datasets: [],
-      titulo: (type === 'PREGUNTA') ? data.ficha.pregunta.titulo : data.ficha.titulo
+      titulo: (type === 'PREGUNTA') ? cloneData.ficha.pregunta.titulo : cloneData.ficha.titulo
     };
     
-    const filas = type == 'PREGUNTA' ? data.ficha.tabla[0].etiqCruce1 : data.ficha.filas.slice(0, -1);
+    const filas = type == 'PREGUNTA' ? cloneData.ficha.tabla[0].etiqCruce1 : cloneData.ficha.filas.slice(0, -1);
     if(type == 'PREGUNTA'){
       filas.push({etiqueta:'Total'});
-      labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
+      labels = cloneData.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
     }
     
     let datasets = [];
@@ -74,7 +75,7 @@ export class Graphic {
     })
 
     if(type == 'PREGUNTA'){
-      data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
+      cloneData.ficha.tabla[0].cruce.slice(0, -1).map(x => {
         filas.map ((fila, index) => {
           if( etiqCruce2_index != null) {
             datasets[index].data.push(x[index][etiqCruce2_index]);
@@ -84,7 +85,7 @@ export class Graphic {
         });
       })
     }else{
-      data.ficha.serie_temporal.map(x => {
+      cloneData.ficha.serie_temporal.map(x => {
         filas.map ( (fila, index) => {
           datasets[index].data.push(x.datos[index]);
         });
