@@ -101,6 +101,7 @@ export class Graphic {
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
     const tblBody = document.createElement('tbody');
+    tblBody.id = "demo";
     const row = document.createElement('tr');
     this.addHeaderCell(row, '');
 
