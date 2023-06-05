@@ -79,7 +79,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         }
     }
    
-    new Graphic(url_basse, call.type, call.details, null);
+    let graphic =  new Graphic(url_basse, call.type, call.details, null);
 
     document.getElementById('exportBtn').addEventListener('click', () => {
         graphic.exportToExcel();
