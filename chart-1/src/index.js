@@ -28,6 +28,10 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     <div id="graph_container">
         <div id="graph_table" class="table"></div>
         <button id="but_pie" class="graphic_btn"></button>
+        <div id="buttons_container">
+            <button type="button" id="exportBtn"> Exportar a Excel </button>
+            <button type="button" id="exportBtnPDF"> Exportar a PDF </button>
+        </div>
         <canvas id="graph_chart"></canvas>
     </div>
     <div>
@@ -75,5 +79,13 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         }
     }
    
-    new Graphic(url_basse, call.type, call.details, null)
+    new Graphic(url_basse, call.type, call.details, null);
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        graphic.exportToExcel();
+    });
+    
+    document.getElementById('exportBtnPDF').addEventListener('click', () => {
+        graphic.exportToPDF();
+    });
 }
