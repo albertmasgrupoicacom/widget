@@ -18,11 +18,33 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // console.log('attri->',Liferay.Util.getAttributes());
     // console.log('portlet->',Liferay.Portlet);
     // console.log(id);
+    // let cuestionarioSeleccionado = 3400
+    // let preguntaSeleccionada = 406338
+    // let variableSeleccionada = 36501
+    // let muestraSeleccionada = 6994
+    // let variableCruce1Seleccionada = 36505
+    // let variableCruce2Seleccionada =  null;
 
-    // buttonPass = document.getElementById("buttonPass");
-    // buttonPass.addEventListener("click", ()=> {
-    //    console.log('Dispatch');
-    // });
+    let buttonPass = document.getElementById("buttonPass");
+    if(buttonPass) {
+        buttonPass.addEventListener("click", ()=> {
+            console.log('id_cuestionario', cuestionarioSeleccionado)
+            console.log('id_pregunta', preguntaSeleccionada)
+            console.log('id_variable', variableSeleccionada)
+            console.log('id_muestra', muestraSeleccionada)
+            console.log('id_cruce1', variableCruce1Seleccionada)
+            console.log('id_cruce2', variableCruce2Seleccionada)
+            console.log('tipo',tipo)    
+        });
+    }
+
+    let sltVariables = document.getElementById("sltVariables");
+    if(sltVariables) {
+        sltVariables.addEventListener("change", ()=> {
+            console.log('change variable',sltVariables.value);
+            // graphic = new Graphic(url_basse, call.type, call.details);
+        });
+    }
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
@@ -35,29 +57,12 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         </div>
         <canvas id="graph_chart"></canvas>
     </div>
-    <div>
-        <span class="tag">Portlet Namespace:</span>
-        <span class="value">${portletNamespace}</span>
-    </div>
-    <div>
-        <span class="tag">Context Path:</span>
-        <span class="value">${contextPath}</span>
-    </div>
-    <div>AB</div>
-    <div>
-        <span class="tag">Portlet Element Id:</span>
-        <span class="value">${portletElementId}</span>
-    </div>
-
-    <div>
-        <span class="tag">Configuration:</span>
-        <span class="value pre">${JSON.stringify(configuration, null, 2)}</span>
-    </div>
     `;
 
     //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
-    const call = {type: 'PREGUNTA', details: {}};
+    // const call = {type: 'PREGUNTA', details: {}};
+    const call = {type: tipo, details: {}};
 
     let graphic = null;
 
@@ -67,15 +72,35 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             break;
         case 'PREGUNTA':
             call.details = {
-                'id_cuestionario': 3400,
-                'id_pregunta': 406338,
-                'id_variable': 36501,
-                'id_muestra': 6994,
-                'id_cruce1': 36505,
+                // 'id_cuestionario': cuestionarioSeleccionado ? cuestionarioSeleccionado : 3400,
+                // 'id_pregunta': preguntaSeleccionada ?  preguntaSeleccionada : 406338,
+                // 'id_variable': variableSeleccionada ? variableSeleccionada : 36501,
+                // 'id_muestra': muestraSeleccionada ? muestraSeleccionada : 6994,
+                // 'id_cruce1': variableCruce1Seleccionada ? variableCruce1Seleccionada : 36505,
+                // 'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : 36506
+                // 'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : null
+                // 'id_cuestionario':3400,
+                // 'id_pregunta': 406338,
+                // 'id_variable': 36501,
+                // 'id_muestra': 6994,
+                // 'id_cruce1': 36505,
                 // 'id_cruce2': 36506
+                'id_cuestionario': cuestionarioSeleccionado,
+                'id_pregunta': preguntaSeleccionada,
+                'id_variable': variableSeleccionada,
+                'id_muestra': muestraSeleccionada,
+                'id_cruce1': variableCruce1Seleccionada,
+                'id_cruce2': variableCruce2Seleccionada
             }
             break;
     }
+
+    // remove null or undefined keys
+    Object.keys(call.details).forEach(key => {
+        if (call.details[key] == null) {
+          delete call.details[key];
+        }
+    });
    
     switch (call.type) {
         case 'HOME':
@@ -85,6 +110,8 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             graphic = new Graphic(url_basse, call.type, call.details);
             break;
     }
+
+   
 
     document.getElementById('exportBtn').addEventListener('click', () => {
         graphic.exportToExcel();

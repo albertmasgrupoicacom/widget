@@ -1,8 +1,8 @@
 import Chart from 'chart.js/auto';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
-import * as FileSaver from 'file-saver';
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
+// import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+// import * as FileSaver from 'file-saver';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
 
@@ -100,9 +100,9 @@ export class Graphic {
 
   mostrarDecimal(numero) {
     if (numero !== Math.round(numero)) {
-      return parseFloat(numero.toFixed(2)); // Retorna el nombre amb 2 decimals com a valor de tipus nombre decimal
+      return parseFloat(numero.toFixed(2)); 
     } else {
-      return numero; // Retorna el nombre sencer com a valor de tipus nombre sencer
+      return numero;
     }
   }
 
@@ -253,7 +253,8 @@ export class Graphic {
     }
     selector.addEventListener("change", e => {
       this.removeTable();
-      this.addTableCRUCE2(data,parseInt(e.target.value));
+      // this.addTableCRUCE2(data,parseInt(e.target.value));
+      this.printTable('PREGUNTA', data, parseInt(e.target.value));
       // this.removeChart();
       this.pintarCruce2(data,parseInt(e.target.value));
    })
@@ -302,7 +303,6 @@ export class Graphic {
       newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
       console.log('Mostrar % (columna)');
-
       let valor = 0;
       for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
         for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
@@ -353,6 +353,51 @@ export class Graphic {
     }
     if ( type_value_index == 4) {
       console.log('Mostrar % (fila - NS/NC)');
+      let valor = 0;
+      let positionsToRemove = []; 
+      cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
+        if (x.esMissing) { positionsToRemove.push(index); }
+      });
+      cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
+      cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
+      for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
+          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+    }
+
+    if ( type_value_index == 5) {
+      console.log('Mostrar % (Total)');
+      let valor = 0;
+      const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
+      const totalIndex = cloneData.ficha.tabla[indexTabla].etiqVar.length;
+      const total = cloneData.ficha.tabla[indexTabla].cruce[totalIndex][index_sum];
+
+      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
+        for (let j = index_sum; j >= 0; j--) {
+      // const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
+          const totalFila = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
+          if( j === index_sum){
+            valor = (valor * 100)/parseFloat(total);
+          }
+          else {
+            const totalfila = cloneData.ficha.tabla[indexTabla].cruce[i][index_sum];
+            valor = (valor * parseFloat(totalfila))/totalFila;
+          }
+          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+        }
+      }
+      newdata = cloneData;
+    }
+
+    if ( type_value_index == 6) {
+      console.log('Mostrar % (Total - NS/NC)');
       let valor = 0;
       let positionsToRemove = []; 
       cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
