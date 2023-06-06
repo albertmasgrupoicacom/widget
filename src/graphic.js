@@ -98,6 +98,14 @@ export class Graphic {
     return newData;
   }
 
+  mostrarDecimal(numero) {
+    if (numero !== Math.round(numero)) {
+      return parseFloat(numero.toFixed(2)); // Retorna el nombre amb 2 decimals com a valor de tipus nombre decimal
+    } else {
+      return numero; // Retorna el nombre sencer com a valor de tipus nombre sencer
+    }
+  }
+
   printTable(type, data, etiqCruce2_index){
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
@@ -124,9 +132,9 @@ export class Graphic {
           // this.addCell(row,data.ficha.tabla[tabla].etiqVar[i].etiqueta);
           for (let j = 0; j < data.ficha.tabla[tabla].cruce[i].length; j++) {
             if( etiqCruce2_index != null) {
-              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index].toFixed(2));
+              this.addCell(row, this.mostrarDecimal(data.ficha.tabla[tabla].cruce[i][j][etiqCruce2_index]));
             } else {
-              this.addCell(row, data.ficha.tabla[tabla].cruce[i][j].toFixed(2));
+              this.addCell(row, this.mostrarDecimal(data.ficha.tabla[tabla].cruce[i][j]));
             }
           }
           
