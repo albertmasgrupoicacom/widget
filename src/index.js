@@ -67,7 +67,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     switch (call.type) {
         case 'SERIE':
-            call.details = {'id': 16393};
+            call.details = {'id': numSerie};
             break;
         case 'PREGUNTA':
             call.details = {
