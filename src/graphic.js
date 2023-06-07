@@ -19,6 +19,7 @@ export class Graphic {
         this.addSelectorOperaciones(data,'operaciones',cruce2);
         if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
       }
+     
       this.printTable(type, data, cruce2);
       this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
     }).catch(error => {
@@ -28,6 +29,29 @@ export class Graphic {
     // const element1 = document.getElementById('but_pie');
     // element1.addEventListener('click', this.toPie);
 
+  }
+
+  refreshData(base_url, type, details) {
+    console.log('refresh');
+    if(this.chart) {
+      console.log('chart destroy');
+      this.chart.destroy()
+    };
+    let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
+    console.log(url);
+    this.getData(type, url, details).then(data => {
+      let cruce2 = null;
+      if ( type == 'PREGUNTA') {
+        cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
+        this.addSelectorOperaciones(data,'operaciones',cruce2);
+        if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
+      }
+    
+      this.printTable(type, data, cruce2);
+      this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
+    }).catch(error => {
+      console.error('Error', error);
+    });
   }
 
   async getData(type, url, params){

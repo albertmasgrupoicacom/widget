@@ -25,6 +25,8 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // let variableCruce1Seleccionada = 36505
     // let variableCruce2Seleccionada =  null;
 
+    let graphic = null;
+
     let buttonPass = document.getElementById("buttonPass");
     if(buttonPass) {
         buttonPass.addEventListener("click", ()=> {
@@ -45,14 +47,16 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     let sltVariables = document.getElementById("sltVariables");
     if(sltVariables) {
         sltVariables.addEventListener("change", ()=> {
-            console.log('change variable',sltVariables.value);
-            // graphic = new Graphic(url_basse, call.type, call.details);
+            console.log('change variable 2',sltVariables.value);
+            //graphic = new Graphic(url_basse, call.type, call.details);
+            this.graphic.refreshData(url_basse, call.type, call.details);
         });
     }
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
     <div id="graph_container">
+        <div>3</div>
         <div id="graph_table" class="table"></div>
         <canvas id="graph_chart"></canvas>
     </div>
@@ -63,7 +67,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // const call = {type: 'PREGUNTA', details: {}};
     const call = {type: tipo, details: {}};
 
-    let graphic = null;
+    
 
     switch (call.type) {
         case 'SERIE':
@@ -103,10 +107,10 @@ export default function main({portletNamespace, contextPath, portletElementId,co
    
     switch (call.type) {
         case 'HOME':
-            graphic = new HomeChart(url_basse, call.details);
+            this.graphic = new HomeChart(url_basse, call.details);
             break;
         default:
-            graphic = new Graphic(url_basse, call.type, call.details);
+            this.graphic = new Graphic(url_basse, call.type, call.details);
             break;
     }
 
