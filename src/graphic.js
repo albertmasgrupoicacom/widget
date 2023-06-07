@@ -167,7 +167,7 @@ export class Graphic {
     const preguntaLabelDiv = document.createElement('div');
     const preguntaDiv = document.createElement('div');
     preguntaLabelDiv.appendChild(labelPregunta);
-    preguntaDiv.innerHTML = data.ficha.pregunta || '<p>Hola</p>';
+    preguntaDiv.innerHTML = data.ficha.pregunta || '-';
     divPregunta.appendChild(preguntaLabelDiv);
     divPregunta.appendChild(preguntaDiv);
 
