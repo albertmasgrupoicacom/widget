@@ -1,6 +1,6 @@
 {
 	"name": "chart-1",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Simple chart",
 	"devDependencies": {
 		"@babel/cli": "^7.7.5",

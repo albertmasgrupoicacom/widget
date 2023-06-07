@@ -19,7 +19,9 @@ export class Graphic {
         this.addSelectorOperaciones(data,'operaciones',cruce2);
         if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
       }
-     
+      if(type == 'SERIE') {
+        this.printHeaderSerie(type, data, cruce2);
+      }
       this.printTable(type, data, cruce2);
       this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
     }).catch(error => {
@@ -41,12 +43,7 @@ export class Graphic {
     console.log(url);
     this.getData(type, url, details).then(data => {
       let cruce2 = null;
-      if ( type == 'PREGUNTA') {
-        cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
-        this.addSelectorOperaciones(data,'operaciones',cruce2);
-        if( cruce2 !== null ) { this.addSelector(data,'variableCruce');}
-      }
-    
+      this.removeTable();
       this.printTable(type, data, cruce2);
       this.printChart(type, this.getParsedData(type, data, cruce2), type === 'SERIE' ? 'line' : 'bar');
     }).catch(error => {
@@ -130,6 +127,69 @@ export class Graphic {
     }
   }
 
+
+  printHeaderSerie(type, data, etiqCruce2_index){
+    console.log(data);
+    const ctx = document.getElementById("graph_container");
+    const divTitulo = document.createElement('div');
+    
+
+    // CODIGO
+    const divCodigo = document.createElement('div');
+    const labelCodigo = document.createTextNode('Serie:');
+    const codigo = document.createTextNode(data.ficha.codigo);
+    const codigoLabelDiv= document.createElement('div');
+    const codigoDiv= document.createElement('div');
+    codigoLabelDiv.appendChild(labelCodigo)
+    codigoDiv.appendChild(codigo)
+    divCodigo.appendChild(codigoLabelDiv);
+    divCodigo.appendChild(codigoDiv);
+
+    // TITULO
+    const titulo = document.createTextNode(data.ficha.titulo);
+    divTitulo.appendChild(titulo);
+
+    // MUESTRA
+    const divMuestra = document.createElement('div');
+    const labelMuestra = document.createTextNode('Muestra:');
+    const muestra = document.createTextNode(data.ficha.muestra || '-');
+    const muestraLabelDiv = document.createElement('div');
+    const muestraDiv = document.createElement('div');
+    muestraLabelDiv.appendChild(labelMuestra);
+    muestraDiv.appendChild(muestra);
+    divMuestra.appendChild(muestraLabelDiv);
+    divMuestra.appendChild(muestraDiv);
+
+    // PREGUNTA
+    const divPregunta = document.createElement('div');
+    const labelPregunta = document.createTextNode('Pregunta:');
+    // const pregunta = document.createTextNode(data.ficha.pregunta || '-');
+    const preguntaLabelDiv = document.createElement('div');
+    const preguntaDiv = document.createElement('div');
+    preguntaLabelDiv.appendChild(labelPregunta);
+    preguntaDiv.innerHTML = data.ficha.pregunta || '<p>Hola</p>';
+    divPregunta.appendChild(preguntaLabelDiv);
+    divPregunta.appendChild(preguntaDiv);
+
+    // NOTAS
+    const divNotas = document.createElement('div');
+    const labelNotas = document.createTextNode('Notas:');
+    const notas = document.createTextNode(data.ficha.notas || '-');
+    const notasLabelDiv = document.createElement('div');
+    const notasDiv = document.createElement('div');
+    notasLabelDiv.appendChild(labelNotas);
+    notasDiv.appendChild(notas);
+    divNotas.appendChild(notasLabelDiv);
+    divNotas.appendChild(notasDiv);
+
+  
+    ctx.insertAdjacentElement( 'afterbegin', divNotas)
+    ctx.insertAdjacentElement( 'afterbegin', divPregunta)
+    ctx.insertAdjacentElement( 'afterbegin', divMuestra)
+    ctx.insertAdjacentElement( 'afterbegin', divTitulo)
+    ctx.insertAdjacentElement( 'afterbegin', divCodigo)
+  }
+
   printTable(type, data, etiqCruce2_index){
     const ctx = document.getElementById("graph_container");
     const tbl = document.getElementById("graph_table");
@@ -205,11 +265,10 @@ export class Graphic {
     }
     
     tbl.appendChild(tblBody);
-    ctx.appendChild(tbl);
+    // ctx.appendChild(tbl);
   }
 
   printChart(type, data, chartType){
-    console.log(data);
     const ctx = document.getElementById("graph_chart");
     this.chart = new Chart(ctx, {
       type: chartType,

@@ -49,6 +49,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         sltVariables.addEventListener("change", ()=> {
             console.log('change variable 2',sltVariables.value);
             //graphic = new Graphic(url_basse, call.type, call.details);
+            call.details.id_variable = sltVariables.value;
             this.graphic.refreshData(url_basse, call.type, call.details);
         });
     }
@@ -56,15 +57,14 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
     <div id="graph_container">
-        <div>3</div>
         <div id="graph_table" class="table"></div>
         <canvas id="graph_chart"></canvas>
     </div>
     `;
 
-    //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
-    const url_basse = 'http://77.227.0.28:8180/cis/apijds';
-    // const call = {type: 'PREGUNTA', details: {}};
+    const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    // const url_basse = 'http://77.227.0.28:8180/cis/apijds';
+    // const call = {type: 'SERIE', details: {}};
     const call = {type: tipo, details: {}};
 
     
@@ -72,6 +72,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     switch (call.type) {
         case 'SERIE':
             call.details = {'id': numSerie};
+            // call.details = {'id': 17314};
             break;
         case 'PREGUNTA':
             call.details = {
@@ -107,10 +108,10 @@ export default function main({portletNamespace, contextPath, portletElementId,co
    
     switch (call.type) {
         case 'HOME':
-            this.graphic = new HomeChart(url_basse, call.details);
+            graphic = new HomeChart(url_basse, call.details);
             break;
         default:
-            this.graphic = new Graphic(url_basse, call.type, call.details);
+            graphic = new Graphic(url_basse, call.type, call.details);
             break;
     }
 
