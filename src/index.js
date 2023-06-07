@@ -28,13 +28,17 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     let buttonPass = document.getElementById("buttonPass");
     if(buttonPass) {
         buttonPass.addEventListener("click", ()=> {
-            console.log('id_cuestionario', cuestionarioSeleccionado)
-            console.log('id_pregunta', preguntaSeleccionada)
-            console.log('id_variable', variableSeleccionada)
-            console.log('id_muestra', muestraSeleccionada)
-            console.log('id_cruce1', variableCruce1Seleccionada)
-            console.log('id_cruce2', variableCruce2Seleccionada)
-            console.log('tipo',tipo)    
+            if( tipo == 'SERIE') {
+                console.log('numSerie',numSerie);
+            } else {
+                console.log('id_cuestionario', cuestionarioSeleccionado)
+                console.log('id_pregunta', preguntaSeleccionada)
+                console.log('id_variable', variableSeleccionada)
+                console.log('id_muestra', muestraSeleccionada)
+                console.log('id_cruce1', variableCruce1Seleccionada)
+                console.log('id_cruce2', variableCruce2Seleccionada)
+                console.log('tipo',tipo)
+            }  
         });
     }
 
@@ -50,11 +54,6 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     node.innerHTML =`
     <div id="graph_container">
         <div id="graph_table" class="table"></div>
-        <button id="but_pie" class="graphic_btn"></button>
-        <div id="buttons_container">
-            <button type="button" id="exportBtn"> Exportar a Excel </button>
-            <button type="button" id="exportBtnPDF"> Exportar a PDF </button>
-        </div>
         <canvas id="graph_chart"></canvas>
     </div>
     `;
@@ -113,11 +112,11 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
    
 
-    document.getElementById('exportBtn').addEventListener('click', () => {
-        graphic.exportToExcel();
-    });
+    // document.getElementById('exportBtn').addEventListener('click', () => {
+    //     graphic.exportToExcel();
+    // });
     
-    document.getElementById('exportBtnPDF').addEventListener('click', () => {
-        graphic.exportToPDF();
-    });
+    // document.getElementById('exportBtnPDF').addEventListener('click', () => {
+    //     graphic.exportToPDF();
+    // });
 }

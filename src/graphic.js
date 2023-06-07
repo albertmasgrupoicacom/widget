@@ -25,8 +25,8 @@ export class Graphic {
       console.error('Error', error);
     });
 
-    const element1 = document.getElementById('but_pie');
-    element1.addEventListener('click', this.toPie);
+    // const element1 = document.getElementById('but_pie');
+    // element1.addEventListener('click', this.toPie);
 
   }
 
