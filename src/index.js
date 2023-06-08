@@ -13,13 +13,22 @@ import { Graphic } from './graphic';
  */
 
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
+
+    // const cuestionarioSeleccionado = 3400;
+    // const preguntaSeleccionada = 406338;
+    // const variableSeleccionada = 36501;
+    // const muestraSeleccionada = 6994;
+    // const variableCruce1Seleccionada = 36505;
+    // const variableCruce2Seleccionada = null;
+
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`<div id="graph_page"></div>`;
 
-    //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
-    const call = {type: 'SERIE', details: {}};
+    const call = {type: 'PREGUNTA', details: {}};
+    // const call = {type: tipo, details: {}};
 
     let graphic = null;
 
@@ -29,15 +38,36 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             break;
         case 'PREGUNTA':
             call.details = {
-                'id_cuestionario': 3400,
-                'id_pregunta': 406338,
-                'id_variable': 36501,
-                'id_muestra': 6994,
-                'id_cruce1': 36505,
+                // 'id_cuestionario': 3400,
+                // 'id_pregunta': 406338,
+                // 'id_variable': 36501,
+                // 'id_muestra': 6994,
+                // 'id_cruce1': 36505,
                 //'id_cruce2': 36506
+
+                // 'id_cuestionario': cuestionarioSeleccionado,
+                // 'id_pregunta': preguntaSeleccionada,
+                // 'id_variable': variableSeleccionada,
+                // 'id_muestra': muestraSeleccionada,
+                // 'id_cruce1': variableCruce1Seleccionada,
+                // 'id_cruce2': variableCruce2Seleccionada
+
+                'id_cuestionario': cuestionarioSeleccionado ? cuestionarioSeleccionado : 3400,
+                'id_pregunta': preguntaSeleccionada ? preguntaSeleccionada : 406338,
+                'id_variable': variableSeleccionada ? variableSeleccionada : 36501,
+                'id_muestra': muestraSeleccionada ? muestraSeleccionada : 6994,
+                'id_cruce1': variableCruce1Seleccionada ? variableCruce1Seleccionada : 36505,
+                'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : 36506
             }
             break;
     }
+
+    // remove null or undefined keys
+    Object.keys(call.details).forEach(key => {
+        if (call.details[key] == null) {
+          delete call.details[key];
+        }
+    });
    
     switch (call.type) {
         case 'HOME':
