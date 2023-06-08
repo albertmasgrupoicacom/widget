@@ -1,8 +1,8 @@
 import Chart from 'chart.js/auto';
-// import { jsPDF } from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
 import { buttons } from './utils/utils';
-// import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
+import * as ExcelJS from 'exceljs';
+// import autoTable from 'jspdf-autotable';
 // import * as FileSaver from 'file-saver';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
@@ -252,6 +252,100 @@ export class Graphic {
     cell.classList.add('td');
     row.appendChild(cell);
   }
+
+  // exportToPDF() {
+  //   const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
+  //   const tbl = document.getElementById('demo');
+  //   const originalCanvas = document.getElementById("graph_chart");
+  //   let inMemoryCanvas = document.createElement('canvas');
+  //   let ctx = inMemoryCanvas.getContext('2d');
+  //   inMemoryCanvas.width = originalCanvas.width;
+  //   inMemoryCanvas.height = originalCanvas.height;
+  //   ctx.fillStyle = 'rgb(255,255,255)';
+  //   ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+  //   ctx.drawImage(originalCanvas, 0, 0);
+  //   const base64Image = inMemoryCanvas.toDataURL("image/png");
+
+  //   // Logo
+  //   const logoWidth = 100;
+  //   const logoHeight = 100;
+  //   const logoX = 20;
+  //   const logoY = 70;
+  //   //const logoUrl = 'https://i.imgur.com/77syx2k.png';
+  //   const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+  //   //const logoUrl = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
+  //   pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+  //   // Título
+  //   const title = 'FICHA DE SERIE';
+  //   pdf.setFont('helvetica', 'bold');
+  //   pdf.setFontSize(24);
+  //   const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+  //   const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
+  //   pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
+    
+
+  //   // Texto
+  //   const text = 'Muestra:   Nacional Población española ambos sexos 18 y más años';
+  //   const note = 'Pregunta:  El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución.';
+  //   const question = 'Notas:  (*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
+  //   const textX = 50;
+  //   const textY = logoY + logoHeight + 70;
+  //   const textFontSize = 10;
+  //   const textWidth = pdf.getStringUnitWidth(text) * textFontSize / pdf.internal.scaleFactor;
+  //   const textOffset = textX;
+  //   pdf.setFontSize(textFontSize);
+  //   pdf.setFont('helvetica', 'bold');
+  //   pdf.text('Muestra:', textOffset, textY);
+  //   pdf.setFont('helvetica', 'normal');
+  //   pdf.text(text.substr(9), textOffset + pdf.getStringUnitWidth('Muestra:') * textFontSize, textY);
+
+  //   const noteX = textOffset;
+  //   const noteY = textY + 20;
+  //   pdf.setFont('helvetica', 'bold');
+  //   pdf.text('Pregunta:', noteX, noteY);
+  //   pdf.setFont('helvetica', 'normal');
+  //   pdf.text(note.substr(9), noteX + pdf.getStringUnitWidth('Pregunta:') * textFontSize, noteY);
+
+  //   const questionX = textOffset;
+  //   const questionY = noteY + 20;
+  //   pdf.setFont('helvetica', 'bold');
+  //   pdf.text('Notas:', questionX, questionY);
+  //   pdf.setFont('helvetica', 'normal');
+  //   pdf.text(question.substr(6), questionX + pdf.getStringUnitWidth('Notas:') * textFontSize, questionY);
+
+  //   // Tabla
+  //   const styles = {
+  //   fontStyle: 'normal',
+  //   cellPadding: 1,
+  //   fontSize: 8,
+  //   cellHeight: 16,
+  //   };
+  //   autoTable(pdf, {
+  //   html: tbl,
+  //   startY: questionY + 30, 
+  //   styles: styles,
+  //   headStyles: {
+  //       fontStyle: 'bold',
+  //       fillColor: [0, 0, 0],
+  //       textColor: [255, 255, 255]
+  //   },
+  //   didDrawPage: (data) => {
+  //       pdf.setFontSize(20);
+  //   },
+  //   });
+
+  //   const rowCount = tbl.rows.length;
+  //   const totalTableHeight = styles.cellHeight * rowCount;
+
+  //   // Gráfico
+  //   const imagePosition = { x: 15, y: questionY + totalTableHeight + 60, width: 800, height: 400 };
+  //   pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+
+  //   // Borde gráfico
+  //   pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+  //   pdf.save('fichaDeSerie.pdf');
+  // }
 
   addSelectorOperaciones(data,name,type_var,tabla_index=0) {
     const ctx = document.getElementById("graph_container");
@@ -554,295 +648,6 @@ export class Graphic {
   //     reader.addEventListener('error', reject);
   //     reader.readAsArrayBuffer(blob);
   //   });
-  // }
-  
-
-// exportToPDF() {
-//   const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
-//   const tbl = document.getElementById('demo');
-//   const originalCanvas = document.getElementById("graph_chart");
-//   let inMemoryCanvas = document.createElement('canvas');
-//   let ctx = inMemoryCanvas.getContext('2d');
-//   inMemoryCanvas.width = originalCanvas.width;
-//   inMemoryCanvas.height = originalCanvas.height;
-//   ctx.fillStyle = 'rgb(255,255,255)';
-//   ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
-//   ctx.drawImage(originalCanvas, 0, 0);
-//   const base64Image = inMemoryCanvas.toDataURL("image/png");
-
-//   // Logo
-//   const logoWidth = 100;
-//   const logoHeight = 100;
-//   const logoX = 20;
-//   const logoY = 70;
-//   //const logoUrl = 'https://i.imgur.com/77syx2k.png';
-//   const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
-//   //const logoUrl = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
-//   pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-
-//   // Título
-//   const title = 'FICHA DE SERIE';
-//   pdf.setFont('helvetica', 'bold');
-//   pdf.setFontSize(24);
-//   const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-//   const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
-//   pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
-  
-
-//     // Texto
-//     const text = 'Muestra:   Nacional Población española ambos sexos 18 y más años';
-//     const note = 'Pregunta:  El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución.';
-//     const question = 'Notas:  (*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
-//     const textX = 50;
-//     const textY = logoY + logoHeight + 70;
-//     const textFontSize = 10;
-//     const textWidth = pdf.getStringUnitWidth(text) * textFontSize / pdf.internal.scaleFactor;
-//     const textOffset = textX;
-//     pdf.setFontSize(textFontSize);
-//     pdf.setFont('helvetica', 'bold');
-//     pdf.text('Muestra:', textOffset, textY);
-//     pdf.setFont('helvetica', 'normal');
-//     pdf.text(text.substr(9), textOffset + pdf.getStringUnitWidth('Muestra:') * textFontSize, textY);
-
-//     const noteX = textOffset;
-//     const noteY = textY + 20;
-//     pdf.setFont('helvetica', 'bold');
-//     pdf.text('Pregunta:', noteX, noteY);
-//     pdf.setFont('helvetica', 'normal');
-//     pdf.text(note.substr(9), noteX + pdf.getStringUnitWidth('Pregunta:') * textFontSize, noteY);
-
-//     const questionX = textOffset;
-//     const questionY = noteY + 20;
-//     pdf.setFont('helvetica', 'bold');
-//     pdf.text('Notas:', questionX, questionY);
-//     pdf.setFont('helvetica', 'normal');
-//     pdf.text(question.substr(6), questionX + pdf.getStringUnitWidth('Notas:') * textFontSize, questionY);
-
-//     // Tabla
-//     const styles = {
-//     fontStyle: 'normal',
-//     cellPadding: 1,
-//     fontSize: 8,
-//     cellHeight: 16,
-//     };
-//     autoTable(pdf, {
-//     html: tbl,
-//     startY: questionY + 30, 
-//     styles: styles,
-//     headStyles: {
-//         fontStyle: 'bold',
-//         fillColor: [0, 0, 0],
-//         textColor: [255, 255, 255]
-//     },
-//     didDrawPage: (data) => {
-//         pdf.setFontSize(20);
-//     },
-//     });
-
-//     const rowCount = tbl.rows.length;
-//     const totalTableHeight = styles.cellHeight * rowCount;
-
-//     // Gráfico
-//     const imagePosition = { x: 15, y: questionY + totalTableHeight + 60, width: 800, height: 400 };
-//     pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
-
-//     // Borde gráfico
-//     pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
-
-//     pdf.save('fichaDeSerie.pdf');
-
-// }
-
-
-  // ********************************************************************************
-
-  // getDataCruce2(data,etiqCruce2_index){
-  //   console.log(data);
-  //   let newData = {};
-  //   let labels = [];
-  //   newData.datasets = [];
-  //   newData.titulo = data.ficha.pregunta.titulo;
-    
-  //   // const filas = data.ficha.tabla[0].etiqCruce1;
-  //   const filas = JSON.parse(JSON.stringify(data.ficha.tabla[0].etiqCruce1));
-  //   filas.push({etiqueta:'Total'});
-  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
-    
-  //   let datasets = [];
-  //   let colorIndex = 0;
-  //   filas.map (fila => {
-  //     let color = colors[colorIndex];
-  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
-  //     datasets.push(element);
-  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-  //   })
-
-  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
-      
-  //     filas.map ( (fila, index) => {
-  //       datasets[index].data.push(x[index][etiqCruce2_index]);
-  //     });
-  //   })
-  //   newData.labels = labels;
-  //   newData.datasets = datasets;
-  //   console.log(newData);
-  //   return newData;
-  // }
-
-  // paintCruce1(ctx,data,tipo){
-  //   this.chart = new Chart(ctx, {
-  //     type: tipo,
-  //     data: data,
-  //     options: {
-  //       plugins: {
-  //         title: {
-  //           display: true,
-  //           text: data.titulo,
-  //           position: 'top'
-  //         },
-  //         legend: {
-  //           display: true,
-  //           position: 'bottom',
-  //         }
-  //       },
-  //       responsive: true,
-  //       scales: {
-  //         x: {
-  //           stacked: false,
-  //         },
-  //         y: {
-  //           beginAtZero: true,
-  //           stacked: false,
-  //           type: 'linear',
-  //         },
-  //       },
-  //     },
-  //   });
-  // };
-
-
-  // pintarCruce1(data) {
-  //   const ctx = document.getElementById("graph_chart");
-  //   const dataReto = this.getDataCruce1(data);
-  //   const tipo = 'bar';
-  //   this.paintCruce1(ctx,dataReto,tipo);
-  // }
-
-  // pintarCruce2(data,etiqCruce2_index) {
-  //   const ctx = document.getElementById("graph_chart");
-  //   const dataReto = this.getDataCruce2(data,etiqCruce2_index);
-  //   const tipo = 'bar';
-  //   if (!this.chart) {
-  //     this.paintCruce1(ctx,dataReto,tipo);
-  //   }
-  //   else {
-  //     this.chart.data = dataReto;
-  //     this.chart.update();
-  //   }
-  // }
-
-  // pintarSerie(data) {
-  //   const ctx = document.getElementById("graph_chart");
-  //   console.log(data);
-  //   const dataReto =  this.getData(data);
-  //   this.paint(ctx,dataReto,'line');
-  // }
-
-  // paint(ctx,data,tipo){
-  //   this.chart = new Chart(ctx, {
-  //     type: tipo,
-  //     data: data,
-  //     options: {
-  //       plugins: {
-  //         title: {
-  //           display: true,
-  //           text: data.titulo,
-  //           position: 'top'
-  //         },
-  //         legend: {
-  //           display: true,
-  //           position: 'bottom',
-  //       }
-  //       },
-  //       responsive: true,
-  //       scales: {
-  //         x: {
-  //           stacked: true,
-  //         },
-  //         y: {
-  //           beginAtZero: true,
-  //           stacked: false,
-  //           type: 'linear',
-  //         },
-  //       },
-  //     },
-  //   });
-  // };
-
-  // getDataCruce1(data){
-
-  //   console.log(data);
-  //   let newData = {};
-  //   let labels = [];
-  //   newData.datasets = [];
-  //   newData.titulo = data.ficha.pregunta.titulo;
-    
-  //   const filas = data.ficha.tabla[0].etiqCruce1;
-  //   filas.push({etiqueta:'Total'});
-  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
-    
-  //   let datasets = [];
-  //   let colorIndex = 0;
-  //   filas.map (fila => {
-  //     let color = colors[colorIndex];
-  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
-  //     datasets.push(element);
-  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-  //   })
-
-  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
-      
-  //     filas.map ( (fila, index) => {
-  //       datasets[index].data.push(x[index]);
-  //     });
-  //   })
-  //   newData.labels = labels;
-  //   newData.datasets = datasets;
-  //   console.log(newData);
-  //   return newData;
-  // }
-
-  // getDataCruce2(data,etiqCruce2_index){
-  //   console.log(data);
-  //   let newData = {};
-  //   let labels = [];
-  //   newData.datasets = [];
-  //   newData.titulo = data.ficha.pregunta.titulo;
-    
-  //   // const filas = data.ficha.tabla[0].etiqCruce1;
-  //   const filas = JSON.parse(JSON.stringify(data.ficha.tabla[0].etiqCruce1));
-  //   filas.push({etiqueta:'Total'});
-  //   labels = data.ficha.tabla[0].etiqVar.map ( label => label.etiqueta);
-    
-  //   let datasets = [];
-  //   let colorIndex = 0;
-  //   filas.map (fila => {
-  //     let color = colors[colorIndex];
-  //     let element = { label: fila.etiqueta, data: [], backgroundColor: color, borderColor: color};
-  //     datasets.push(element);
-  //     colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-  //   })
-
-  //   data.ficha.tabla[0].cruce.slice(0, -1).map(x => {
-      
-  //     filas.map ( (fila, index) => {
-  //       datasets[index].data.push(x[index][etiqCruce2_index]);
-  //     });
-  //   })
-  //   newData.labels = labels;
-  //   newData.datasets = datasets;
-  //   console.log(newData);
-  //   return newData;
   // }
 
 }

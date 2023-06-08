@@ -22,6 +22,7 @@
 		"html-to-image": "^1.11.11",
 		"jspdf": "^2.5.1",
 		"jspdf-autotable": "^3.5.29",
+		"liferay-npm-bundler-plugin-inject-peer-dependencies": "^2.31.2",
 		"xlsx": "^0.18.5",
 		"xlsx-populate": "^1.21.0"
 	},

@@ -1,6 +1,5 @@
 import { HomeChart } from './home-chart';
 import { Graphic } from './graphic';
-// import * as data from './mono_var.json';
 
 /**
  * This is the main entry point of the portlet.
@@ -15,12 +14,12 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
-    // const cuestionarioSeleccionado = 3400;
-    // const preguntaSeleccionada = 406338;
-    // const variableSeleccionada = 36501;
-    // const muestraSeleccionada = 6994;
-    // const variableCruce1Seleccionada = 36505;
-    // const variableCruce2Seleccionada = null;
+    const cuestionarioSeleccionado = 3400;
+    const preguntaSeleccionada = 406338;
+    const variableSeleccionada = 36501;
+    const muestraSeleccionada = 6994;
+    const variableCruce1Seleccionada = 36505;
+    const variableCruce2Seleccionada = null;
 
     
     const node = document.getElementById(portletElementId);
@@ -56,14 +55,6 @@ export default function main({portletNamespace, contextPath, portletElementId,co
                 'id_muestra': muestraSeleccionada,
                 'id_cruce1': variableCruce1Seleccionada,
                 'id_cruce2': variableCruce2Seleccionada
-
-                // COMENTAR PARA LIFERAY
-                // 'id_cuestionario': cuestionarioSeleccionado ? cuestionarioSeleccionado : 3400,
-                // 'id_pregunta': preguntaSeleccionada ? preguntaSeleccionada : 406338,
-                // 'id_variable': variableSeleccionada ? variableSeleccionada : 36501,
-                // 'id_muestra': muestraSeleccionada ? muestraSeleccionada : 6994,
-                // 'id_cruce1': variableCruce1Seleccionada ? variableCruce1Seleccionada : 36505,
-                // 'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : 36506
             }
             break;
     }
