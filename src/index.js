@@ -14,12 +14,12 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
-    const cuestionarioSeleccionado = 3400;
-    const preguntaSeleccionada = 406338;
-    const variableSeleccionada = 36501;
-    const muestraSeleccionada = 6994;
-    const variableCruce1Seleccionada = 36505;
-    const variableCruce2Seleccionada = null;
+    // const cuestionarioSeleccionado = 3400;
+    // const preguntaSeleccionada = 406338;
+    // const variableSeleccionada = 36501;
+    // const muestraSeleccionada = 6994;
+    // const variableCruce1Seleccionada = 36505;
+    // const variableCruce2Seleccionada = null;
 
     
     const node = document.getElementById(portletElementId);
@@ -27,8 +27,8 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
-    const call = {type: 'PREGUNTA', details: {}};
-    // const call = {type: tipo, details: {}};
+    // const call = {type: 'SERIE', details: {}};
+    const call = {type: tipo, details: {}};
 
     let graphic = null;
 
@@ -37,8 +37,28 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     if(sltVariables) {
         sltVariables.addEventListener("change", ()=> {
             console.log('change variable 2',sltVariables.value);
-            //graphic = new Graphic(url_basse, call.type, call.details);
+            console.log('details',call.details);
             call.details.id_variable = sltVariables.value;
+            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+        });
+    }
+
+    let sltCruce1 = document.getElementById("sltCruce1");
+    if(sltCruce1) {
+        sltCruce1.addEventListener("change", ()=> {
+            console.log('change cruce 1',sltCruce1.value);
+            console.log('details',call.details);
+            call.details.id_cruce1 = sltCruce1.value;
+            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+        });
+    }
+
+    let sltCruce2 = document.getElementById("sltCruce2");
+    if(sltCruce2) {
+        sltCruce2.addEventListener("change", ()=> {
+            console.log('change cruce 2',sltCruce2.value);
+            console.log('details',call.details);
+            call.details.id_cruce2 = sltCruce2.value;
             if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
         });
     }

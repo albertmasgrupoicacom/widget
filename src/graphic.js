@@ -71,6 +71,7 @@ export class Graphic {
       this.printTable(type, this.getParsedData(type, tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex);
     }else{
       this.printTable(type, this.getParsedData(type, data));
+      this.printHeaderSerie(type,data);
     }
   }
 
@@ -186,7 +187,8 @@ export class Graphic {
     const table = document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table');
     let canvas = document.createElement("canvas");
     canvas.id = tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart';
-    table.insertAdjacentElement('beforebegin', canvas)
+    // table.insertAdjacentElement('afterbegin', canvas)
+    table.insertAdjacentElement('beforeend', canvas);
     new Chart(canvas, {
       type: config && config.type ? config.type : type === 'SERIE' ? 'line' : 'bar',
       data: data,
@@ -389,8 +391,72 @@ export class Graphic {
   }
 
   removeChart(tableIndex) {
+    // graph_chart_0_export_buttons
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart').remove();
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons').remove();
+    document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons').remove();
+  }
+
+  printHeaderSerie(type, data){
+    console.log(data);
+    const ctx = document.getElementById("graph_container");
+    const divTitulo = document.createElement('div');
+    
+
+    // CODIGO
+    const divCodigo = document.createElement('div');
+    const labelCodigo = document.createTextNode('Serie:');
+    const codigo = document.createTextNode(data.ficha.codigo);
+    const codigoLabelDiv= document.createElement('div');
+    const codigoDiv= document.createElement('div');
+    codigoLabelDiv.appendChild(labelCodigo)
+    codigoDiv.appendChild(codigo)
+    divCodigo.appendChild(codigoLabelDiv);
+    divCodigo.appendChild(codigoDiv);
+
+    // TITULO
+    const titulo = document.createTextNode(data.ficha.titulo);
+    divTitulo.appendChild(titulo);
+
+    // MUESTRA
+    const divMuestra = document.createElement('div');
+    const labelMuestra = document.createTextNode('Muestra:');
+    const muestra = document.createTextNode(data.ficha.muestra || '-');
+    const muestraLabelDiv = document.createElement('div');
+    const muestraDiv = document.createElement('div');
+    muestraLabelDiv.appendChild(labelMuestra);
+    muestraDiv.appendChild(muestra);
+    divMuestra.appendChild(muestraLabelDiv);
+    divMuestra.appendChild(muestraDiv);
+
+    // PREGUNTA
+    const divPregunta = document.createElement('div');
+    const labelPregunta = document.createTextNode('Pregunta:');
+    // const pregunta = document.createTextNode(data.ficha.pregunta || '-');
+    const preguntaLabelDiv = document.createElement('div');
+    const preguntaDiv = document.createElement('div');
+    preguntaLabelDiv.appendChild(labelPregunta);
+    preguntaDiv.innerHTML = data.ficha.pregunta || '-';
+    divPregunta.appendChild(preguntaLabelDiv);
+    divPregunta.appendChild(preguntaDiv);
+
+    // NOTAS
+    const divNotas = document.createElement('div');
+    const labelNotas = document.createTextNode('Notas:');
+    const notas = document.createTextNode(data.ficha.notas || '-');
+    const notasLabelDiv = document.createElement('div');
+    const notasDiv = document.createElement('div');
+    notasLabelDiv.appendChild(labelNotas);
+    notasDiv.appendChild(notas);
+    divNotas.appendChild(notasLabelDiv);
+    divNotas.appendChild(notasDiv);
+
+  
+    ctx.insertAdjacentElement( 'afterbegin', divNotas)
+    ctx.insertAdjacentElement( 'afterbegin', divPregunta)
+    ctx.insertAdjacentElement( 'afterbegin', divMuestra)
+    ctx.insertAdjacentElement( 'afterbegin', divTitulo)
+    ctx.insertAdjacentElement( 'afterbegin', divCodigo)
   }
 
 }
