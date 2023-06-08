@@ -1,19 +1,11 @@
 import Chart from 'chart.js/auto';
-import jsPDF from 'jspdf';
+// import jsPDF from 'jspdf';
 // import autoTable from 'jspdf-autotable';
 import { buttons } from './utils/utils';
 // import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
 // import * as FileSaver from 'file-saver';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
-
-// export const buttons = [
-//   {type: 'line', icon: 'https://cdn-icons-png.flaticon.com/512/4301/4301717.png'},
-//   {type: 'bar', stacked: false, axis: 'x', icon: 'https://cdn-icons-png.flaticon.com/128/893/893201.png'},
-//   {type: 'bar', stacked: false, axis: 'y', icon: 'https://cdn-icons-png.flaticon.com/128/3723/3723413.png'},
-//   {type: 'bar', stacked: true, axis: 'x', icon: 'https://cdn-icons-png.flaticon.com/128/2272/2272055.png'},
-//   {type: 'bar', stacked: true, axis: 'y', icon: 'https://cdn-icons-png.flaticon.com/128/3723/3723415.png'},
-// ];
 
 export class Graphic {
 
@@ -42,6 +34,10 @@ export class Graphic {
     let response = await fetch(url, {method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
     return result;
+  }
+
+  refreshData(url, type, details) {
+    console.log(type);
   }
 
   printContainers(type, data){

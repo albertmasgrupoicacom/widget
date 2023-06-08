@@ -14,6 +14,7 @@ import { Graphic } from './graphic';
 
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
+    // COMENTAR PARA LIFERAY
     // const cuestionarioSeleccionado = 3400;
     // const preguntaSeleccionada = 406338;
     // const variableSeleccionada = 36501;
@@ -32,32 +33,37 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     let graphic = null;
 
+
+    let sltVariables = document.getElementById("sltVariables");
+    if(sltVariables) {
+        sltVariables.addEventListener("change", ()=> {
+            console.log('change variable 2',sltVariables.value);
+            //graphic = new Graphic(url_basse, call.type, call.details);
+            call.details.id_variable = sltVariables.value;
+            this.graphic.refreshData(url_basse, call.type, call.details);
+        });
+    }
+
     switch (call.type) {
         case 'SERIE':
             call.details = {'id': 16393};
             break;
         case 'PREGUNTA':
             call.details = {
-                // 'id_cuestionario': 3400,
-                // 'id_pregunta': 406338,
-                // 'id_variable': 36501,
-                // 'id_muestra': 6994,
-                // 'id_cruce1': 36505,
-                //'id_cruce2': 36506
+                'id_cuestionario': cuestionarioSeleccionado,
+                'id_pregunta': preguntaSeleccionada,
+                'id_variable': variableSeleccionada,
+                'id_muestra': muestraSeleccionada,
+                'id_cruce1': variableCruce1Seleccionada,
+                'id_cruce2': variableCruce2Seleccionada
 
-                // 'id_cuestionario': cuestionarioSeleccionado,
-                // 'id_pregunta': preguntaSeleccionada,
-                // 'id_variable': variableSeleccionada,
-                // 'id_muestra': muestraSeleccionada,
-                // 'id_cruce1': variableCruce1Seleccionada,
-                // 'id_cruce2': variableCruce2Seleccionada
-
-                'id_cuestionario': cuestionarioSeleccionado ? cuestionarioSeleccionado : 3400,
-                'id_pregunta': preguntaSeleccionada ? preguntaSeleccionada : 406338,
-                'id_variable': variableSeleccionada ? variableSeleccionada : 36501,
-                'id_muestra': muestraSeleccionada ? muestraSeleccionada : 6994,
-                'id_cruce1': variableCruce1Seleccionada ? variableCruce1Seleccionada : 36505,
-                'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : 36506
+                // COMENTAR PARA LIFERAY
+                // 'id_cuestionario': cuestionarioSeleccionado ? cuestionarioSeleccionado : 3400,
+                // 'id_pregunta': preguntaSeleccionada ? preguntaSeleccionada : 406338,
+                // 'id_variable': variableSeleccionada ? variableSeleccionada : 36501,
+                // 'id_muestra': muestraSeleccionada ? muestraSeleccionada : 6994,
+                // 'id_cruce1': variableCruce1Seleccionada ? variableCruce1Seleccionada : 36505,
+                // 'id_cruce2': variableCruce2Seleccionada ? variableCruce2Seleccionada : 36506
             }
             break;
     }
