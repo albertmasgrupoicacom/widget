@@ -37,7 +37,11 @@ export class Graphic {
   }
 
   refreshData(url, type, details) {
-    console.log(type);
+    this.getData(type, url, details).then(data => {
+      this.printContainers(type, data);
+    }).catch(error => {
+      console.error('Error', error);
+    });
   }
 
   printContainers(type, data){
