@@ -74,12 +74,4 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             graphic = new Graphic(url_basse, call.type, call.details);
             break;
     }
-
-    // document.getElementById('exportBtn').addEventListener('click', () => {
-    //     graphic.exportToExcel();
-    // });
-    
-    // document.getElementById('exportBtnPDF').addEventListener('click', () => {
-    //     graphic.exportToPDF();
-    // });
 }
