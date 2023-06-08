@@ -38,11 +38,17 @@ export class Graphic {
 
   refreshData(base_url, type, details) {
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
+    this.removeAllContainers();
     this.getData(type, url, details).then(data => {
       this.printContainers(type, data);
     }).catch(error => {
       console.error('Error', error);
     });
+  }
+
+  removeAllContainers() {
+    const page = document.getElementById('graph_page');
+    page.innerHTML = '';
   }
 
   printContainers(type, data){
