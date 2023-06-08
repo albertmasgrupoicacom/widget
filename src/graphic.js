@@ -1,5 +1,5 @@
 import Chart from 'chart.js/auto';
-// import jsPDF from 'jspdf';
+// import { jsPDF } from 'jspdf';
 // import autoTable from 'jspdf-autotable';
 import { buttons } from './utils/utils';
 // import * as ExcelJS from 'exceljs/dist/exceljs.min.js';
@@ -36,7 +36,8 @@ export class Graphic {
     return result;
   }
 
-  refreshData(url, type, details) {
+  refreshData(base_url, type, details) {
+    let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
     this.getData(type, url, details).then(data => {
       this.printContainers(type, data);
     }).catch(error => {

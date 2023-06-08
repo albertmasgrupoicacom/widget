@@ -40,7 +40,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('change variable 2',sltVariables.value);
             //graphic = new Graphic(url_basse, call.type, call.details);
             call.details.id_variable = sltVariables.value;
-            if( this.graphic) { this.graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
         });
     }
 
