@@ -14,13 +14,14 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
-    const tipo = 'PREGUNTA';
-    const cuestionarioSeleccionado = 17738; // 3400;
-    const preguntaSeleccionada = 634460; //406338;
-    const variableSeleccionada = 993194; //36501;
-    const muestraSeleccionada = null; //6994;
-    const variableCruce1Seleccionada = null; //36505;
-    const variableCruce2Seleccionada = null;
+    // const id = 16393;
+    // const tipo = 'PREGUNTA';
+    // const cuestionarioSeleccionado = 17738; // 3400;
+    // const preguntaSeleccionada = 634460; //406338;
+    // const variableSeleccionada = 993194; //36501;
+    // const muestraSeleccionada = null; //6994;
+    // const variableCruce1Seleccionada = null; //36505;
+    // const variableCruce2Seleccionada = null;
 
     
     const node = document.getElementById(portletElementId);
@@ -88,7 +89,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     switch (call.type) {
         case 'SERIE':
-            call.details = {'id': 16393};
+            call.details = {'id': numSerie};
             break;
         case 'PREGUNTA':
             call.details = {
