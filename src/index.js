@@ -14,11 +14,19 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
+    // const numSerie = 16393;
+    // const tipo = 'PREGUNTA';
+    // const cuestionarioSeleccionado = 17738; // 3400;
+    // const preguntaSeleccionada = 634460; //406338;
+    // const variableSeleccionada = 993194; //36501;
+    // const muestraSeleccionada = null; //6994;
+    // const variableCruce1Seleccionada = null; //36505;
+    // const variableCruce2Seleccionada = null;
     const numSerie = 16393;
     const tipo = 'PREGUNTA';
     const cuestionarioSeleccionado = 17738; // 3400;
-    const preguntaSeleccionada = 634460; //406338;
-    const variableSeleccionada = 993194; //36501;
+    const preguntaSeleccionada = null; //406338;
+    const variableSeleccionada = 36502; //36501;
     const muestraSeleccionada = null; //6994;
     const variableCruce1Seleccionada = null; //36505;
     const variableCruce2Seleccionada = null;

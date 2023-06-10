@@ -120,7 +120,7 @@ export class Graphic {
       container.appendChild(tbl);
       let chartConfig = container.getAttribute('config')
       // transform data -> remove medias & others
-      if(type == 'PREGUNTA'){
+      if(type == 'PREGUNTA' && data.numNographicFields>0){
         data.datasets.map( dataset => {
           dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
         });
