@@ -22,3 +22,6 @@ npm run deploy
 npm start
 
 ...
+
+## script template
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>

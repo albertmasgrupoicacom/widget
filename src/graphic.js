@@ -39,8 +39,11 @@ export class Graphic {
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
     this.removeAllContainers();
     this.getData(type, url, details).then(data => {
-      this.printContainers(type, data);
+      if( data && data.ficha && data.ficha.tabla) {
+        this.printContainers(type, data);
+      }
     }).catch(error => {
+      console.warn('No Data', error);
       console.error('Error', error);
     });
   }
@@ -120,6 +123,7 @@ export class Graphic {
   }
 
   getParsedData(type, data, etiqCruce2_index){
+    console.log(data);
     const cloneData = JSON.parse(JSON.stringify(data));
     let newData = {
       datasets: [],
@@ -130,12 +134,20 @@ export class Graphic {
     let datasets = [];
     let colorIndex = 0;
 
-    const filas = type == 'PREGUNTA' ? cloneData.etiqCruce1 : cloneData.ficha.filas.slice(0, -1);
+    // const filas = type == 'PREGUNTA' ? cloneData.etiqCruce1 : cloneData.ficha.filas.slice(0, -1);
 
-    if(type == 'PREGUNTA'){
+    let filas;
+    if(type == 'PREGUNTA' && cloneData.etiqCruce1 ){
+      filas = cloneData.etiqCruce1;
       filas.push({etiqueta: 'Total'});
       labels = cloneData.etiqVar.map(label => label.etiqueta);
-    }else{
+    } else if( type == 'PREGUNTA' && cloneData.frecuencias ){
+      console.log('FRECUENCIAS');
+      filas = [];
+      filas.push({etiqueta: 'Nº de casos'});
+      labels = cloneData.frecuencias.map(label => label.etiqueta);
+    } else {
+      filas = cloneData.ficha.filas.slice(0, -1);
       labels = cloneData.ficha.serie_temporal.map(label => label.fecha);
     }
 
@@ -145,28 +157,43 @@ export class Graphic {
     })
 
     if(type == 'PREGUNTA'){
-      cloneData.cruce.slice(0, -1).map(x => {
-        filas.map((fila, index) => {
-          if( etiqCruce2_index >= 0) {
-            datasets[index].data.push(x[index][etiqCruce2_index]);
-          } else {
-            datasets[index].data.push(x[index]);
-          } 
+      if(cloneData.etiqCruce1) {
+          cloneData.cruce.slice(0, -1).map(x => {
+            filas.map((fila, index) => {
+              if( etiqCruce2_index >= 0) {
+                datasets[index].data.push(x[index][etiqCruce2_index]);
+              } else {
+                datasets[index].data.push(x[index]);
+              } 
+            });
+          })
+          if(data.hayMediaVar || data.haymediaVariable){
+            let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'}]
+            vars.forEach(item => labels.push(item.name));
+            if(data.hayMediaVar){
+              cloneData.mediasVariable.forEach((media, index) => {
+                vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[item.id])))
+              })
+            }else{
+              cloneData.mediasVariable[0].forEach((media, index) => {
+                vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[etiqCruce2_index][item.id])))
+              })
+            }
+          }
+       } else {
+        cloneData.frecuencias.map((fila, index) => {
+            datasets[0].data.push(fila.n);
         });
-      })
-      if(data.hayMediaVar || data.haymediaVariable){
-        let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'}]
-        vars.forEach(item => labels.push(item.name));
-        if(data.hayMediaVar){
-          cloneData.mediasVariable.forEach((media, index) => {
-            vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[item.id])))
-          })
-        }else{
-          cloneData.mediasVariable[0].forEach((media, index) => {
-            vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[etiqCruce2_index][item.id])))
-          })
+        if(data.haymedia){
+          let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
+          vars.forEach(item => labels.push(item.name));
+          // vars.forEach(item => datasets[0].data.push(this.showInDecimal(media[item.id])))
+          datasets[0].data.push(this.showInDecimal(data.N));
+          datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
+          datasets[0].data.push(this.showInDecimal(data.media.media));
+          datasets[0].data.push(this.showInDecimal(data.media.base));
         }
-      }
+       }
     }else{
       cloneData.ficha.serie_temporal.map(x => {
         filas.map ( (fila, index) => {
@@ -176,6 +203,7 @@ export class Graphic {
     }
     newData.labels = labels;
     newData.datasets = datasets;
+    console.log('newData', newData);
     return newData;
   }
 
