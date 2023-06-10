@@ -120,10 +120,12 @@ export class Graphic {
       container.appendChild(tbl);
       let chartConfig = container.getAttribute('config')
       // transform data -> remove medias & others
-      data.datasets.map( dataset => {
-        dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
-      });
-      data.labels = data.labels.slice(0,-Math.abs(data.numNographicFields));
+      if(type == 'PREGUNTA'){
+        data.datasets.map( dataset => {
+          dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
+        });
+        data.labels = data.labels.slice(0,-Math.abs(data.numNographicFields));
+      }
       this.printChart(type, data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[type == 'SERIE' ? 0 : 1]);
   }
 
