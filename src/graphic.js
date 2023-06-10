@@ -119,6 +119,11 @@ export class Graphic {
       tbl.appendChild(tblBody);
       container.appendChild(tbl);
       let chartConfig = container.getAttribute('config')
+      // transform data -> remove medias & others
+      data.datasets.map( dataset => {
+        dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
+      });
+      data.labels = data.labels.slice(0,-Math.abs(data.numNographicFields));
       this.printChart(type, data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[type == 'SERIE' ? 0 : 1]);
   }
 
@@ -126,6 +131,7 @@ export class Graphic {
     console.log(data);
     const cloneData = JSON.parse(JSON.stringify(data));
     let newData = {
+      numNographicFields: 0,
       datasets: [],
       titulo: (type === 'PREGUNTA') ? cloneData.titulo : cloneData.ficha.titulo
     };
@@ -135,14 +141,13 @@ export class Graphic {
     let colorIndex = 0;
 
     // const filas = type == 'PREGUNTA' ? cloneData.etiqCruce1 : cloneData.ficha.filas.slice(0, -1);
-
+    let numNographicFields = 0;
     let filas;
     if(type == 'PREGUNTA' && cloneData.etiqCruce1 ){
       filas = cloneData.etiqCruce1;
       filas.push({etiqueta: 'Total'});
       labels = cloneData.etiqVar.map(label => label.etiqueta);
     } else if( type == 'PREGUNTA' && cloneData.frecuencias ){
-      console.log('FRECUENCIAS');
       filas = [];
       filas.push({etiqueta: 'Nº de casos'});
       labels = cloneData.frecuencias.map(label => label.etiqueta);
@@ -168,15 +173,18 @@ export class Graphic {
             });
           })
           if(data.hayMediaVar || data.haymediaVariable){
+            
             let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'}]
             vars.forEach(item => labels.push(item.name));
             if(data.hayMediaVar){
               cloneData.mediasVariable.forEach((media, index) => {
                 vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[item.id])))
+                numNographicFields++;
               })
             }else{
               cloneData.mediasVariable[0].forEach((media, index) => {
                 vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[etiqCruce2_index][item.id])))
+                numNographicFields++;
               })
             }
           }
@@ -187,11 +195,11 @@ export class Graphic {
         if(data.haymedia){
           let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
           vars.forEach(item => labels.push(item.name));
-          // vars.forEach(item => datasets[0].data.push(this.showInDecimal(media[item.id])))
           datasets[0].data.push(this.showInDecimal(data.N));
           datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
           datasets[0].data.push(this.showInDecimal(data.media.media));
           datasets[0].data.push(this.showInDecimal(data.media.base));
+          numNographicFields = 4;
         }
        }
     }else{
@@ -201,9 +209,9 @@ export class Graphic {
         });
       })
     }
+    newData.numNographicFields = numNographicFields;
     newData.labels = labels;
     newData.datasets = datasets;
-    console.log('newData', newData);
     return newData;
   }
 
@@ -426,7 +434,6 @@ export class Graphic {
   }
 
   printHeaderSerie(type, data){
-    console.log(data);
     const ctx = document.getElementById("graph_container");
     const divTitulo = document.createElement('div');
     
