@@ -156,10 +156,17 @@ export class Graphic {
       labels = cloneData.ficha.serie_temporal.map(label => label.fecha);
     }
 
-    filas.forEach(fila => {
-      datasets.push({label: (type==='SERIE') ? fila : fila.etiqueta, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
-      colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-    })
+    if( type == 'PREGUNTA' && cloneData.frecuencias ) {
+      filas.forEach(fila => {
+        datasets.push({label: fila.etiqueta, data: [], backgroundColor: [] , borderColor: []});
+        colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+      });
+    } else {
+      filas.forEach(fila => {
+        datasets.push({label: (type==='SERIE') ? fila : fila.etiqueta, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
+        colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+      });
+    }
 
     if(type == 'PREGUNTA'){
       if(cloneData.etiqCruce1) {
@@ -191,6 +198,8 @@ export class Graphic {
        } else {
         cloneData.frecuencias.map((fila, index) => {
             datasets[0].data.push(fila.n);
+            datasets[0].backgroundColor.push(colors[colorIndex]);
+            index == 6 ? colorIndex = 0 : colorIndex++;
         });
         if(data.haymedia){
           let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
