@@ -112,8 +112,8 @@ export class Graphic {
       const headerrow = document.createElement('tr');
 
       this.addHeaderCell(headerrow, '');
-      data.datasets.forEach(dataset => {
-        this.addHeaderCell(headerrow, dataset.label);
+      data.labels.forEach(label => {
+        this.addHeaderCell(headerrow, label);
       })
       tThead.appendChild(headerrow);
       tblTable.appendChild(tThead);
@@ -128,10 +128,10 @@ export class Graphic {
       // })
       // tblBody.appendChild(row);
 
-      data.labels.forEach((label, index) => {
+      data.datasets.forEach((dataset, index) => {
         const row = document.createElement('tr');
-        this.addCell(row, label);
-        data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
+        this.addCell(row, dataset.label);
+        dataset.data.forEach(item => this.addCell(row, item))
         tblBody.appendChild(row);
       })
 

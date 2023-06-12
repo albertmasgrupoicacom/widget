@@ -1,5 +1,6 @@
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'
+// const jsPDF = window.jspdf.jsPDF;
 import * as ExcelJS from 'exceljs';
 
 export class ExportUtils {
@@ -72,7 +73,7 @@ export class ExportUtils {
           fontSize: 8,
           cellHeight: 16,
         };
-        autoTable(pdf, {
+        pdf.autoTable({
         html: tbl,
         startY: questionY + 30, 
         styles: styles,
