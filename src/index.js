@@ -14,21 +14,21 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
-    const numSerie = 16393;
-    const tipo = 'SERIE';
-    const cuestionarioSeleccionado = 17738; // 3400;
-    const preguntaSeleccionada = 634460; //406338;
-    const variableSeleccionada = 993194; //36501;
-    const muestraSeleccionada = null; //6994;
-    const variableCruce1Seleccionada = null; //36505;
-    const variableCruce2Seleccionada = null;
+    // const numSerie = 16393;
+    // const tipo = 'SERIE';
+    // const cuestionarioSeleccionado = 17738; // 3400;
+    // const preguntaSeleccionada = 634460; //406338;
+    // const variableSeleccionada = 993194; //36501;
+    // const muestraSeleccionada = null; //6994;
+    // const variableCruce1Seleccionada = null; //36505;
+    // const variableCruce2Seleccionada = null;
 
     
     const node = document.getElementById(portletElementId);
     node.innerHTML =`<div id="graph_page" class="cis-caja-tot"></div>`;
 
-    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
-    const url_basse = 'http://77.227.0.28:8180/cis/apijds';
+    const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    // const url_basse = 'http://77.227.0.28:8180/cis/apijds';
     const call = {type: tipo, details: {}};
 
     let graphic = null;
