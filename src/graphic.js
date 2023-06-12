@@ -257,9 +257,9 @@ export class Graphic {
             display: true,
             text: data.titulo,
             position: 'top',
-            color: '#228FAA',
+            color: '#005767',
             font: {
-                size: 14
+                size: 16
             }
           },
           legend: {
@@ -459,7 +459,7 @@ export class Graphic {
     // graph_chart_0_export_buttons
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart').remove();
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons').remove();
-    document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons').remove();
+    // document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons').remove();
   }
 
   printHeaderSerie(type, data){
