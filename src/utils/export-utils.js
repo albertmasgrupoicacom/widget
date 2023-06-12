@@ -5,132 +5,11 @@ import * as ExcelJS from 'exceljs';
 
 export class ExportUtils {
 
-    exportToPDF(type, data, tableIndex) {
-        const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
-        const tbl = document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table').firstChild;
-        const originalCanvas = document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart');
-        let inMemoryCanvas = document.createElement('canvas');
-        let ctx = inMemoryCanvas.getContext('2d');
-        inMemoryCanvas.width = originalCanvas.width;
-        inMemoryCanvas.height = originalCanvas.height;
-        ctx.fillStyle = 'rgb(255,255,255)';
-        ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
-        ctx.drawImage(originalCanvas, 0, 0);
-        const base64Image = inMemoryCanvas.toDataURL("image/png");
-    
-        // Logo
-        const logoWidth = 100;
-        const logoHeight = 100;
-        const logoX = 20;
-        const logoY = 70;
-        //const logoUrl = 'https://i.imgur.com/77syx2k.png';
-        const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
-        //const logoUrl = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
-        pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-    
-        // Título
-        const title = 'FICHA DE SERIE';
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(24);
-        const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-        const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
-        pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
-        
-    
-        // Texto
-        const text = 'Muestra:   Nacional Población española ambos sexos 18 y más años';
-        const note = 'Pregunta:  El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución.';
-        const question = 'Notas:  (*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
-        const textX = 50;
-        const textY = logoY + logoHeight + 70;
-        const textFontSize = 10;
-        const textWidth = pdf.getStringUnitWidth(text) * textFontSize / pdf.internal.scaleFactor;
-        const textOffset = textX;
-        pdf.setFontSize(textFontSize);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Muestra:', textOffset, textY);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(text.substr(9), textOffset + pdf.getStringUnitWidth('Muestra:') * textFontSize, textY);
-    
-        const noteX = textOffset;
-        const noteY = textY + 20;
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Pregunta:', noteX, noteY);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(note.substr(9), noteX + pdf.getStringUnitWidth('Pregunta:') * textFontSize, noteY);
-    
-        const questionX = textOffset;
-        const questionY = noteY + 20;
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Notas:', questionX, questionY);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(question.substr(6), questionX + pdf.getStringUnitWidth('Notas:') * textFontSize, questionY);
-    
-        // Tabla
-        const styles = {
-          fontStyle: 'normal',
-          cellPadding: 1,
-          fontSize: 8,
-          cellHeight: 16,
-        };
-        pdf.autoTable({
-        html: tbl,
-        startY: questionY + 30, 
-        styles: styles,
-        headStyles: {
-            fontStyle: 'bold',
-            fillColor: [0, 0, 0],
-            textColor: [255, 255, 255]
-        },
-        didDrawPage: (data) => {
-            pdf.setFontSize(20);
-        },
-        });
-    
-        const rowCount = tbl.rows.length;
-        const totalTableHeight = styles.cellHeight * rowCount;
-    
-        // Gráfico
-        const imagePosition = { x: 15, y: questionY + totalTableHeight + 60, width: 800, height: 400 };
-        pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
-    
-        // Borde gráfico
-        pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
-        pdf.save('fichaDeSerie.pdf');
-    }
-
-    exportToExcel(type, data, tableIndex) {
-        const workbook = new ExcelJS.Workbook();
-        const ws1 = workbook.addWorksheet('Ficha de serie');
-    
-        // Título
-        const title = 'FICHA DE SERIE';
-        ws1.mergeCells('A4:F4');
-        const titleCell = ws1.getCell('A4');
-        titleCell.value = title;
-        titleCell.font = { bold: true, size: 16 };
-        titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-        ws1.getRow(4).height = 40; 
-    
-        // Texto
-        ws1.getCell('A6').value = 'Muestra:';
-        ws1.getCell('B6').value = 'Nacional Población española ambos sexos 18 y más años';
-        ws1.getCell('A6').font = { bold: true };
-    
-        ws1.getCell('A7').value = 'Pregunta:';
-        ws1.getCell('B7').value = 'El próximo mes de diciembre hará (*) años que en España, en un referéndum, se aprobó la Constitución. En general, ¿cree Ud. que los/as españoles/as conocemos bien la Constitución, la conocemos por encima, la conocemos muy poco o casi nada?:N: :N:';
-        ws1.getCell('A7').font = { bold: true };
-    
-        ws1.getCell('A8').value = 'Notas:';
-        ws1.getCell('B8').value = '(*)Tiempo transcurrido desde la fecha de aprobación de la Constitución hasta la fecha de cada punto de la serie.';
-        ws1.getCell('A8').font = { bold: true };
-    
-        const tbl = document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table').firstChild;
-        const startRow = 14;
-        const tableEndRow = this.addTableToWorksheet(tbl, ws1, startRow);
-    
-        this.addLogoToWorkbook(workbook).then(() => {
-            const originalCanvas = document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart');
+    exportToPDF(type, data) {
+        if(type == 'SERIE'){
+            const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
+            const tbl = document.getElementById('graph_table').firstChild;
+            const originalCanvas = document.getElementById('graph_chart');
             let inMemoryCanvas = document.createElement('canvas');
             let ctx = inMemoryCanvas.getContext('2d');
             inMemoryCanvas.width = originalCanvas.width;
@@ -139,18 +18,144 @@ export class ExportUtils {
             ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
             ctx.drawImage(originalCanvas, 0, 0);
             const base64Image = inMemoryCanvas.toDataURL("image/png");
-            this.addImageToWorkbook(workbook, tableEndRow, base64Image).then(() => {
-                workbook.xlsx.writeBuffer().then(buffer => {
-                    const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    var blobUrl = URL.createObjectURL(excel);
-                    let link = document.createElement("a");
-                    link.href = blobUrl;
-                    link.download = "output.xlsx";
-                    link.innerHTML = "Click here to download the file";
-                    link.click()
+        
+            // Logo
+            const logoWidth = 100;
+            const logoHeight = 100;
+            const logoX = 20;
+            const logoY = 70;
+            //const logoUrl = 'https://i.imgur.com/77syx2k.png';
+            const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
+            //const logoUrl = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
+            pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+        
+            // Título
+            const title = `${data.codigo} - ${data.titulo}`;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(24);
+            const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+            const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
+            pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo
+            
+        
+            // Texto
+            const text = `Muestra: ${data.muestra || '-'}`;
+            const note = `Pregunta: ${data.pregunta || '-'}`;
+            const question = `Notas: ${data.notas || '-'}`;
+            const textX = 50;
+            const textY = logoY + logoHeight + 70;
+            const textFontSize = 10;
+            const textWidth = pdf.getStringUnitWidth(text) * textFontSize / pdf.internal.scaleFactor;
+            const textOffset = textX;
+            pdf.setFontSize(textFontSize);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Muestra:', textOffset, textY);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(text.substr(9), textOffset + pdf.getStringUnitWidth('Muestra:') * textFontSize, textY);
+        
+            const noteX = textOffset;
+            const noteY = textY + 20;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Pregunta:', noteX, noteY);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(note.substr(9), noteX + pdf.getStringUnitWidth('Pregunta:') * textFontSize, noteY);
+        
+            const questionX = textOffset;
+            const questionY = noteY + 20;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Notas:', questionX, questionY);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(question.substr(6), questionX + pdf.getStringUnitWidth('Notas:') * textFontSize, questionY);
+        
+            // Tabla
+            const styles = {
+              fontStyle: 'normal',
+              cellPadding: 1,
+              fontSize: 8,
+              cellHeight: 16,
+            };
+            pdf.autoTable({
+            html: tbl,
+            startY: questionY + 30, 
+            styles: styles,
+            headStyles: {
+                fontStyle: 'bold',
+                fillColor: [0, 0, 0],
+                textColor: [255, 255, 255]
+            },
+            didDrawPage: (data) => {
+                pdf.setFontSize(20);
+            },
+            });
+        
+            const rowCount = tbl.rows.length;
+            const totalTableHeight = styles.cellHeight * rowCount;
+        
+            // Gráfico
+            const imagePosition = { x: 15, y: questionY + totalTableHeight + 60, width: 800, height: 400 };
+            pdf.addImage(base64Image, 'JPEG', imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+        
+            // Borde gráfico
+            pdf.rect(imagePosition.x, imagePosition.y, imagePosition.width, imagePosition.height);
+            pdf.save('fichaDeSerie.pdf');
+        }
+    }
+
+    exportToExcel(type, data) {
+        if(type == 'SERIE'){
+
+            const workbook = new ExcelJS.Workbook();
+            const ws1 = workbook.addWorksheet('Ficha de serie');
+        
+            // Título
+            ws1.mergeCells('A4:F4');
+            const titleCell = ws1.getCell('A4');
+            titleCell.value = `${data.codigo} - ${data.titulo}`;
+            titleCell.font = { bold: true, size: 16 };
+            titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+            ws1.getRow(4).height = 40; 
+        
+            // Texto
+            ws1.getCell('A6').value = 'Muestra:';
+            ws1.getCell('B6').value = data.muestra || '-';
+            ws1.getCell('A6').font = { bold: true };
+        
+            ws1.getCell('A7').value = 'Pregunta:';
+            ws1.getCell('B7').value = data.pregunta || '-';
+            ws1.getCell('A7').font = { bold: true };
+        
+            ws1.getCell('A8').value = 'Notas:';
+            ws1.getCell('B8').value = data.notas || '-';
+            ws1.getCell('A8').font = { bold: true };
+        
+            const tbl = document.getElementById('graph_table').firstChild;
+            const startRow = 14;
+            const tableEndRow = this.addTableToWorksheet(tbl, ws1, startRow);
+        
+            this.addLogoToWorkbook(workbook).then(() => {
+                const originalCanvas = document.getElementById('graph_chart');
+                let inMemoryCanvas = document.createElement('canvas');
+                let ctx = inMemoryCanvas.getContext('2d');
+                inMemoryCanvas.width = originalCanvas.width;
+                inMemoryCanvas.height = originalCanvas.height;
+                ctx.fillStyle = 'rgb(255,255,255)';
+                ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+                ctx.drawImage(originalCanvas, 0, 0);
+                const base64Image = inMemoryCanvas.toDataURL("image/png");
+                this.addImageToWorkbook(workbook, tableEndRow, base64Image).then(() => {
+                    workbook.xlsx.writeBuffer().then(buffer => {
+                        const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var blobUrl = URL.createObjectURL(excel);
+                        let link = document.createElement("a");
+                        link.href = blobUrl;
+                        link.download = "output.xlsx";
+                        link.innerHTML = "Click here to download the file";
+                        link.click()
+                    });
                 });
             });
-        });
+        }
+
     }
     
     getLogoAsBase64() {

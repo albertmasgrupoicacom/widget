@@ -5,14 +5,17 @@ import { ExportUtils } from './utils/export-utils';
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
 const exportUtils = new ExportUtils();
 
+
 export class Graphic {
 
+  type;
+  data;
 
   constructor(base_url, type, details) {
-
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
-
     this.getData(type, url, details).then(data => {
+      this.type = type;
+      this.data = data;
       this.printContainers(type, data);
     }).catch(error => {
       console.error('Error', error);
@@ -305,20 +308,12 @@ export class Graphic {
     chart.insertAdjacentElement('afterend', buttonsContainer);
   }
 
-  printExportButtons(type, data, tableIndex){
-    const chart = document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart');
-    let buttonsContainer = document.createElement('div');
-    buttonsContainer.id = tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons';
-    exportButtons.forEach(config => {
-      let button = document.createElement('button');
-      button.classList.add('graphic_btn', tableIndex >= 0 ? `graph_chart_${tableIndex}_export_button` : 'graph_chart_export_button');
-      button.style.background = `url(${config.icon}) no-repeat`;
-      button.onclick = () => {
-        config.type == 'pdf' ? exportUtils.exportToPDF(type, data, tableIndex) : exportUtils.exportToExcel(type, data, tableIndex);
-      }
-      buttonsContainer.appendChild(button);
-    });
-    chart.insertAdjacentElement('beforebegin', buttonsContainer);
+  exportExcel(){
+    exportUtils.exportToExcel(this.type, this.data.ficha);
+  }
+
+  exportPdf(){
+    exportUtils.exportToPDF(this.type, this.data.ficha);
   }
 
   addHeaderCell(row,contenido) {

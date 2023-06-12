@@ -27,8 +27,8 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const node = document.getElementById(portletElementId);
     node.innerHTML =`<div id="graph_page" class="cis-caja-tot"></div>`;
 
-    const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
-    // const url_basse = 'http://77.227.0.28:8180/cis/apijds';
+    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    const url_basse = 'http://77.227.0.28:8180/cis/apijds';
     const call = {type: tipo, details: {}};
 
     let graphic = null;
@@ -86,6 +86,14 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
         });
     }
+
+    document.getElementById('exportExcelButton').onclick = (event => {
+        graphic.exportExcel();
+    })
+
+    document.getElementById('exportPdfButton').onclick = (event => {
+        graphic.exportPdf();
+    })
 
     switch (call.type) {
         case 'SERIE':
