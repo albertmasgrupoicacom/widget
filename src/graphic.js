@@ -96,18 +96,37 @@ export class Graphic {
   }
 
   printTable(type, data, tableIndex){
+    console.log('printTable',data);
     const container = document.getElementById(tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
       const tbl = document.createElement('div');
       tbl.id = tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table';
       tbl.classList.add('table');
+      tbl.classList.add('table-responsive');
+      tbl.classList.add('border-0');
+
+      const tblTable = document.createElement('table');
+      tblTable.classList.add('cis-tabla');
+      tblTable.classList.add('mb-5');
+
+      const tThead = document.createElement('thead');
+      const headerrow = document.createElement('tr');
+
+      this.addHeaderCell(headerrow, '');
+      data.datasets.forEach(dataset => {
+        this.addHeaderCell(headerrow, dataset.label);
+      })
+      tThead.appendChild(headerrow);
+      tblTable.appendChild(tThead);
+      
+
       const tblBody = document.createElement('tbody');
       
-      const row = document.createElement('tr');
-      this.addHeaderCell(row, '');
-      data.datasets.forEach(dataset => {
-        this.addHeaderCell(row, dataset.label);
-      })
-      tblBody.appendChild(row);
+      // const row = document.createElement('tr');
+      // this.addHeaderCell(row, '');
+      // data.datasets.forEach(dataset => {
+      //   this.addHeaderCell(row, dataset.label);
+      // })
+      // tblBody.appendChild(row);
 
       data.labels.forEach((label, index) => {
         const row = document.createElement('tr');
@@ -116,7 +135,8 @@ export class Graphic {
         tblBody.appendChild(row);
       })
 
-      tbl.appendChild(tblBody);
+      tblTable.appendChild(tblBody);
+      tbl.appendChild(tblTable);
       container.appendChild(tbl);
       let chartConfig = container.getAttribute('config')
       // transform data -> remove medias & others
@@ -284,6 +304,9 @@ export class Graphic {
       }
       buttonsContainer.appendChild(button);
     });
+    buttonsContainer.classList.add('my-3'); 
+    buttonsContainer.classList.add('d-flex');
+    buttonsContainer.classList.add('justify-content-end');
     chart.insertAdjacentElement('afterend', buttonsContainer);
   }
 
@@ -446,63 +469,25 @@ export class Graphic {
 
   printHeaderSerie(type, data){
     const ctx = document.getElementById("graph_container");
-    const divTitulo = document.createElement('div');
-    
-
-    // CODIGO
-    const divCodigo = document.createElement('div');
-    const labelCodigo = document.createTextNode('Serie:');
-    const codigo = document.createTextNode(data.ficha.codigo);
-    const codigoLabelDiv= document.createElement('div');
-    const codigoDiv= document.createElement('div');
-    codigoLabelDiv.appendChild(labelCodigo)
-    codigoDiv.appendChild(codigo)
-    divCodigo.appendChild(codigoLabelDiv);
-    divCodigo.appendChild(codigoDiv);
-
-    // TITULO
-    const titulo = document.createTextNode(data.ficha.titulo);
-    divTitulo.appendChild(titulo);
-
-    // MUESTRA
-    const divMuestra = document.createElement('div');
-    const labelMuestra = document.createTextNode('Muestra:');
-    const muestra = document.createTextNode(data.ficha.muestra || '-');
-    const muestraLabelDiv = document.createElement('div');
-    const muestraDiv = document.createElement('div');
-    muestraLabelDiv.appendChild(labelMuestra);
-    muestraDiv.appendChild(muestra);
-    divMuestra.appendChild(muestraLabelDiv);
-    divMuestra.appendChild(muestraDiv);
-
-    // PREGUNTA
-    const divPregunta = document.createElement('div');
-    const labelPregunta = document.createTextNode('Pregunta:');
-    // const pregunta = document.createTextNode(data.ficha.pregunta || '-');
-    const preguntaLabelDiv = document.createElement('div');
-    const preguntaDiv = document.createElement('div');
-    preguntaLabelDiv.appendChild(labelPregunta);
-    preguntaDiv.innerHTML = data.ficha.pregunta || '-';
-    divPregunta.appendChild(preguntaLabelDiv);
-    divPregunta.appendChild(preguntaDiv);
-
-    // NOTAS
-    const divNotas = document.createElement('div');
-    const labelNotas = document.createTextNode('Notas:');
-    const notas = document.createTextNode(data.ficha.notas || '-');
-    const notasLabelDiv = document.createElement('div');
-    const notasDiv = document.createElement('div');
-    notasLabelDiv.appendChild(labelNotas);
-    notasDiv.appendChild(notas);
-    divNotas.appendChild(notasLabelDiv);
-    divNotas.appendChild(notasDiv);
-
-  
-    ctx.insertAdjacentElement( 'afterbegin', divNotas)
-    ctx.insertAdjacentElement( 'afterbegin', divPregunta)
-    ctx.insertAdjacentElement( 'afterbegin', divMuestra)
-    ctx.insertAdjacentElement( 'afterbegin', divTitulo)
-    ctx.insertAdjacentElement( 'afterbegin', divCodigo)
+    const htmlHeader = `
+        <div>
+            <h4>Serie:</h4>
+            <p>${data.ficha.codigo || '-'}</p>
+            <p>${data.ficha.titulo || '-'}</p>
+        </div>
+        <div>
+            <h4>Muestra:</h4>
+            <p>${data.ficha.muestra || '-'}</p>
+        </div>
+        <div>
+            <h4>Pregunta:</h4>
+            ${data.ficha.pregunta || '-'}
+        </div>
+        <div>
+            <h4>Notas:</h4>
+            <p>${data.ficha.notas || '-'}</p>
+        </div>`;
+    ctx.insertAdjacentHTML( 'afterbegin', htmlHeader);
   }
 
 }
