@@ -96,7 +96,6 @@ export class Graphic {
   }
 
   printTable(type, data, tableIndex){
-    console.log('printTable',data);
     const container = document.getElementById(tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
       const tbl = document.createElement('div');
       tbl.id = tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table';
@@ -118,15 +117,7 @@ export class Graphic {
       tThead.appendChild(headerrow);
       tblTable.appendChild(tThead);
       
-
       const tblBody = document.createElement('tbody');
-      
-      // const row = document.createElement('tr');
-      // this.addHeaderCell(row, '');
-      // data.datasets.forEach(dataset => {
-      //   this.addHeaderCell(row, dataset.label);
-      // })
-      // tblBody.appendChild(row);
 
       data.datasets.forEach((dataset, index) => {
         const row = document.createElement('tr');
@@ -265,7 +256,11 @@ export class Graphic {
           title: {
             display: true,
             text: data.titulo,
-            position: 'top'
+            position: 'top',
+            color: '#228FAA',
+            font: {
+                size: 14
+            }
           },
           legend: {
             display: true,
@@ -287,7 +282,7 @@ export class Graphic {
     const container = document.getElementById(tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
     container.setAttribute('config', JSON.stringify(config));
     this.printChartSelectionButtons(type, data, tableIndex);
-    this.printExportButtons(type, data, tableIndex)
+    // this.printExportButtons(type, data, tableIndex);
   }
 
   printChartSelectionButtons(type, data, tableIndex){
