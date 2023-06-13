@@ -16,7 +16,7 @@ export class Graphic {
     this.getData(type, url, details).then(data => {
       this.type = type;
       this.data = data;
-      if( data && data.ficha && data.ficha.tabla) {
+      if( (data && data.ficha && data.ficha.tabla && type == 'PREGUNTA') || ( type == 'SERIE' && data && data.ficha) ) {
         this.printContainers(type, data);
       }
     }).catch(error => {
@@ -64,7 +64,7 @@ export class Graphic {
       if(tableData.etiqCruce2){this.printTableSelector(type, tableData, tableIndex)};
       this.printTable(type, this.getParsedData(type, tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex);
     }else{
-      this.printTable(type, this.getParsedData(type, data));
+      this.printTable(type, this.getParsedData(type, data),tableIndex);
       this.printHeaderSerie(type,data);
     }
   }
@@ -89,7 +89,7 @@ export class Graphic {
   printTable(type, data, tableIndex){
     const container = document.getElementById(`graph_container_${tableIndex}`);
       const tbl = document.createElement('div');
-      tbl.id = tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table';
+      tbl.id = `graph_table_${tableIndex}`;
       tbl.classList.add('table');
       tbl.classList.add('table-responsive');
       tbl.classList.add('border-0');
@@ -97,7 +97,7 @@ export class Graphic {
       const tblTable = document.createElement('table');
       tblTable.classList.add('cis-tabla');
       tblTable.classList.add('mb-5');
-      tblTable.id = tableIndex >= 0 ? `table_${tableIndex}` : 'table';
+      tblTable.id = `table_${tableIndex}`;
 
       const tThead = document.createElement('thead');
       const headerrow = document.createElement('tr');
@@ -453,7 +453,7 @@ export class Graphic {
   }
 
   printHeaderSerie(type, data){
-    const ctx = document.getElementById("graph_container");
+    const ctx = document.getElementById("graph_container_0");
     const htmlHeader = `
         <div>
             <h4>Serie:</h4>
