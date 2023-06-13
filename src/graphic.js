@@ -98,6 +98,7 @@ export class Graphic {
       const tblTable = document.createElement('table');
       tblTable.classList.add('cis-tabla');
       tblTable.classList.add('mb-5');
+      tblTable.id = tableIndex >= 0 ? `table_${tableIndex}` : 'table';
 
       const tThead = document.createElement('thead');
       const headerrow = document.createElement('tr');
@@ -123,12 +124,12 @@ export class Graphic {
       container.appendChild(tbl);
       let chartConfig = container.getAttribute('config')
       // transform data -> remove medias & others
-      if(type == 'PREGUNTA' && data.numNographicFields>0){
-        data.datasets.map( dataset => {
-          dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
-        });
-        data.labels = data.labels.slice(0,-Math.abs(data.numNographicFields));
-      }
+      // if(type == 'PREGUNTA' && data.numNographicFields>0){
+      //   data.datasets.map( dataset => {
+      //     dataset.data = dataset.data.slice(0,-Math.abs(data.numNographicFields));
+      //   });
+      //   data.labels = data.labels.slice(0,-Math.abs(data.numNographicFields));
+      // }
       this.printChart(type, data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[type == 'SERIE' ? 0 : 1]);
   }
 
@@ -136,7 +137,7 @@ export class Graphic {
     console.log(data);
     const cloneData = JSON.parse(JSON.stringify(data));
     let newData = {
-      numNographicFields: 0,
+      // numNographicFields: 0,
       datasets: [],
       titulo: (type === 'PREGUNTA') ? cloneData.titulo : cloneData.ficha.titulo
     };
@@ -146,7 +147,7 @@ export class Graphic {
     let colorIndex = 0;
 
     // const filas = type == 'PREGUNTA' ? cloneData.etiqCruce1 : cloneData.ficha.filas.slice(0, -1);
-    let numNographicFields = 0;
+    // let numNographicFields = 0;
     let filas;
     if(type == 'PREGUNTA' && cloneData.etiqCruce1 ){
       filas = cloneData.etiqCruce1;
@@ -184,22 +185,22 @@ export class Graphic {
               } 
             });
           })
-          if(data.hayMediaVar || data.haymediaVariable){
+          // if(data.hayMediaVar || data.haymediaVariable){
             
-            let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'}]
-            vars.forEach(item => labels.push(item.name));
-            if(data.hayMediaVar){
-              cloneData.mediasVariable.forEach((media, index) => {
-                vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[item.id])))
-                numNographicFields++;
-              })
-            }else{
-              cloneData.mediasVariable[0].forEach((media, index) => {
-                vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[etiqCruce2_index][item.id])))
-                numNographicFields++;
-              })
-            }
-          }
+          //   let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'}]
+          //   vars.forEach(item => labels.push(item.name));
+          //   if(data.hayMediaVar){
+          //     cloneData.mediasVariable.forEach((media, index) => {
+          //       vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[item.id])))
+          //       // numNographicFields++;
+          //     })
+          //   }else{
+          //     cloneData.mediasVariable[0].forEach((media, index) => {
+          //       vars.forEach(item => datasets[index].data.push(this.showInDecimal(media[etiqCruce2_index][item.id])))
+          //       // numNographicFields++;
+          //     })
+          //   }
+          // }
        } else {
         cloneData.frecuencias.map((fila, index) => {
             datasets[0].data.push(fila.n);
@@ -213,7 +214,7 @@ export class Graphic {
           datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
           datasets[0].data.push(this.showInDecimal(data.media.media));
           datasets[0].data.push(this.showInDecimal(data.media.base));
-          numNographicFields = 4;
+          // numNographicFields = 4;
         }
        }
     }else{
@@ -223,7 +224,7 @@ export class Graphic {
         });
       })
     }
-    newData.numNographicFields = numNographicFields;
+    // newData.numNographicFields = numNographicFields;
     newData.labels = labels;
     newData.datasets = datasets;
     return newData;
@@ -442,11 +443,13 @@ export class Graphic {
 
   removeTable(tableIndex) {
     document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table').remove();
-    this.removeChart(tableIndex)
+    // this.removeChart(tableIndex)
   }
 
   removeChart(tableIndex) {
     // graph_chart_0_export_buttons
+    const val = document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart');
+    val.remove();
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart').remove();
     document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons').remove();
     // document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons').remove();

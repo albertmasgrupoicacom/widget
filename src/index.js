@@ -18,10 +18,10 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const tipo = 'PREGUNTA';
     const cuestionarioSeleccionado = 17738; // 3400;
     const preguntaSeleccionada = 634460; //406338;
-    const variableSeleccionada = 993194; //36501;
+    const variableSeleccionada = 993194; //36501; // 993172
     const muestraSeleccionada = null; //6994;
-    const variableCruce1Seleccionada = null; //36505;
-    const variableCruce2Seleccionada = null;
+    const variableCruce1Seleccionada = 993172; //36505;
+    const variableCruce2Seleccionada = 993301;
 
     
     const node = document.getElementById(portletElementId);
