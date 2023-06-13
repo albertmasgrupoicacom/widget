@@ -442,7 +442,7 @@ export class Graphic {
 
   removeTable(tableIndex) {
     document.getElementById(`graph_table_${tableIndex}`).remove();
-    this.removeChart(tableIndex)
+    // this.removeChart(tableIndex)
   }
 
   removeChart(tableIndex) {
