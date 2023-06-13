@@ -1,6 +1,6 @@
-// import jsPDF from 'jspdf';
-// import 'jspdf-autotable'
-const jsPDF = window.jspdf.jsPDF; // comentar local
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'
+// const jsPDF = window.jspdf.jsPDF; // comentar local
 import * as ExcelJS from 'exceljs';
 
 export class ExportUtils {
@@ -32,7 +32,7 @@ export class ExportUtils {
             // Título
             const title = `${data.codigo} - ${data.titulo}`;
             pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(24);
+            pdf.setFontSize(18);
             const titleWidth = pdf.getStringUnitWidth(title) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
             const titleOffset = (pdf.internal.pageSize.width - titleWidth) / 2;
             pdf.text(title, titleOffset, logoY + logoHeight + 30); // Título centrado y debajo del logo

@@ -4,19 +4,20 @@ import { ExportUtils } from './utils/export-utils';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
 const exportUtils = new ExportUtils();
-
-
+let type;
+let data;
 export class Graphic {
 
-  type;
-  data;
+ 
 
   constructor(base_url, type, details) {
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
     this.getData(type, url, details).then(data => {
       this.type = type;
       this.data = data;
-      this.printContainers(type, data);
+      if( data && data.ficha && data.ficha.tabla) {
+        this.printContainers(type, data);
+      }
     }).catch(error => {
       console.error('Error', error);
     });
