@@ -23,5 +23,7 @@ npm start
 
 ...
 
-## script template
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+## Liferay dir
+
+/Users/albert.mas/liferay-ce-portal-7.4.3.75-ga75
+C:/Users/sergio.asensio/develop/liferay
