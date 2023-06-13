@@ -1,11 +1,12 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
-// const jsPDF = window.jspdf.jsPDF; // comentar local
+//const jsPDF = window.jspdf.jsPDF; // comentar local
 import * as ExcelJS from 'exceljs';
 
 export class ExportUtils {
 
     exportToPDF(type, data) {
+        console.log(type, data);
         if(type == 'SERIE'){
             const pdf = new jsPDF('p', 'pt', 'a3'); // A3 en lugar de A4
             const tbl = document.getElementById('graph_table').firstChild;

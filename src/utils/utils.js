@@ -10,3 +10,5 @@ export const exportButtons = [
     {type: 'excel', icon: 'https://cdn-icons-png.flaticon.com/128/732/732220.png'},
     {type: 'pdf', icon: 'https://cdn-icons-png.flaticon.com/128/337/337946.png'},
 ]
+
+export const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];

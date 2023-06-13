@@ -1,27 +1,28 @@
 import Chart from 'chart.js/auto';
-import { buttons, exportButtons } from './utils/utils';
+import { buttons, colors } from './utils/utils';
 import { ExportUtils } from './utils/export-utils';
 
-const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
-const exportUtils = new ExportUtils();
-let type_global;
-let data_global;
+
 export class Graphic {
 
- 
-
-  constructor(base_url, type, details) {
+  constructor() {
+    this._exportUtils = new ExportUtils();
+    this.type;
+    this.data;
+  }
+  
+  init(base_url, type, details){
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
+    this.removeAllContainers();
     this.getData(type, url, details).then(data => {
-      type_global = type;
-      data_global = data;
+      this.type = type;
+      this.data = data;
       if( data && data.ficha && data.ficha.tabla) {
         this.printContainers(type, data);
       }
     }).catch(error => {
       console.error('Error', error);
     });
-
   }
 
   async getData(type, url, params){
@@ -37,19 +38,6 @@ export class Graphic {
     let response = await fetch(url, {method: method, headers: headers, body: body ? body : undefined});
     let result = await response.json();
     return result;
-  }
-
-  refreshData(base_url, type, details) {
-    let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
-    this.removeAllContainers();
-    this.getData(type, url, details).then(data => {
-      if( data && data.ficha && data.ficha.tabla) {
-        this.printContainers(type, data);
-      }
-    }).catch(error => {
-      console.warn('No Data', error);
-      console.error('Error', error);
-    });
   }
 
   removeAllContainers() {
@@ -310,13 +298,17 @@ export class Graphic {
   }
 
   exportExcel(){
-    console.log('excel')
-    exportUtils.exportToExcel(type_global, data_global.ficha);
+    if(this.type && this.data){
+      console.log('excel')
+      this._exportUtils.exportToExcel(this.type, this.data);
+    }
   }
   
   exportPdf(){
-    console.log('pdf')
-    exportUtils.exportToPDF(type_global, data_global.ficha);
+    if(this.type && this.data){
+      console.log('pdf')
+      this._exportUtils.exportToPDF(this.type, this.data);
+    }
   }
 
   addHeaderCell(row,contenido) {

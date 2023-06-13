@@ -32,7 +32,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
     const call = {type: tipo, details: {}};
 
-    let graphic = null;
+    let graphic = new Graphic();
 
 
     // let sltVariables = document.getElementById("sltVariables");
@@ -42,7 +42,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('change variable 2',sltVariables.value);
             console.log('details',call.details);
             call.details.id_variable = sltVariables.value;
-            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.init(url_basse, call.type, call.details);}
         });
     }
 
@@ -53,7 +53,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('change cruce 1',sltCruce1.value);
             console.log('details',call.details);
             call.details.id_cruce1 = sltCruce1.value;
-            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.init(url_basse, call.type, call.details);}
         });
     }
 
@@ -64,7 +64,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('change cruce 2',sltCruce2.value);
             console.log('details',call.details);
             call.details.id_cruce2 = sltCruce2.value;
-            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.init(url_basse, call.type, call.details);}
         });
     }
 
@@ -74,7 +74,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('remove cruce 1',ocultaCruce1.value);
             console.log('details',call.details);
             call.details.id_cruce1 = ocultaCruce1.value;
-            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.init(url_basse, call.type, call.details);}
         });
     }
 
@@ -84,7 +84,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
             console.log('remove cruce 2',ocultaCruce2.value);
             console.log('details',call.details);
             call.details.id_cruce2 = ocultaCruce2.value;
-            if( graphic ) { graphic.refreshData(url_basse, call.type, call.details);}
+            if( graphic ) { graphic.init(url_basse, call.type, call.details);}
         });
     }
 
@@ -118,13 +118,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
           delete call.details[key];
         }
     });
-   
-    switch (call.type) {
-        case 'HOME':
-            graphic = new HomeChart(url_basse, call.details);
-            break;
-        default:
-            graphic = new Graphic(url_basse, call.type, call.details);
-            break;
-    }
+
+    graphic.init(url_basse, call.type, call.details);
+    
 }
