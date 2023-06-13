@@ -61,6 +61,7 @@ export class Graphic {
     page.appendChild(container);
     if(type == 'PREGUNTA'){
       let tableData = data.ficha.tabla[tableIndex];
+      this.addSelectorOperaciones(type, tableData, tableIndex);
       if(tableData.etiqCruce2){this.printTableSelector(type, tableData, tableIndex)};
       this.printTable(type, this.getParsedData(type, tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex);
     }else{
@@ -326,12 +327,10 @@ export class Graphic {
     row.appendChild(cell);
   }
 
-  addSelectorOperaciones(data,name,type_var,tabla_index=0) {
-    const ctx = document.getElementById("graph_container");
+  addSelectorOperaciones(type, data, tableIndex) {
+    const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
-    selector.id = name;
-    ctx.appendChild(selector);
-
+    selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
     const array = [{id: 0, etiqueta:'Valores Absolutos'},
                   {id: 1, etiqueta:'Mostrar % (columna)'},
                   {id: 2, etiqueta:'Mostrar % (columna - NS/NC)'},
@@ -340,28 +339,22 @@ export class Graphic {
                   {id: 5, etiqueta:'Mostrar % (total)'},
                   {id: 6, etiqueta:'Mostrar % (total - NS/NC)'}];
     for (var i = 0; i < array.length; i++) {
-      var option = document.createElement("option");
+      let option = document.createElement("option");
       option.value = parseInt(i); //array[i].categoria;
       option.text = array[i].etiqueta;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
-      let newData = this.calculate(data,parseInt(e.target.value));
-      console.log('newDAta return ->',newData);
-      this.removeTable();
-      // if ( type_var === 0){
-        const cruce2 = data.ficha.tabla[0].etiqCruce2 ? 0 : null;
-        this.printTable('PREGUNTA', newData, cruce2);
-        // this.addTableCRUCE(newData,parseInt(e.target.value));
-        // this.pintarCruce1(newData,parseInt(e.target.value));
-      // } else {
-        // this.addTableCRUCE2(newData,parseInt(e.target.value));
-        // this.pintarCruce2(newData,parseInt(e.target.value));
-      // }
+      const cruce2 = data.etiqCruce2 ? true : false; // ??
+      let newData = this.calculate(data,parseInt(e.target.value),cruce2);
+      this.removeTable(tableIndex);
+      this.printTable(type, this.getParsedData(type, newData),tableIndex);
    })
+   container.appendChild(selector);
   }
 
-  calculate(data,type_value_index,indexTabla=0){
+  calculate(data,type_value_index,isCruce2){
+    const indexTabla = 0;
     console.log('opcion',type_value_index);
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
@@ -369,38 +362,43 @@ export class Graphic {
       newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
       console.log('Mostrar % (columna)');
-
-      let valor = 0;
-      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
-        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
-          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
-          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j])
-          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+      console.log(cloneData);
+      if(!isCruce2) {
+        let valor = 0;
+        for (let i = 0; i < cloneData.etiqVar.length; i++) {
+          for (let j = 0; j < cloneData.cruce[i].length; j++) {
+            valor = cloneData.cruce[i][j];
+            const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
+            valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j])
+            cloneData.cruce[i][j] = this.showInDecimal(valor);
+          }
         }
+        newdata = cloneData;
       }
-      newdata = cloneData;
+      else {
+        // CRUCE2 -> 
+      }
     }
     if ( type_value_index == 2) {
       console.log('Mostrar % (columna - NS/NC)');
       let valor = 0;
       let positionsToRemove = []; 
-      cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
+      cloneData.etiqVar.map( (x,index) => {
         if (x.esMissing) { positionsToRemove.push(index); }
       });
-      cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
-      cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
-      for (let i = 0; i < cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
-        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length; j++) {
-          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqVar.length;
+      cloneData.cruce.splice(positionsToRemove[0],2);
+      cloneData.etiqVar = cloneData.etiqVar.filter( x => !x.esMissing);
+      for (let i = 0; i < cloneData.etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.cruce[i].length; j++) {
+          valor = cloneData.cruce[i][j];
+          const index_sum = cloneData.etiqVar.length;
 
           let totalnsnc = 0; 
           positionsToRemove.map( cell => {
-            totalnsnc += data.ficha.tabla[indexTabla].cruce[cell][j];
+            totalnsnc += data.cruce[cell][j];
           })
-          valor = (valor * 100)/(parseFloat(cloneData.ficha.tabla[indexTabla].cruce[index_sum][j]) - parseFloat(totalnsnc));
-          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+          valor = (valor * 100)/(parseFloat(cloneData.cruce[index_sum][j]) - parseFloat(totalnsnc));
+          cloneData.cruce[i][j] = this.showInDecimal(valor);
         }
       }
       newdata = cloneData;
@@ -408,12 +406,12 @@ export class Graphic {
     if ( type_value_index == 3) {
       console.log('Mostrar % (fila)');
       let valor = 0;
-      for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
-        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
-          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
-          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
-          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+      for (let i = 0; i <= cloneData.etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.cruce[i].length-1; j++) {
+          valor = cloneData.cruce[i][j];
+          const index_sum = cloneData.etiqCruce1.length;
+          valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
+          cloneData.cruce[i][j] = this.showInDecimal(valor);
         }
       }
       newdata = cloneData;
@@ -422,17 +420,17 @@ export class Graphic {
       console.log('Mostrar % (fila - NS/NC)');
       let valor = 0;
       let positionsToRemove = []; 
-      cloneData.ficha.tabla[indexTabla].etiqVar.map( (x,index) => {
+      cloneData.etiqVar.map( (x,index) => {
         if (x.esMissing) { positionsToRemove.push(index); }
       });
-      cloneData.ficha.tabla[indexTabla].cruce.splice(positionsToRemove[0],2);
-      cloneData.ficha.tabla[indexTabla].etiqVar = cloneData.ficha.tabla[indexTabla].etiqVar.filter( x => !x.esMissing);
-      for (let i = 0; i <= cloneData.ficha.tabla[indexTabla].etiqVar.length; i++) {
-        for (let j = 0; j < cloneData.ficha.tabla[indexTabla].cruce[i].length-1; j++) {
-          valor = cloneData.ficha.tabla[indexTabla].cruce[i][j];
-          const index_sum = cloneData.ficha.tabla[indexTabla].etiqCruce1.length;
-          valor = (valor * 100)/parseFloat(cloneData.ficha.tabla[indexTabla].cruce[i][index_sum]);
-          cloneData.ficha.tabla[indexTabla].cruce[i][j] = valor;
+      cloneData.cruce.splice(positionsToRemove[0],2);
+      cloneData.etiqVar = cloneData.etiqVar.filter( x => !x.esMissing);
+      for (let i = 0; i <= cloneData.etiqVar.length; i++) {
+        for (let j = 0; j < cloneData.cruce[i].length-1; j++) {
+          valor = cloneData.cruce[i][j];
+          const index_sum = cloneData.etiqCruce1.length;
+          valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
+          cloneData.cruce[i][j] = this.showInDecimal(valor);
         }
       }
       newdata = cloneData;

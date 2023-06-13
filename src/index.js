@@ -21,7 +21,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const variableSeleccionada = 993194; //36501; // 993172
     const muestraSeleccionada = null; //6994;
     const variableCruce1Seleccionada = 993172; //36505;
-    const variableCruce2Seleccionada = 993301;
+    const variableCruce2Seleccionada = null; //993301;
 
     
     const node = document.getElementById(portletElementId);
