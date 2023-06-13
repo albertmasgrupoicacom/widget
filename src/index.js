@@ -14,7 +14,7 @@ import { Graphic } from './graphic';
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
 
     // COMENTAR PARA LIFERAY
-    const numSerie = 16393;
+    // const numSerie = 16393;
     const tipo = 'PREGUNTA';
     const cuestionarioSeleccionado = 17738; // 3400;
     const preguntaSeleccionada = 634460; //406338;

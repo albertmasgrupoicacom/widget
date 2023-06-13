@@ -2,7 +2,6 @@ import Chart from 'chart.js/auto';
 import { buttons, colors } from './utils/utils';
 import { ExportUtils } from './utils/export-utils';
 
-
 export class Graphic {
 
   constructor() {
@@ -51,14 +50,14 @@ export class Graphic {
         this.printContainer(type, data, tableIndex);
       }
     }else{
-      this.printContainer(type, data);
+      this.printContainer(type, data, 0);
     }
   }
 
   printContainer(type, data, tableIndex){
     const page = document.getElementById('graph_page');
     let container = document.createElement('div');
-    container.setAttribute('id', tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
+    container.id = `graph_container_${tableIndex}`;
     page.appendChild(container);
     if(type == 'PREGUNTA'){
       let tableData = data.ficha.tabla[tableIndex];
@@ -88,7 +87,7 @@ export class Graphic {
   }
 
   printTable(type, data, tableIndex){
-    const container = document.getElementById(tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
+    const container = document.getElementById(`graph_container_${tableIndex}`);
       const tbl = document.createElement('div');
       tbl.id = tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table';
       tbl.classList.add('table');
@@ -235,7 +234,7 @@ export class Graphic {
   }
 
   printChart(type, data, tableIndex, config){
-    const table = document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table');
+    const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart';
     // table.insertAdjacentElement('afterbegin', canvas)
@@ -272,14 +271,14 @@ export class Graphic {
         },
       },
     });
-    const container = document.getElementById(tableIndex >= 0 ? `graph_container_${tableIndex}` : 'graph_container');
+    const container = document.getElementById(`graph_container_${tableIndex}`);
     container.setAttribute('config', JSON.stringify(config));
     this.printChartSelectionButtons(type, data, tableIndex);
     // this.printExportButtons(type, data, tableIndex);
   }
 
   printChartSelectionButtons(type, data, tableIndex){
-    const chart = document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart');
+    const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons';
     buttons.forEach(config => {
@@ -442,14 +441,14 @@ export class Graphic {
   }
 
   removeTable(tableIndex) {
-    document.getElementById(tableIndex >= 0 ? `graph_table_${tableIndex}` : 'graph_table').remove();
-    // this.removeChart(tableIndex)
+    document.getElementById(`graph_table_${tableIndex}`).remove();
+    this.removeChart(tableIndex)
   }
 
   removeChart(tableIndex) {
     // graph_chart_0_export_buttons
-    document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart').remove();
-    document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons').remove();
+    document.getElementById(`graph_chart_${tableIndex}`).remove();
+    document.getElementById(`graph_chart_${tableIndex}_buttons`).remove();
     // document.getElementById(tableIndex >= 0 ? `graph_chart_${tableIndex}_export_buttons` : 'graph_chart_export_buttons').remove();
   }
 
