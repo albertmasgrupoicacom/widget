@@ -4,8 +4,8 @@ import { ExportUtils } from './utils/export-utils';
 
 const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
 const exportUtils = new ExportUtils();
-let type;
-let data;
+let type_global;
+let data_global;
 export class Graphic {
 
  
@@ -13,8 +13,8 @@ export class Graphic {
   constructor(base_url, type, details) {
     let url = type == 'SERIE' ? `${base_url}/serie/${details.id}` : `${base_url}/resultados`;
     this.getData(type, url, details).then(data => {
-      this.type = type;
-      this.data = data;
+      type_global = type;
+      data_global = data;
       if( data && data.ficha && data.ficha.tabla) {
         this.printContainers(type, data);
       }
@@ -310,11 +310,13 @@ export class Graphic {
   }
 
   exportExcel(){
-    exportUtils.exportToExcel(this.type, this.data.ficha);
+    console.log('excel')
+    exportUtils.exportToExcel(type_global, data_global.ficha);
   }
-
+  
   exportPdf(){
-    exportUtils.exportToPDF(this.type, this.data.ficha);
+    console.log('pdf')
+    exportUtils.exportToPDF(type_global, data_global.ficha);
   }
 
   addHeaderCell(row,contenido) {
