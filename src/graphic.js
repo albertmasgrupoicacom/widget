@@ -267,8 +267,8 @@ export class Graphic {
   printChart(type, data, tableIndex, config){
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
-    canvas.id = tableIndex >= 0 ? `graph_chart_${tableIndex}` : 'graph_chart';
-    // table.insertAdjacentElement('afterbegin', canvas)
+    canvas.id = `graph_chart_${tableIndex}`;
+    canvas.classList.add('graph_chart')
     table.insertAdjacentElement('beforeend', canvas);
     new Chart(canvas, {
       type: config && config.type ? config.type : type === 'SERIE' ? 'line' : 'bar',
@@ -288,7 +288,7 @@ export class Graphic {
           legend: {
             display: true,
             position: 'bottom',
-        }
+          },
         },
         responsive: true,
         scales: {
@@ -311,10 +311,10 @@ export class Graphic {
   printChartSelectionButtons(type, data, tableIndex){
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
-    buttonsContainer.id = tableIndex >= 0 ? `graph_chart_${tableIndex}_buttons` : 'graph_chart_buttons';
+    buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
     buttons.forEach(config => {
       let button = document.createElement('button');
-      button.classList.add('graphic_btn', tableIndex >= 0 ? `graph_chart_${tableIndex}_button` : 'graph_chart_button');
+      button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
       button.style.background = `url(${config.icon}) no-repeat`;
       button.onclick = () => {
         this.removeChart(tableIndex);
@@ -331,14 +331,14 @@ export class Graphic {
   exportExcel(){
     if(this.type && this.data){
       console.log('excel')
-      this._exportUtils.exportToExcel(this.type, this.data);
+      this._exportUtils.exportToExcel(this.type, this.data.ficha);
     }
   }
   
   exportPdf(){
     if(this.type && this.data){
       console.log('pdf')
-      this._exportUtils.exportToPDF(this.type, this.data);
+      this._exportUtils.exportToPDF(this.type, this.data.ficha);
     }
   }
 
