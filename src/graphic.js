@@ -61,11 +61,13 @@ export class Graphic {
     page.appendChild(container);
     if(type == 'PREGUNTA'){
       let tableData = data.ficha.tabla[tableIndex];
-      this.addSelectorOperaciones(type, tableData, tableIndex);
+      if(!tableData.frecuencias) {
+        this.addSelectorOperaciones(type, tableData, tableIndex);
+      }
       if(tableData.etiqCruce2){this.printTableSelector(type, tableData, tableIndex)};
-      this.printTable(type, this.getParsedData(type, tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex);
+      this.printTable(type, this.getParsedData(type, tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex,!tableData.frecuencias ? 'PREGUNTA':'FREQ');
     }else{
-      this.printTable(type, this.getParsedData(type, data),tableIndex);
+      this.printTable(type, this.getParsedData(type, data),tableIndex,'SERIE');
       this.printHeaderSerie(type,data);
     }
   }
@@ -82,12 +84,14 @@ export class Graphic {
     }
     selector.addEventListener("change", e => {
       this.removeTable(tableIndex);
-      this.printTable(type, this.getParsedData(type, data, parseInt(e.target.value)), tableIndex);
+      this.printTable(type, this.getParsedData(type, data, parseInt(e.target.value)), tableIndex, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
 
-  printTable(type, data, tableIndex){
+  // tipoTabla - SERIE, FREQ, PREGUNTA
+  printTable(type, data, tableIndex, tipoTabla){
+    console.log(tipoTabla);
     const container = document.getElementById(`graph_container_${tableIndex}`);
       const tbl = document.createElement('div');
       tbl.id = `graph_table_${tableIndex}`;
@@ -104,20 +108,46 @@ export class Graphic {
       const headerrow = document.createElement('tr');
 
       this.addHeaderCell(headerrow, '');
-      data.labels.forEach(label => {
-        this.addHeaderCell(headerrow, label);
-      })
+      if( tipoTabla == 'SERIE') {
+        data.labels.forEach(label => {
+          this.addHeaderCell(headerrow, label);
+        })
+      } else {
+        data.datasets.forEach(dataset => {
+          this.addHeaderCell(headerrow, dataset.label);
+        })
+      }
+
       tThead.appendChild(headerrow);
       tblTable.appendChild(tThead);
       
       const tblBody = document.createElement('tbody');
 
+/*
+-      data.labels.forEach((label, index) => {
++      data.datasets.forEach((dataset, index) => {
+         const row = document.createElement('tr');
+-        this.addCell(row, label);
+-        data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
++        this.addCell(row, dataset.label);
++        dataset.data.forEach(item => this.addCell(row, item))
+
+*/
+    if( tipoTabla == 'SERIE') {
       data.datasets.forEach((dataset, index) => {
         const row = document.createElement('tr');
         this.addCell(row, dataset.label);
         dataset.data.forEach(item => this.addCell(row, item))
         tblBody.appendChild(row);
       })
+    } else {
+      data.labels.forEach((label, index) => {
+        const row = document.createElement('tr');
+        this.addCell(row, label);
+        data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
+        tblBody.appendChild(row);
+      })
+    }
 
       tblTable.appendChild(tblBody);
       tbl.appendChild(tblTable);
@@ -348,7 +378,7 @@ export class Graphic {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
       let newData = this.calculate(data,parseInt(e.target.value),cruce2);
       this.removeTable(tableIndex);
-      this.printTable(type, this.getParsedData(type, newData),tableIndex);
+      this.printTable(type, this.getParsedData(type, newData),tableIndex,'PREGUNTA');
    })
    container.appendChild(selector);
   }
