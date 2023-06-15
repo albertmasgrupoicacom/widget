@@ -1,5 +1,6 @@
 import { HomeChart } from './home-chart';
-import { Graphic } from './graphic';
+import { ResultChart } from './result-chart';
+import { SerieChart } from './serie-chart';
 
 /**
  * This is the main entry point of the portlet.
@@ -28,12 +29,11 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // node.innerHTML =`<div id="graph_page" class="cis-caja-tot"></div>`;
     node.innerHTML =`<div><button id="exportExcelButton">Excel</button><button id="exportPdfButton">PDF</button></div><div id="graph_page" class="cis-caja-tot"></div>`;
 
-    // const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
+    //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
     const url_basse = 'http://77.227.0.28:8180/cis/apijds';
     const call = {type: tipo, details: {}};
 
-    let graphic = new Graphic();
-
+    let graphic = tipo == 'SERIE' ? new SerieChart() : new ResultChart();
 
     // let sltVariables = document.getElementById("sltVariables");
     let sltVariables = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltVariables");
