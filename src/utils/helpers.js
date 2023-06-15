@@ -99,4 +99,12 @@ export class Helpers {
         var ratio = (maxWidth / srcWidth);
         return { width: srcWidth*ratio, height: srcHeight*ratio };
     }
+
+    showInDecimal(number) {
+        return number !== Math.round(number) ? parseFloat(number.toFixed(2)) : number;
+    }
+
+    getEtiqueta(label) {
+        return (label.etiqueta_abrev && label.etiqueta_abrev !== '') ? label.etiqueta_abrev: label.etiqueta;
+    }
 }

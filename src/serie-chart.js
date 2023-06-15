@@ -114,10 +114,6 @@ export class SerieChart {
         row.appendChild(cell);
     }
 
-    showInDecimal(number) {
-        return number !== Math.round(number) ? parseFloat(number.toFixed(2)) : number;
-    }
-
     printChart(data, config){
         const table = document.getElementById(`graph_table`);
         let canvas = document.createElement("canvas");

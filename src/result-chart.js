@@ -4,12 +4,14 @@ import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
 import { DataService } from './services/data.service';
+import { Helpers } from './utils/helpers';
 
 export class ResultChart {
   
   constructor() {
     this._dataService = new DataService();
     this._http = new HttpClient();
+    this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
     this.variables = this._dataService.getVariables();
@@ -81,10 +83,10 @@ export class ResultChart {
       // if(data.haymedia){
       //   let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
       //   vars.forEach(item => labels.push(item.name));
-      //   datasets[0].data.push(this.showInDecimal(data.N));
-      //   datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
-      //   datasets[0].data.push(this.showInDecimal(data.media.media));
-      //   datasets[0].data.push(this.showInDecimal(data.media.base));
+      //   datasets[0].data.push(this._helpers.showInDecimal(data.N));
+      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.desvEstandar));
+      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.media));
+      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.base));
       // }
     }
     newData.labels = labels;
@@ -162,7 +164,7 @@ export class ResultChart {
             valor = cloneData.cruce[i][j];
             const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
             valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j])
-            cloneData.cruce[i][j] = this.showInDecimal(valor);
+            cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
           }
         }
         newdata = cloneData;
@@ -175,7 +177,7 @@ export class ResultChart {
             valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
             const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
             valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j][this.cruce2SelectionIndex]);
-            cloneData.cruce[i][j] = this.showInDecimal(valor);
+            cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
           }
         }
         newdata = cloneData;
@@ -201,7 +203,7 @@ export class ResultChart {
             totalnsnc += data.cruce[cell][j];
           })
           valor = (valor * 100)/(parseFloat(cloneData.cruce[index_sum][j]) - parseFloat(totalnsnc));
-          cloneData.cruce[i][j] = this.showInDecimal(valor);
+          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
         }
       }
       newdata = cloneData;
@@ -214,7 +216,7 @@ export class ResultChart {
           valor = cloneData.cruce[i][j];
           const index_sum = cloneData.etiqCruce1.length;
           valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
-          cloneData.cruce[i][j] = this.showInDecimal(valor);
+          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
         }
       }
       newdata = cloneData;
@@ -233,7 +235,7 @@ export class ResultChart {
           valor = cloneData.cruce[i][j];
           const index_sum = cloneData.etiqCruce1.length;
           valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
-          cloneData.cruce[i][j] = this.showInDecimal(valor);
+          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
         }
       }
       newdata = cloneData;
@@ -257,10 +259,6 @@ export class ResultChart {
       this.printTable(this.getParsedData(data, parseInt(e.target.value)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
-  }
-
-  getEtiqueta(label) {
-    return (label.etiqueta_abrev && label.etiqueta_abrev !== '') ? label.etiqueta_abrev: label.etiqueta;
   }
 
   // data , tableIndex, delMissing(boolean), tipoTabla (FREQ,PREGUNTA)
@@ -287,7 +285,7 @@ export class ResultChart {
 
     data.labels.forEach((label, index) => {
       const row = document.createElement('tr');
-      this.addCell(row, this.getEtiqueta(label));
+      this.addCell(row, this._helpers.getEtiqueta(label));
       data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
       tblBody.appendChild(row);
     })
@@ -296,7 +294,7 @@ export class ResultChart {
     tbl.appendChild(tblTable);
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
-    data.labels = data.labels.map(label => this.getEtiqueta(label)); 
+    data.labels = data.labels.map(label => this._helpers.getEtiqueta(label)); 
     this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[1]);
   }
 
@@ -315,9 +313,9 @@ export class ResultChart {
     row.appendChild(cell);
   }
 
-  showInDecimal(number) {
-    return number !== Math.round(number) ? parseFloat(number.toFixed(2)) : number;
-  }
+  // showInDecimal(number) {
+  //   return number !== Math.round(number) ? parseFloat(number.toFixed(2)) : number;
+  // }
 
   printChart(data, tableIndex, config){
     const table = document.getElementById(`graph_table_${tableIndex}`);
