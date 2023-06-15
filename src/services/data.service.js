@@ -1,12 +1,19 @@
-const tipo = 'SERIE';
+const tipo = 'PREGUNTA';
 const numSerie = 16393;
-const codEstudio = 14706;
-const cuestionarioSeleccionado = 17738; // 3400;
-const preguntaSeleccionada = 634460; //406338;
+const codEstudio = 14695; //14706;
+const cuestionarioSeleccionado = 17697; //17738; // 3400;
+const preguntaSeleccionada = null;//634460; //406338;
 const muestraSeleccionada = null; //6994;
-const variableSeleccionada = 993194; //36501; // 993172
-const variableCruce1Seleccionada = 993172; //36505;
-const variableCruce2Seleccionada = null; //993301;
+const variableSeleccionada = 980820;//993194; //36501; // 993172
+const variableCruce1Seleccionada = 980773;//993172; //36505;
+const variableCruce2Seleccionada = 980774; //993301;
+
+//sexo: 980773
+//edad: 980774
+//partido pol: 980948
+//escala ideo: 980820
+//estudio: 14695
+//id_cuestionario: 17697, "titulo": "BARÓMETRO DE MARZO 2023",
 
 export class DataService {
 
