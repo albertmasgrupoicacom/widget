@@ -1,36 +1,22 @@
 import { ResultChart } from './result-chart';
 import { SerieChart } from './serie-chart';
+import { DataService } from './services/data.service';
 
-/**
- * This is the main entry point of the portlet.
- *
- * See https://tinyurl.com/js-ext-portlet-entry-point for the most recent 
- * information on the signature of this function.
- *
- * @param  {Object} params a hash with values of interest to the portlet
- * @return {void}
- */
 
 export default function main({portletNamespace, contextPath, portletElementId,configuration}) {
-
-    // COMENTAR PARA LIFERAY
-    const tipo = 'PREGUNTA';
-    const numSerie = 16393;
-    const cuestionarioSeleccionado = 17738; // 3400;
-    const preguntaSeleccionada = 634460; //406338;
-    const variableSeleccionada = 993194; //36501; // 993172
-    const muestraSeleccionada = null; //6994;
-    const variableCruce1Seleccionada = 993172; //36505;
-    const variableCruce2Seleccionada = null; //993301;
-
     
+    const dataService = new DataService();
+
+    let graphic;
+
     const node = document.getElementById(portletElementId);
-    // node.innerHTML =`<div id="graph_page" class="cis-caja-tot"></div>`;
-    node.innerHTML =`<div><button id="exportExcelButton">Excel</button><button id="exportPdfButton">PDF</button></div><div id="graph_page" class="cis-caja-tot"></div>`;
-
-    const call = {type: tipo, details: {}};
-
-    let graphic = tipo == 'SERIE' ? new SerieChart() : new ResultChart();
+    node.innerHTML =`
+        <div>
+            <button id="exportExcelButton">Excel</button>
+            <button id="exportPdfButton">PDF</button>
+        </div>
+        <div id="graph_page" class="cis-caja-tot"></div>
+    `;
 
     // let sltVariables = document.getElementById("sltVariables");
     let sltVariables = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltVariables");
@@ -85,37 +71,22 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         });
     }
 
-    let excel = document.getElementById('exportExcelButton').onclick = (event => {
-        graphic.exportExcel();
-    })
+    let excelButton = document.getElementById("exportExcelButton");
+    if(excelButton) {excelButton.onclick = (event => graphic.exportExcel())}
 
-    let pdf = document.getElementById('exportPdfButton').onclick = (event => {
-        graphic.exportPdf();
-    })
+    let pdfButton = document.getElementById("exportPdfButton");
+    if(pdfButton) {pdfButton.onclick = (event => graphic.exportPdf())}
 
-    switch (call.type) {
+    
+    switch (dataService.getVariables().type) {
         case 'SERIE':
-            call.details = {'id': numSerie};
+            graphic = new SerieChart();
             break;
         case 'PREGUNTA':
-            call.details = {
-                'id_cuestionario': cuestionarioSeleccionado,
-                'id_pregunta': preguntaSeleccionada,
-                'id_variable': variableSeleccionada,
-                'id_muestra': muestraSeleccionada,
-                'id_cruce1': variableCruce1Seleccionada,
-                'id_cruce2': variableCruce2Seleccionada
-            }
+            graphic = new ResultChart();
             break;
     }
 
-    // remove null or undefined keys
-    Object.keys(call.details).forEach(key => {
-        if (call.details[key] == null) {
-          delete call.details[key];
-        }
-    });
-
-    graphic.init(call.type, call.details);
+    graphic.init();
     
 }

@@ -3,22 +3,23 @@ import { buttons, colors } from './utils/utils';
 import { SerieExport } from './utils/serie-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
+import { DataService } from './services/data.service';
 
 export class SerieChart {
 
     constructor() {
+        this._dataService = new DataService()
         this._http = new HttpClient();
         this._exportUtils = new SerieExport();
-        this.type;
-        this.data;
     }
     
-    init(type, details){
+    init(){
         this.removeContainer();
-        this._http.get( `${base_url}/serie/${details.id}`).then(data => {
-            this.type = type;
+        this._http.get( `${base_url}/serie/${this._dataService.getParams().id}`).then(data => {
             this.data = data;
-            if(data && data.ficha) {this.printContainer(data)}
+            if(data && data.ficha) {
+                this.printContainer(data);
+            }
         }).catch(error => {
             console.error('Error', error);
         });
@@ -26,25 +27,22 @@ export class SerieChart {
 
     getParsedData(rawData){
         const data = JSON.parse(JSON.stringify(rawData));
-        let result = {datasets: [], titulo: data.ficha.titulo};
+
         let labels = data.ficha.serie_temporal.map(label => label.fecha);
+        
+        let filas = data.ficha.filas.slice(0, -1);
         let datasets = [];
         let colorIndex = 0;
-        let filas = data.ficha.filas.slice(0, -1);
-
         filas.forEach(fila => {
             datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
             colorIndex == 6 ? colorIndex = 0 : colorIndex++;
         });
 
         data.ficha.serie_temporal.map(x => {
-            filas.map ( (fila, index) => {datasets[index].data.push(x.datos[index])});
+            filas.map ((fila, index) => {datasets[index].data.push(x.datos[index])});
         })
 
-        result.labels = labels;
-        result.datasets = datasets;
-
-        return result;
+        return {titulo: data.ficha.titulo, labels: labels, datasets: datasets};
     }
 
     printContainer(data){

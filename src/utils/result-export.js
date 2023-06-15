@@ -5,15 +5,18 @@ import * as ExcelJS from 'exceljs';
 import { HttpClient } from './http-client';
 import { base_url } from '../environments/environment.prod';
 import { Helpers } from './helpers';
+import { DataService } from '../services/data.service';
 
 export class ResultExport {
 
     constructor() {
+        this._dataService = new DataService();
         this._http = new HttpClient();
         this._helpers = new Helpers();
     }
 
     getData(data){
+        this.variables = this._dataService.getVariables();
         let promises = [
             this._http.get(`${base_url}/estudio/${data.ficha.pregunta.id_estudio}`),
             this._http.get(`${base_url}/pregunta/${data.ficha.pregunta.id}`),

@@ -3,23 +3,23 @@ import { buttons, colors } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
+import { DataService } from './services/data.service';
 
 export class ResultChart {
-
+  
   constructor() {
+    this._dataService = new DataService();
     this._http = new HttpClient();
     this._exportUtils = new ResultExport();
-    this.type;
     this.data;
+    this.variables = this._dataService.getVariables();
   }
   
-  init(type, details){
-    let url = `${base_url}/resultados`;
+  init(){
     this.removeAllContainers();
-    this._http.post(url, details).then(data => {
-      this.type = type;
+    this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
       this.data = data;
-      if(data && data.ficha) {this.printContainers(data)}
+      if(data && data.ficha) {this.printContainers(data)};
     }).catch(error => {
       console.error('Error', error);
     });
