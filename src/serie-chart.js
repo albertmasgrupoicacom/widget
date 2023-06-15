@@ -2,6 +2,7 @@ import Chart from 'chart.js/auto';
 import { buttons, colors } from './utils/utils';
 import { SerieExport } from './utils/serie-export';
 import { HttpClient } from './utils/http-client';
+import { base_url } from './environments/environment.prod';
 
 export class SerieChart {
 
@@ -12,7 +13,7 @@ export class SerieChart {
         this.data;
     }
     
-    init(base_url, type, details){
+    init(type, details){
         this.removeContainer();
         this._http.get( `${base_url}/serie/${details.id}`).then(data => {
             this.type = type;

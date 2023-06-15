@@ -2,6 +2,7 @@ import Chart from 'chart.js/auto';
 import { buttons, colors } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
+import { base_url } from './environments/environment.prod';
 
 export class ResultChart {
 
@@ -12,7 +13,7 @@ export class ResultChart {
     this.data;
   }
   
-  init(base_url, type, details){
+  init(type, details){
     let url = `${base_url}/resultados`;
     this.removeAllContainers();
     this._http.post(url, details).then(data => {
@@ -351,11 +352,11 @@ export class ResultChart {
   }
 
   exportExcel(){
-    if(this.data){this._exportUtils.exportToExcel(this.data.ficha)}
+    if(this.data){this._exportUtils.exportToExcel(this.data)}
   }
   
   exportPdf(){
-    if(this.data){this._exportUtils.exportToPDF(this.data.ficha)}
+    if(this.data){this._exportUtils.exportToPDF(this.data)}
   }
 
 }

@@ -1,4 +1,3 @@
-import { HomeChart } from './home-chart';
 import { ResultChart } from './result-chart';
 import { SerieChart } from './serie-chart';
 
@@ -29,8 +28,6 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     // node.innerHTML =`<div id="graph_page" class="cis-caja-tot"></div>`;
     node.innerHTML =`<div><button id="exportExcelButton">Excel</button><button id="exportPdfButton">PDF</button></div><div id="graph_page" class="cis-caja-tot"></div>`;
 
-    //const url_basse = 'https://webserver-cis-dev.lfr.cloud/o/cis';
-    const url_basse = 'http://77.227.0.28:8180/cis/apijds';
     const call = {type: tipo, details: {}};
 
     let graphic = tipo == 'SERIE' ? new SerieChart() : new ResultChart();
@@ -119,6 +116,6 @@ export default function main({portletNamespace, contextPath, portletElementId,co
         }
     });
 
-    graphic.init(url_basse, call.type, call.details);
+    graphic.init(call.type, call.details);
     
 }

@@ -2,8 +2,13 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 //const jsPDF = window.jspdf.jsPDF; // comentar local
 import * as ExcelJS from 'exceljs';
+import { Helpers } from './helpers';
 
 export class SerieExport {
+
+    constructor() {
+        this._helpers = new Helpers();
+    }
 
     getParsedData(data){
         return {
@@ -70,21 +75,18 @@ export class SerieExport {
         ctx.fillStyle = 'rgb(255,255,255)';
         ctx.fillRect(0, 0, chart.width, chart.height);
         ctx.drawImage(chart, 0, 0);
-        let elementSize = this.calculateAspectRatioFit(canvas.width, canvas.height, pdf.internal.pageSize.width - (marginX * 2));
+        let elementSize = this._helpers.calculateAspectRatioFit(canvas.width, canvas.height, pdf.internal.pageSize.width - (marginX * 2));
         pdf.addImage(canvas, 'PNG', marginX, marginY, elementSize.width, elementSize.height);
         
         // Save
         pdf.save(`${rawData.codigo}.pdf`);
     }
 
-    calculateAspectRatioFit(srcWidth, srcHeight, maxWidth) {
-        var ratio = (maxWidth / srcWidth);
-        return { width: srcWidth*ratio, height: srcHeight*ratio };
-    }
-
     exportToExcel(rawData) {
+        const wsName = 'Ficha de serie';
         const workbook = new ExcelJS.Workbook();
-        const ws1 = workbook.addWorksheet('Ficha de serie');
+
+        const ws1 = workbook.addWorksheet(wsName);
 
         const data = this.getParsedData(rawData);
 
@@ -110,7 +112,7 @@ export class SerieExport {
         const tbl = document.getElementById(`graph_table`).firstChild;
         const tableEndRow = this.addTableToWorksheet(tbl, ws1, 10);
 
-        this.addLogoToWorkbook(workbook).then(() => {
+        this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
             const originalCanvas = document.getElementById(`graph_chart`);
             let inMemoryCanvas = document.createElement('canvas');
             let ctx = inMemoryCanvas.getContext('2d');
@@ -120,7 +122,7 @@ export class SerieExport {
             ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
             ctx.drawImage(originalCanvas, 0, 0);
             const base64Image = inMemoryCanvas.toDataURL("image/png");
-            this.addImageToWorkbook(workbook, tableEndRow, base64Image).then(() => {
+            this._helpers.addImageToWorkbook(workbook, ws1, tableEndRow, base64Image).then(() => {
                 workbook.xlsx.writeBuffer().then(buffer => {
                     const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                     var blobUrl = URL.createObjectURL(excel);
@@ -131,37 +133,6 @@ export class SerieExport {
                 });
             });
         });
-    }
-    
-    getLogoAsBase64() {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
-            //img.src = 'https://webserver-cis-dev.lfr.cloud/documents/d/cis/logo-cis';
-            img.onload = () => {
-                let canvas = document.createElement('canvas');
-                let ctx = canvas.getContext('2d');
-                canvas.height = img.naturalHeight;
-                canvas.width = img.naturalWidth;
-                ctx.drawImage(img, 0, 0);
-                let base64Image = canvas.toDataURL('image/png');
-                resolve(base64Image);
-            };
-            img.onerror = error => {
-                reject(error);
-            };
-        });
-    }
-    
-    async addLogoToWorkbook(workbook) {
-        const base64Logo = await this.getLogoAsBase64();
-        const base64Data = base64Logo.split(',')[1];
-        const blob = this.b64toBlob(base64Data, 'image/png');
-        const buffer = await this.blobToArrayBuffer(blob);
-        const logoId = workbook.addImage({buffer: buffer, extension: 'png'});
-        const ws = workbook.getWorksheet('Ficha de serie');
-        ws.addImage(logoId, {tl: { col: 0, row: 0 }, br: { col: 1, row: 3 }, editAs: 'absolute'});
     }
     
     addTableToWorksheet(table, worksheet, startRow = 10) {
@@ -178,47 +149,6 @@ export class SerieExport {
             })}
         }
         return startRow + rows.length;
-    }
-    
-    async addImageToWorkbook(workbook, startRow, image) {
-        const ws = workbook.getWorksheet('Ficha de serie');
-        const blob = this.b64toBlob(image.split(',')[1], 'image/png');
-        const buffer = await this.blobToArrayBuffer(blob);
-        const imageId = workbook.addImage({buffer: buffer, extension: 'png'});
-        
-        const startRowChart = startRow;
-        const endRowChart = startRowChart + 19;
-    
-        ws.addImage(imageId, {
-            tl: { col: 0, row: startRowChart },
-            br: { col: 6, row: endRowChart },
-            editAs: 'absolute',
-        });
-    }
-    
-    b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-        const byteCharacters = atob(b64Data);
-        const byteArrays = [];
-        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            const slice = byteCharacters.slice(offset, offset + sliceSize);
-            const byteNumbers = new Array(slice.length);
-            for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-        const blob = new Blob(byteArrays, { type: contentType });
-        return blob;
-    }
-    
-    blobToArrayBuffer(blob) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.addEventListener('loadend', (e) => {resolve(reader.result)});
-            reader.addEventListener('error', reject);
-            reader.readAsArrayBuffer(blob);
-        });
     }
 
 }
