@@ -13,6 +13,9 @@ export class ResultChart {
     this._exportUtils = new ResultExport();
     this.data;
     this.variables = this._dataService.getVariables();
+    this.cruce2SelectionIndex;
+    this.show_legend = true;
+
   }
   
   init(){
@@ -37,11 +40,14 @@ export class ResultChart {
     if(cloneData.etiqCruce1 ){
       filas = cloneData.etiqCruce1;
       filas.push({etiqueta: 'Total'});
-      labels = cloneData.etiqVar.map(label => label.etiqueta);
+      // labels = cloneData.etiqVar.map(label => label.etiqueta);
+      labels = cloneData.etiqVar;
     } else if(cloneData.frecuencias ){
       filas = [];
+      this.show_legend = false;
       filas.push({etiqueta: 'Nº de casos'});
-      labels = cloneData.frecuencias.map(label => label.etiqueta);
+      // labels = cloneData.frecuencias.map(label => label.etiqueta);
+      labels = cloneData.frecuencias;
     }
 
     if(cloneData.frecuencias ) {
@@ -72,14 +78,14 @@ export class ResultChart {
           datasets[0].backgroundColor.push(colors[colorIndex]);
           index == 6 ? colorIndex = 0 : colorIndex++;
       });
-      if(data.haymedia){
-        let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
-        vars.forEach(item => labels.push(item.name));
-        datasets[0].data.push(this.showInDecimal(data.N));
-        datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
-        datasets[0].data.push(this.showInDecimal(data.media.media));
-        datasets[0].data.push(this.showInDecimal(data.media.base));
-      }
+      // if(data.haymedia){
+      //   let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
+      //   vars.forEach(item => labels.push(item.name));
+      //   datasets[0].data.push(this.showInDecimal(data.N));
+      //   datasets[0].data.push(this.showInDecimal(data.media.desvEstandar));
+      //   datasets[0].data.push(this.showInDecimal(data.media.media));
+      //   datasets[0].data.push(this.showInDecimal(data.media.base));
+      // }
     }
     newData.labels = labels;
     newData.datasets = datasets;
@@ -100,7 +106,7 @@ export class ResultChart {
       let tableData = data.ficha.tabla[tableIndex];
       if(!tableData.frecuencias) {this.addSelectorOperaciones(tableData, tableIndex)};
       if(tableData.etiqCruce2){this.printTableSelector(tableData, tableIndex)};
-      this.printTable(this.getParsedData(tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex,!tableData.frecuencias ? 'PREGUNTA':'FREQ');
+      this.printTable(this.getParsedData(tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
   }
 
   
@@ -108,29 +114,40 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
-    const array = [{id: 0, etiqueta:'Valores Absolutos'},
-                  {id: 1, etiqueta:'Mostrar % (columna)'},
-                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)'},
-                  {id: 3, etiqueta:'Mostrar % (fila)'},
-                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)'},
-                  {id: 5, etiqueta:'Mostrar % (total)'},
-                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)'}];
+    // const array = [{id: 0, etiqueta:'Valores Absolutos'},
+    //               {id: 1, etiqueta:'Mostrar % (columna)'},
+    //               {id: 2, etiqueta:'Mostrar % (columna - NS/NC)'},
+    //               {id: 3, etiqueta:'Mostrar % (fila)'},
+    //               {id: 4, etiqueta:'Mostrar % (fila - NS/NC)'},
+    //               {id: 5, etiqueta:'Mostrar % (total)'},
+    //               {id: 6, etiqueta:'Mostrar % (total - NS/NC)'}];
+    const array = [{id: 0, etiqueta:'Valores Absolutos', delMissing: false},
+                  {id: 1, etiqueta:'Mostrar % (columna)', delMissing: false},
+                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)',delMissing: true},
+                  {id: 3, etiqueta:'Mostrar % (fila)',delMissing: false},
+                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)',delMissing: true},
+                  {id: 5, etiqueta:'Mostrar % (total)',delMissing: false},
+                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)',delMissing: true}];
     for (var i = 0; i < array.length; i++) {
       let option = document.createElement("option");
       option.value = parseInt(i); //array[i].categoria;
       option.text = array[i].etiqueta;
+      option.delMissing = array[i].delMissing;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
-      let newData = this.calculate(data, parseInt(e.target.value), cruce2);
+      const delMissing = selector.options[selector.options.selectedIndex].delMissing;
+      let newData = this.calculate(data,parseInt(e.target.value),cruce2,delMissing);
+      // let newData = this.calculate(data, parseInt(e.target.value), cruce2);
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(newData), tableIndex);
+      this.printTable(this.getParsedData(newData,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
+      // this.printTable(this.getParsedData(newData), tableIndex);
    })
    container.appendChild(selector);
   }
 
-  calculate(data, type_value_index, isCruce2){
+  calculate(data, type_value_index, isCruce2, delMissing){
     let newdata;
     const cloneData = JSON.parse(JSON.stringify(data));
     if ( type_value_index == 0) { 
@@ -152,6 +169,17 @@ export class ResultChart {
       }
       else {
         // CRUCE2 -> 
+        let valor = 0;
+        for (let i = 0; i < cloneData.etiqVar.length; i++) {
+          for (let j = 0; j < cloneData.cruce[i].length; j++) {
+            valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
+            const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
+            valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j][this.cruce2SelectionIndex]);
+            cloneData.cruce[i][j] = this.showInDecimal(valor);
+          }
+        }
+        newdata = cloneData;
+
       }
     }
     if ( type_value_index == 2) {
@@ -224,13 +252,19 @@ export class ResultChart {
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
+      this.cruce2SelectionIndex = e.target.value;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(data, parseInt(e.target.value)), tableIndex, 'PREGUNTA');
+      this.printTable(this.getParsedData(data, parseInt(e.target.value)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
 
-  printTable(data, tableIndex){
+  getEtiqueta(label) {
+    return (label.etiqueta_abrev && label.etiqueta_abrev !== '') ? label.etiqueta_abrev: label.etiqueta;
+  }
+
+  // data , tableIndex, delMissing(boolean), tipoTabla (FREQ,PREGUNTA)
+  printTable(data, tableIndex, delMissing, tipoTabla){
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;
@@ -253,7 +287,7 @@ export class ResultChart {
 
     data.labels.forEach((label, index) => {
       const row = document.createElement('tr');
-      this.addCell(row, label);
+      this.addCell(row, this.getEtiqueta(label));
       data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
       tblBody.appendChild(row);
     })
@@ -261,7 +295,8 @@ export class ResultChart {
     tblTable.appendChild(tblBody);
     tbl.appendChild(tblTable);
     container.appendChild(tbl);
-    let chartConfig = container.getAttribute('config')
+    let chartConfig = container.getAttribute('config');
+    data.labels = data.labels.map(label => this.getEtiqueta(label)); 
     this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[1]);
   }
 
@@ -304,7 +339,7 @@ export class ResultChart {
             font: {size: 16}
           },
           legend: {
-            display: true,
+            display: this.show_legend,
             position: 'bottom',
           },
         },
