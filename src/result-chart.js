@@ -1,5 +1,5 @@
 import Chart from 'chart.js/auto';
-import { buttons, colors } from './utils/utils';
+import { resultButtons, colors } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
@@ -112,8 +112,10 @@ export class ResultChart {
   }
 
   printContainers(data){
-    for (let tableIndex = 0; tableIndex < data.ficha.tabla.length; tableIndex++) {
-      this.printContainer(data, tableIndex);
+    if(data.ficha.tabla && data.ficha.tabla.length){
+      for (let tableIndex = 0; tableIndex < data.ficha.tabla.length; tableIndex++) {
+        this.printContainer(data, tableIndex);
+      }
     }
   }
 
@@ -322,7 +324,7 @@ export class ResultChart {
       data.datasets = data.datasets.slice(0,value);
       data.labels = data.labels.slice(0,value);
     }
-    this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[1]);
+    this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[0]);
   }
 
   addHeaderCell(row, contenido) {
@@ -385,7 +387,7 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
-    buttons.forEach(config => {
+    resultButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
       button.style.background = `url(${config.icon}) no-repeat`;

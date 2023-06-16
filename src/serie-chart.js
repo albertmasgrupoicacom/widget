@@ -1,5 +1,5 @@
 import Chart from 'chart.js/auto';
-import { buttons, colors } from './utils/utils';
+import { serieButtons, colors } from './utils/utils';
 import { SerieExport } from './utils/serie-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
@@ -96,7 +96,7 @@ export class SerieChart {
         tbl.appendChild(tblTable);
         container.appendChild(tbl);
         let chartConfig = container.getAttribute('config')
-        this.printChart(data, chartConfig ? JSON.parse(chartConfig) : buttons[0]);
+        this.printChart(data, chartConfig ? JSON.parse(chartConfig) : serieButtons[0]);
     }
 
     addHeaderCell(row, contenido) {
@@ -150,7 +150,7 @@ export class SerieChart {
         const chart = document.getElementById(`graph_chart`);
         let buttonsContainer = document.createElement('div');
         buttonsContainer.id = `graph_chart_buttons`;
-        buttons.forEach(config => {
+        serieButtons.forEach(config => {
         let button = document.createElement('button');
         button.classList.add('graphic_btn', `graph_chart_button`);
         button.style.background = `url(${config.icon}) no-repeat`;

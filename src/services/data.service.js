@@ -1,4 +1,4 @@
-const tipo = 'SERIE';
+const tipo = 'PREGUNTA';
 const numSerie = 6010;
 const codEstudio = 14695;
 const cuestionarioSeleccionado = 17697;

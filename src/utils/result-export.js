@@ -7,6 +7,8 @@ import { base_url } from '../environments/environment.prod';
 import { Helpers } from './helpers';
 import { DataService } from '../services/data.service';
 
+jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39'}, theme: "grid"})
+
 export class ResultExport {
 
     constructor() {
@@ -29,7 +31,6 @@ export class ResultExport {
         this.getData(rawData).then(data => {
             let study = data[0];
             let question = data[1];
-            let tables = rawData;
 
             const workbook = new ExcelJS.Workbook();
             const ws1 = workbook.addWorksheet('Estudio');
@@ -262,7 +263,6 @@ export class ResultExport {
 
             let study = data[0];
             let question = data[1];
-            let tables = rawData;
             
             const doc = new jsPDF();
     
@@ -274,7 +274,7 @@ export class ResultExport {
             const logoUrl = 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Logotipo_del_CIS.png';
             doc.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
     
-            //Estudios
+            //Estudio
             const estudioData = [
                 ["Nº Estudio", study.ficha.estudio.id],
                 ["Fecha", study.ficha.estudio.fecha],
@@ -286,106 +286,117 @@ export class ResultExport {
             ];
     
             doc.setFontSize(14);
-            doc.text("ESTUDIOS", 10, 70);
+            doc.text("ESTUDIO", 10, 70);
             doc.autoTable({
                 startY: 80,
                 body: estudioData,
-                theme: "grid",
                 didParseCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 0) {
-                        data.cell.styles.fontStyle = 'bold';
-                    }
+                    if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
                 },
             });
-    
-            //Cuestionarios
-            doc.addPage();
-            doc.setFontSize(14);
-            doc.text("CUESTIONARIOS", 10, 10);
-            const cuestionarios = study.ficha.cuestionarios;
-            cuestionarios.forEach((cuestionario, index) => {
-                const cuestionarioData = [
-                    ["Nº Cuestionario", cuestionario.numero],
-                    ["Título", cuestionario.titulo],
-                    ["Fecha de inicio", cuestionario.fecha_inicio],
-                    ["Fecha de finalización", cuestionario.fecha_fin],
-                    ["Tipo de entrevista", cuestionario.tipo_entrevista],
-                    ["Variables Sociodemográficas", cuestionario.variables_sociodemograficas],
-                    ["Contenido", cuestionario.contenido]
-                ];
-    
-                doc.autoTable({
-                    startY: 20 + (index * 30), 
-                    body: cuestionarioData,
-                    theme: "grid",
-                    theme: "grid",
-                    didParseCell: function(data) {
-                        if (data.section === 'body' && data.column.index === 0) {
-                            data.cell.styles.fontStyle = 'bold';
-                        }
-                    },
-                });
-            });
-    
-            //Muestras
-            doc.addPage();
-            doc.setFontSize(14);
-            doc.text("MUESTRAS", 10, 10);
-            const muestras = study.ficha.muestras;
-            let startY = 20; 
-    
-            muestras.forEach(muestra => {
-                const muestraData = [
-                    ["Muestra", muestra.titulo],
-                    ["Ámbito", muestra.ambito],
-                    ["Universo", muestra.universo],
-                    ["Sexo", muestra.sexo],
-                    ["Edad", muestra.edad],
-                    ["Tamaño Real", muestra.tamano_real],
-                    ["Tamaño Teórico", muestra.tamano_teorico],
-                    ["Afijación", muestra.afijacion],
-                    ["Puntos de Muestreo", muestra.puntos_muestreo],
-                    ["Error Muestral", muestra.error_muestral],
-                    ["Método de Muestreo", muestra.metodo_muestreo],
-                ];
-    
-                doc.autoTable({
-                    startY: startY, 
-                    body: muestraData,
-                    theme: "grid",
-                    didParseCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 0) {
-                        data.cell.styles.fontStyle = 'bold';
-                    }
-                    },
-                });
-                startY = doc.autoTable.previous.finalY + 7; 
-            }); 
-    
-            //Preguntas
-            doc.addPage();
-            doc.setFontSize(14);
-            doc.text("PREGUNTAS", 10, 10);
-    
-            const preguntaData = [
-                ["Pregunta", question.ficha.titulo],
-                ["Texto", this._helpers.stripHTML(question.ficha.texto)],
-            ];
-    
-            doc.autoTable({
-                startY: 20,
-                body: preguntaData,
-                theme: "grid",
-                didParseCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 0) {
-                        data.cell.styles.fontStyle = 'bold';
-                    }
-                },
-            });
-        
-            doc.save("FichaDeEstudios.pdf");
 
-        })
+            if(this._dataService.variables.id_cuestionario){
+                const cuestionario = study.ficha.cuestionarios.find(cuestionario => cuestionario.id == this._dataService.variables.id_cuestionario);
+                if(cuestionario){
+                    doc.addPage();
+                    doc.setFontSize(14);
+                    doc.text("CUESTIONARIO", 10, 20);
+                    const cuestionarioData = [
+                        ["Nº Cuestionario", cuestionario.numero],
+                        ["Título", cuestionario.titulo],
+                        ["Fecha de inicio", cuestionario.fecha_inicio],
+                        ["Fecha de finalización", cuestionario.fecha_fin],
+                        ["Tipo de entrevista", cuestionario.tipo_entrevista],
+                        ["Variables Sociodemográficas", cuestionario.variables_sociodemograficas],
+                        ["Contenido", cuestionario.contenido]
+                    ];
+        
+                    doc.autoTable({
+                        startY: 30,
+                        body: cuestionarioData,
+                        didParseCell: function(data) {
+                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
+                        },
+                    });
+                }
+            }
+
+            //Muestras
+            if(this._dataService.variables.id_muestra){
+                const muestra = study.ficha.muestras.find(muestra => muestra.id == this._dataService.variables.id_muestra);
+                if(muestra){
+                    doc.addPage();
+                    doc.setFontSize(14);
+                    doc.text("MUESTRA", 10, 20);
+                    const muestraData = [
+                        ["Muestra", muestra.titulo],
+                        ["Ámbito", muestra.ambito],
+                        ["Universo", muestra.universo],
+                        ["Sexo", muestra.sexo],
+                        ["Edad", muestra.edad],
+                        ["Tamaño Real", muestra.tamano_real],
+                        ["Tamaño Teórico", muestra.tamano_teorico],
+                        ["Afijación", muestra.afijacion],
+                        ["Puntos de Muestreo", muestra.puntos_muestreo],
+                        ["Error Muestral", muestra.error_muestral],
+                        ["Método de Muestreo", muestra.metodo_muestreo],
+                    ];
+            
+                    doc.autoTable({
+                        startY: 30, 
+                        body: muestraData,
+                        didParseCell: function(data) {
+                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
+                        }
+                    }); 
+                }
+            }
+
+            if(this._dataService.variables.id_pregunta){
+                const pregunta = question.ficha;
+                if(pregunta){
+                    doc.addPage();
+                    doc.setFontSize(14);
+                    doc.text("PREGUNTA", 10, 20);
+
+                    const preguntaData = [
+                        ["Pregunta", pregunta.titulo],
+                        ["Texto", this._helpers.stripHTML(pregunta.texto)],
+                    ];
+            
+                    doc.autoTable({
+                        startY: 30,
+                        body: preguntaData,
+                        didParseCell: function(data) {
+                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
+                        }
+                    });
+                }
+            }
+
+            if(rawData.ficha.tabla && rawData.ficha.tabla.length){
+                rawData.ficha.tabla.forEach((table, index) => {
+                    doc.addPage();
+                    doc.setFontSize(14);
+                    doc.text(table.titulo, 10, 20);
+                    doc.text(`Cruce 1: ${table.tituloCruce1}`, 10, 30);
+                    doc.text(`Cruce 2: ${table.tituloCruce2}`, 10, 40);
+                    
+                    const tbl = document.getElementById(`graph_table_${index}`).firstChild;
+                    doc.autoTable({
+                        html: tbl,
+                        startY: 50,
+                        horizontalPageBreak: true, 
+                        horizontalPageBreakRepeat: 0,
+                        didDrawCell: (data) => {
+                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
+                            if (data.column.index === 0) {data.cell.x = 100}
+                        }
+                    });
+                })
+            }
+            doc.save(`FichaEstudio.pdf`);
+        });
     }
 
 }

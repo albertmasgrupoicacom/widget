@@ -4,6 +4,8 @@ import 'jspdf-autotable'
 import * as ExcelJS from 'exceljs';
 import { Helpers } from './helpers';
 
+jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39'}, theme: "grid"})
+
 export class SerieExport {
 
     constructor() {
@@ -13,15 +15,14 @@ export class SerieExport {
     getParsedData(data){
         return {
             code: {pre: '', text: `${data.codigo} - ${data.titulo}`, fontSize: 12, bold: true, align: 'center'},
-            sample: {pre: 'Muestra', text: data.muestra || '-', fontSize: 10, bold: true, align: 'left'},
-            question: {pre: 'Pregunta', text: this._helpers.stripHTML(data.pregunta || '-'), fontSize: 10, bold: true, align: 'left'},
-            notes: {pre: 'Notas', text: data.notas || '-', fontSize: 10, bold: true, align: 'left'},
+            sample: {pre: 'Muestra', text: data.muestra || '', fontSize: 10, bold: true, align: 'left'},
+            question: {pre: 'Pregunta', text: this._helpers.stripHTML(data.pregunta || ''), fontSize: 10, bold: true, align: 'left'},
+            notes: {pre: 'Notas', text: data.notas || '', fontSize: 10, bold: true, align: 'left'},
         }
     }
 
-    exportToExcel(rawData) {
+    exportToExcel(data) {
         let offset = 7;
-        const data = this.getParsedData(rawData);
 
         const workbook = new ExcelJS.Workbook();
         const ws1 = workbook.addWorksheet('Series');
@@ -32,25 +33,31 @@ export class SerieExport {
         columnA.font = { bold: true };
         
         const titleCell = ws1.getCell(`A${offset}`);
-        titleCell.value = data.code.text || '-';
+        titleCell.value = `${data.codigo} - ${data.titulo}`;
         titleCell.font = { bold: true, size: 16 };
         titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
         offset++;
 
-        ws1.getCell(`A${offset}`).value = data.sample.pre || '';
-        ws1.getCell(`A${offset}`).font = { bold: true };
-        ws1.getCell(`B${offset}`).value = data.sample.text || '-';
-        offset++;
+        if(data.muestra){
+            ws1.getCell(`A${offset}`).value = 'Muestra';
+            ws1.getCell(`A${offset}`).font = { bold: true };
+            ws1.getCell(`B${offset}`).value = data.muestra;
+            offset++;
+        }
 
-        ws1.getCell(`A${offset}`).value = data.question.pre || '';
-        ws1.getCell(`A${offset}`).font = { bold: true };
-        ws1.getCell(`B${offset}`).value = data.question.text || '-';
-        offset++;
+        if(data.pregunta){
+            ws1.getCell(`A${offset}`).value = 'Pregunta';
+            ws1.getCell(`A${offset}`).font = { bold: true };
+            ws1.getCell(`B${offset}`).value = this._helpers.stripHTML(data.pregunta);
+            offset++;
+        }
 
-        ws1.getCell(`A${offset}`).value = data.notes.pre || '';
-        ws1.getCell(`A${offset}`).font = { bold: true };
-        ws1.getCell(`B${offset}`).value = data.notes.text || '-';
-        offset++;
+        if(data.notas){
+            ws1.getCell(`A${offset}`).value = 'Notas';
+            ws1.getCell(`A${offset}`).font = { bold: true };
+            ws1.getCell(`B${offset}`).value = data.notas;
+            offset++;
+        }
 
         const tbl = document.getElementById(`graph_table`).firstChild;
         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
@@ -71,7 +78,7 @@ export class SerieExport {
                     var blobUrl = URL.createObjectURL(excel);
                     let link = document.createElement("a");
                     link.href = blobUrl;
-                    link.download = `${rawData.codigo}.xlsx`;
+                    link.download = `${data.codigo}.xlsx`;
                     link.click();
                 });
             });
@@ -96,30 +103,26 @@ export class SerieExport {
 
         // Header
         Object.values(this.getParsedData(rawData)).forEach(item => {
-            const title = item.pre ? `${item.pre}: ${item.text}` : item.text;
-            const titleSize = item.fontSize;
-            const position = item.align == 'center' ? pdf.internal.pageSize.width / 2 : item.align == 'left' ? marginX : pdf.internal.pageSize.width - marginX;
-            pdf.setFont('helvetica', item.bold ? 'bold' : 'normal');
-            pdf.setFontSize(titleSize);
-            pdf.text(title, position, offset, { align: item.align, maxWidth: pdf.internal.pageSize.width - (marginX * 2) });
-            offset += pdf.getTextDimensions(title, { titleSize, maxWidth: pdf.internal.pageSize.width - (marginX * 2) }).h + gapSize;
+            if(item.text){
+                const title = item.pre ? `${item.pre}: ${item.text}` : item.text;
+                const titleSize = item.fontSize;
+                const position = item.align == 'center' ? pdf.internal.pageSize.width / 2 : item.align == 'left' ? marginX : pdf.internal.pageSize.width - marginX;
+                pdf.setFont('helvetica', item.bold ? 'bold' : 'normal');
+                pdf.setFontSize(titleSize);
+                pdf.text(title, position, offset, { align: item.align, maxWidth: pdf.internal.pageSize.width - (marginX * 2) });
+                offset += pdf.getTextDimensions(title, { titleSize, maxWidth: pdf.internal.pageSize.width - (marginX * 2) }).h + gapSize;
+            }
         })
         
         // Table
-        const tableStyles = {fontStyle: 'normal', cellPadding: 1, fontSize: 8, valign: 'middle'};
-        const tableHeaderStyles = {fontStyle: 'bold', fillColor: [0, 0, 0], textColor: [255, 255, 255]};
-        const tableBodyStyles = {fontStyle: 'normal', cellPadding: 1, fontSize: 8};
-
         const tbl = document.getElementById(`graph_table`).firstChild;
         pdf.autoTable({
             html: tbl,
-            startY: offset, 
-            styles: tableStyles, 
-            headStyles: tableHeaderStyles, 
-            bodyStyles: tableBodyStyles, 
+            startY: offset,
             horizontalPageBreak: true, 
             horizontalPageBreakRepeat: 0,
             didDrawCell: (data) => {
+                if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
                 if (data.column.index === 0) {data.cell.x = 100}
             }
         });
