@@ -16,226 +16,244 @@ export class ResultExport {
     }
 
     getData(data){
-        this.variables = this._dataService.getVariables();
         let promises = [
             this._http.get(`${base_url}/estudio/${data.ficha.pregunta.id_estudio}`),
             this._http.get(`${base_url}/pregunta/${data.ficha.pregunta.id}`),
         ]
-        return Promise.all(promises)
+        return Promise.all(promises);
     }
     
     // EXPORTACIÓN EXCEL
     async exportToExcel(rawData) {
+        let offset = 7;
         this.getData(rawData).then(data => {
             let study = data[0];
             let question = data[1];
             let tables = rawData;
 
             const workbook = new ExcelJS.Workbook();
-            const ws1 = workbook.addWorksheet('Estudios');
-            this._helpers.addLogoToWorkbook(workbook, ws1);
+            const ws1 = workbook.addWorksheet('Estudio');
             const columnA = ws1.getColumn('A');
-            columnA.width = 40;
+            const columnB = ws1.getColumn('B');
+            columnA.width = 30;
+            columnB.width = 50;
             columnA.font = { bold: true };
+
+            //Estudio
+            const estudioCell = ws1.getCell(`A${offset}`);
+            estudioCell.value = 'ESTUDIO';
+            estudioCell.font = { bold: true };
+            estudioCell.alignment = { vertical: 'middle', horizontal: 'center' };
+            estudioCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+            ws1.mergeCells(`A${offset}:B${offset}`);
+            offset++;
         
-            //Estudios
-            const cuestionarioCell = ws1.getCell('A7');
-            cuestionarioCell.value = 'ESTUDIOS';
-            cuestionarioCell.font = { bold: true };
-            cuestionarioCell.alignment = { vertical: 'middle', horizontal: 'center' };
-            ws1.mergeCells('A7:B7');
+            ws1.getCell(`A${offset}`).value = 'Nº Estudio';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.id;
+            offset++;
         
-            for(let i = 1; i <= 26; i++){ 
-                ws1.getCell(7, i).fill = {
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{ argb:'FFD3D3D3' }
-                };
+            ws1.getCell(`A${offset}`).value = 'Fecha';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.fecha;
+            offset++;
+        
+            ws1.getCell(`A${offset}`).value = 'Título';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.titulo;
+            offset++;
+        
+            ws1.getCell(`A${offset}`).value = 'Autor(es)';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.autores;
+            offset++;
+        
+            ws1.getCell(`A${offset}`).value = 'Encargo(es)';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.encargo;
+            offset++;
+        
+            ws1.getCell(`A${offset}`).value = 'País';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.pais;
+            offset++;
+        
+            ws1.getCell(`A${offset}`).value = 'Índice Temático';
+            ws1.getCell(`B${offset}`).value = study.ficha.estudio.indiceTematico;
+            ws1.getCell(`B${offset}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+            ws1.getRow(offset).height = 300;
+            offset++;
+        
+            // Cuestionario
+            if(this._dataService.variables.id_cuestionario){
+                const cuestionario = study.ficha.cuestionarios.find(cuestionario => cuestionario.id == this._dataService.variables.id_cuestionario);
+                if(cuestionario){
+                    const cuestionarioCell = ws1.getCell(`A${offset}`);
+                    cuestionarioCell.value = 'CUESTIONARIO';
+                    cuestionarioCell.font = { bold: true };
+                    cuestionarioCell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    cuestionarioCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+                    ws1.mergeCells(`A${offset}:B${offset}`);
+                    offset++;
+
+                    ws1.getCell(`A${offset}`).value = 'Nº Cuestionario';
+                    ws1.getCell(`B${offset}`).value = cuestionario.numero;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Título';
+                    ws1.getCell(`B${offset}`).value = cuestionario.titulo;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Fecha de inicio';
+                    ws1.getCell(`B${offset}`).value = cuestionario.fecha_inicio;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Fecha de finalización';
+                    ws1.getCell(`B${offset}`).value = cuestionario.fecha_fin;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Tipo de entrevista';
+                    ws1.getCell(`B${offset}`).value = cuestionario.tipo_entrevista;
+                    offset++;
+            
+                    ws1.getCell(`A${offset}`).value = 'Variables Sociodemográficas';
+                    ws1.getCell(`B${offset}`).value = cuestionario.variables_sociodemograficas;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Contenido';
+                    ws1.getCell(`B${offset}`).value = cuestionario.contenido;
+                    ws1.getCell(`B${offset}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                    ws1.getRow(offset).height = 300;
+                    offset++;
+                }
             }
         
-            ws1.getCell('A8').value = 'Nº Estudio';
-            ws1.getCell('B8').value = study.ficha.estudio.id;
-        
-            ws1.getCell('A9').value = 'Fecha';
-            ws1.getCell('B9').value = study.ficha.estudio.fecha;
-        
-            ws1.getCell('A10').value = 'Título';
-            ws1.getCell('B10').value = study.ficha.estudio.titulo;
-        
-            ws1.getCell('A11').value = 'Autor(es)';
-            ws1.getCell('B11').value = study.ficha.estudio.autores;
-        
-            ws1.getCell('A12').value = 'Encargo(es)';
-            ws1.getCell('B12').value = study.ficha.estudio.encargo;
-        
-            ws1.getCell('A13').value = 'País';
-            ws1.getCell('B13').value = study.ficha.estudio.pais;
-        
-            ws1.getCell('A14').value = 'Índice Temático';
-            ws1.getCell('B14').value = study.ficha.estudio.indiceTematico;
-            ws1.mergeCells('B14:E14');
-            ws1.getCell('B14').alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-            ws1.getRow(14).height = 300;
-        
-            //Cuestionarios
-            const cuestionarioCell1 = ws1.getCell('A15');
-            cuestionarioCell1.value = 'CUESTIONARIOS';
-            cuestionarioCell1.font = { bold: true };
-            cuestionarioCell1.alignment = { vertical: 'middle', horizontal: 'center' };
-            ws1.mergeCells('A15:B15');
-        
-            for(let i = 1; i <= 26; i++){ 
-                ws1.getCell(15, i).fill = {
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{ argb:'FFD3D3D3' }
-                };
-            }
-        
-            const cuestionarios = study.ficha.cuestionarios;
-            let currentRow = 16;
-        
-            for (let cuestionario of cuestionarios) {
-                ws1.getCell(`A${currentRow}`).value = 'Nº Cuestionario';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.numero;
-                currentRow++;
+            //Muestra
+            if(this._dataService.variables.id_muestra){
+                const muestra = study.ficha.muestras.find(muestra => muestra.id == this._dataService.variables.id_muestra);
+                if(muestra){
+                    const muestraCell = ws1.getCell(`A${offset}`);
+                    muestraCell.value = 'MUESTRA';
+                    muestraCell.font = { bold: true };
+                    muestraCell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    muestraCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+                    ws1.mergeCells(`A${offset}:B${offset}`);
+                    offset++;
+
+                    ws1.getCell(`A${offset}`).value = 'Muestra';
+                    ws1.getCell(`B${offset}`).value = muestra.nombre;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Ámbito';
+                    ws1.getCell(`B${offset}`).value = muestra.ambito;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Universo';
+                    ws1.getCell(`B${offset}`).value = muestra.universo;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Sexo';
+                    ws1.getCell(`B${offset}`).value = muestra.sexo;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Edad';
+                    ws1.getCell(`B${offset}`).value = muestra.edad;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Tamaño Real';
+                    ws1.getCell(`B${offset}`).value = muestra.tamano_real;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Tamaño Teórico';
+                    ws1.getCell(`B${offset}`).value = muestra.tamano_teorico;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Afijación';
+                    ws1.getCell(`B${offset}`).value = muestra.afijacion;
+                    offset++;
+                
+                    ws1.getCell(`A${offset}`).value = 'Puntos de Muestreo';
+                    ws1.getCell(`B${offset}`).value = muestra.puntos_muestreo;
+                    offset++;
+
+                    ws1.getCell(`A${offset}`).value = 'Error Muestral';
+                    ws1.getCell(`B${offset}`).value = muestra.error_muestral;
+                    offset++;
             
-                ws1.getCell(`A${currentRow}`).value = 'Título';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.titulo;
-                currentRow++;
-            
-                ws1.getCell(`A${currentRow}`).value = 'Fecha de inicio';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.fecha_inicio;
-                currentRow++;
-            
-                ws1.getCell(`A${currentRow}`).value = 'Fecha de finalización';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.fecha_fin;
-                currentRow++;
-            
-                ws1.getCell(`A${currentRow}`).value = 'Tipo de entrevista';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.tipo_entrevista;
-                currentRow++;
-        
-                ws1.getCell(`A${currentRow}`).value = 'Variables Sociodemográficas';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.variables_sociodemograficas;
-                currentRow++;
-            
-                ws1.getCell(`A${currentRow}`).value = 'Contenido';
-                ws1.getCell(`B${currentRow}`).value = cuestionario.contenido;
-                ws1.mergeCells(`B${currentRow}:E${currentRow}`);
-                ws1.getCell(`B${currentRow}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                ws1.getRow(currentRow).height = 300;
-                currentRow++;
-            }
-        
-        
-            //Muestras
-            const cuestionarioCell2 = ws1.getCell('A23');
-            cuestionarioCell2.value = 'MUESTRAS';
-            cuestionarioCell2.font = { bold: true };
-            cuestionarioCell2.alignment = { vertical: 'middle', horizontal: 'center' };
-            ws1.mergeCells('A23:B23');
-        
-            for(let i = 1; i <= 26; i++){ 
-                ws1.getCell(23, i).fill = {
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{ argb:'FFD3D3D3' }
-                };
-            }
-        
-            const muestras = study.ficha.muestras;
-            let currentRow1 = 24;
-        
-            for (let muestra of muestras) {
-                ws1.getCell(`A${currentRow1}`).value = 'Muestra';
-                ws1.getCell(`B${currentRow1}`).value = muestra.nombre;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Ámbito';
-                ws1.getCell(`B${currentRow1}`).value = muestra.ambito;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Universo';
-                ws1.getCell(`B${currentRow1}`).value = muestra.universo;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Sexo';
-                ws1.getCell(`B${currentRow1}`).value = muestra.sexo;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Edad';
-                ws1.getCell(`B${currentRow1}`).value = muestra.edad;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Tamaño Real';
-                ws1.getCell(`B${currentRow1}`).value = muestra.tamano_real;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Tamaño Teórico';
-                ws1.getCell(`B${currentRow1}`).value = muestra.tamano_teorico;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Afijación';
-                ws1.getCell(`B${currentRow1}`).value = muestra.afijacion;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Puntos de Muestreo';
-                ws1.getCell(`B${currentRow1}`).value = muestra.puntos_muestreo;
-                currentRow1++;
-            
-                ws1.getCell(`A${currentRow1}`).value = 'Error Muestral';
-                ws1.getCell(`B${currentRow1}`).value = muestra.error_muestral;
-                currentRow1++;
-        
-                ws1.getCell(`A${currentRow1}`).value = 'Método de Muestreo';
-                ws1.getCell(`B${currentRow1}`).value = muestra.metodo_muestreo;
-                ws1.mergeCells(`B${currentRow1}:E${currentRow1}`);
-                ws1.getCell(`B${currentRow1}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                ws1.getRow(currentRow1).height = 300;
-                currentRow1++;
-            
-                currentRow1++;
-            }
-            
-            // Preguntas
-            const cuestionarioCell3 = ws1.getCell('A47');
-            cuestionarioCell3.value = 'PREGUNTAS';
-            cuestionarioCell3.font = { bold: true };
-            cuestionarioCell3.alignment = { vertical: 'middle', horizontal: 'center' };
-            ws1.mergeCells('A47:B47');
-            
-            for(let i = 1; i <= 26; i++){ 
-                ws1.getCell(47, i).fill = {
-                    type: 'pattern',
-                    pattern:'solid',
-                    fgColor:{ argb:'FFD3D3D3' }
-                };
+                    ws1.getCell(`A${offset}`).value = 'Método de Muestreo';
+                    ws1.getCell(`B${offset}`).value = muestra.metodo_muestreo;
+                    ws1.getCell(`B${offset}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                    ws1.getRow(offset).height = 300;
+                    offset++;
+                }
             }
 
-            ws1.getCell('A48').value = 'Pregunta';
-            ws1.getCell('B48').value = question.ficha.titulo;
-
-            ws1.getCell('A49').value = 'Texto';
-            ws1.getCell('B49').value = this._helpers.stripHtmlTags(question.ficha.texto); 
-            ws1.mergeCells('B49:E49');
-            ws1.getCell('B49').alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-            ws1.getRow(49).height = 300;
+            if(this._dataService.variables.id_pregunta){
+                const pregunta = question.ficha;
+                if(pregunta){
+                    const preguntaCell = ws1.getCell(`A${offset}`);
+                    preguntaCell.value = 'PREGUNTAS';
+                    preguntaCell.font = { bold: true };
+                    preguntaCell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    preguntaCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+                    ws1.mergeCells(`A${offset}:B${offset}`);
+                    offset++;
+        
+                    ws1.getCell(`A${offset}`).value = 'Pregunta';
+                    ws1.getCell(`B${offset}`).value = question.ficha.titulo
+                    offset++;
+        
+                    ws1.getCell(`A${offset}`).value = 'Texto';
+                    ws1.getCell(`B${offset}`).value = this._helpers.stripHtmlTags(question.ficha.texto);
+                    ws1.getCell(`B${offset}`).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                    ws1.getRow(offset).height = 300;
+                    offset++
+                }
+            }
         
             //Logo
             this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'Estudios.xlsx';
-                    link.click();
-                    URL.revokeObjectURL(url);
-                });
+                if(rawData.ficha.tabla && rawData.ficha.tabla.length){
+                    const dataCell = ws1.getCell(`A${offset}`);
+                    dataCell.value = 'DATOS';
+                    dataCell.font = { bold: true };
+                    dataCell.alignment = { vertical: 'middle', horizontal: 'center' };
+                    dataCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+                    ws1.mergeCells(`A${offset}:B${offset}`);
+                    offset ++;
+    
+                    rawData.ficha.tabla.forEach((table, index) => {
+                        ws1.getCell(`A${offset}`).value = 'Título';
+                        ws1.getCell(`B${offset}`).value = table.titulo;
+                        offset++;
+
+                        ws1.getCell(`A${offset}`).value = 'Cruce 1';
+                        ws1.getCell(`B${offset}`).value = table.tituloCruce1;
+                        offset++;
+        
+                        ws1.getCell(`A${offset}`).value = 'Cruce 2';
+                        ws1.getCell(`B${offset}`).value = table.tituloCruce2;
+                        offset += 2;
+    
+                        const tbl = document.getElementById(`graph_table_${index}`).firstChild;
+                        offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
+
+                        const chart = this._helpers.getBase64Canvas(index);
+                        this._helpers.addImageToWorkbook(workbook, ws1, offset, chart).then(() => {
+                            this.saveExcel(workbook);
+                        })
+                    })
+                }else{
+                    this.saveExcel(workbook);
+                }
             });
 
         })
+    }
+
+    saveExcel(workbook){
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const url = URL.createObjectURL(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Estudios.xlsx';
+            link.click();
+            URL.revokeObjectURL(url);
+        });
     }
 
     // EXPORTACIÓN PDF

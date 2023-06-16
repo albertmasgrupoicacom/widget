@@ -14,9 +14,68 @@ export class SerieExport {
         return {
             code: {pre: '', text: `${data.codigo} - ${data.titulo}`, fontSize: 12, bold: true, align: 'center'},
             sample: {pre: 'Muestra', text: data.muestra || '-', fontSize: 10, bold: true, align: 'left'},
-            question: {pre: 'Pregunta', text: data.pregunta || '-', fontSize: 10, bold: true, align: 'left'},
+            question: {pre: 'Pregunta', text: this._helpers.stripHTML(data.pregunta || '-'), fontSize: 10, bold: true, align: 'left'},
             notes: {pre: 'Notas', text: data.notas || '-', fontSize: 10, bold: true, align: 'left'},
         }
+    }
+
+    exportToExcel(rawData) {
+        let offset = 7;
+        const data = this.getParsedData(rawData);
+
+        const workbook = new ExcelJS.Workbook();
+        const ws1 = workbook.addWorksheet('Series');
+        const columnA = ws1.getColumn('A');
+        const columnB = ws1.getColumn('B');
+        columnA.width = 30;
+        columnB.width = 50;
+        columnA.font = { bold: true };
+        
+        const titleCell = ws1.getCell(`A${offset}`);
+        titleCell.value = data.code.text || '-';
+        titleCell.font = { bold: true, size: 16 };
+        titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        offset++;
+
+        ws1.getCell(`A${offset}`).value = data.sample.pre || '';
+        ws1.getCell(`A${offset}`).font = { bold: true };
+        ws1.getCell(`B${offset}`).value = data.sample.text || '-';
+        offset++;
+
+        ws1.getCell(`A${offset}`).value = data.question.pre || '';
+        ws1.getCell(`A${offset}`).font = { bold: true };
+        ws1.getCell(`B${offset}`).value = data.question.text || '-';
+        offset++;
+
+        ws1.getCell(`A${offset}`).value = data.notes.pre || '';
+        ws1.getCell(`A${offset}`).font = { bold: true };
+        ws1.getCell(`B${offset}`).value = data.notes.text || '-';
+        offset++;
+
+        const tbl = document.getElementById(`graph_table`).firstChild;
+        offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
+
+        this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
+            const originalCanvas = document.getElementById(`graph_chart`);
+            let inMemoryCanvas = document.createElement('canvas');
+            let ctx = inMemoryCanvas.getContext('2d');
+            inMemoryCanvas.width = originalCanvas.width;
+            inMemoryCanvas.height = originalCanvas.height;
+            ctx.fillStyle = 'rgb(255,255,255)';
+            ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+            ctx.drawImage(originalCanvas, 0, 0);
+            const base64Image = inMemoryCanvas.toDataURL("image/png");
+            this._helpers.addImageToWorkbook(workbook, ws1, offset, base64Image).then(() => {
+                workbook.xlsx.writeBuffer().then(buffer => {
+                    const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    var blobUrl = URL.createObjectURL(excel);
+                    let link = document.createElement("a");
+                    link.href = blobUrl;
+                    link.download = `${rawData.codigo}.xlsx`;
+                    link.click();
+                });
+            });
+        });
     }
 
     exportToPDF(rawData) {
@@ -80,75 +139,6 @@ export class SerieExport {
         
         // Save
         pdf.save(`${rawData.codigo}.pdf`);
-    }
-
-    exportToExcel(rawData) {
-        const wsName = 'Ficha de serie';
-        const workbook = new ExcelJS.Workbook();
-
-        const ws1 = workbook.addWorksheet(wsName);
-
-        const data = this.getParsedData(rawData);
-
-        ws1.mergeCells('A4:F4');
-        const titleCell = ws1.getCell('A4');
-        titleCell.value = data.code.text || '-';
-        titleCell.font = { bold: true, size: 16 };
-        titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
-        ws1.getRow(4).height = 40; 
-
-        ws1.getCell('A6').value = data.sample.pre || '';
-        ws1.getCell('B6').value = data.sample.text || '-';
-        ws1.getCell('A6').font = { bold: true };
-
-        ws1.getCell('A7').value = data.question.pre || '';
-        ws1.getCell('B7').value = data.question.text || '-';
-        ws1.getCell('A7').font = { bold: true };
-
-        ws1.getCell('A8').value = data.notes.pre || '';
-        ws1.getCell('B8').value = data.notes.text || '-';
-        ws1.getCell('A8').font = { bold: true };
-
-        const tbl = document.getElementById(`graph_table`).firstChild;
-        const tableEndRow = this.addTableToWorksheet(tbl, ws1, 10);
-
-        this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
-            const originalCanvas = document.getElementById(`graph_chart`);
-            let inMemoryCanvas = document.createElement('canvas');
-            let ctx = inMemoryCanvas.getContext('2d');
-            inMemoryCanvas.width = originalCanvas.width;
-            inMemoryCanvas.height = originalCanvas.height;
-            ctx.fillStyle = 'rgb(255,255,255)';
-            ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
-            ctx.drawImage(originalCanvas, 0, 0);
-            const base64Image = inMemoryCanvas.toDataURL("image/png");
-            this._helpers.addImageToWorkbook(workbook, ws1, tableEndRow, base64Image).then(() => {
-                workbook.xlsx.writeBuffer().then(buffer => {
-                    const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    var blobUrl = URL.createObjectURL(excel);
-                    let link = document.createElement("a");
-                    link.href = blobUrl;
-                    link.download = `${rawData.codigo}.xlsx`;
-                    link.click();
-                });
-            });
-        });
-    }
-    
-    addTableToWorksheet(table, worksheet, startRow = 10) {
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const cells = i === 0 ? row.getElementsByTagName('th') : row.getElementsByTagName('td');
-            const rowData = Array.from(cells).map(cell => cell.innerText);
-            const rowAdded = worksheet.addRow(rowData);
-            if (i === 0) {rowAdded.eachCell((cell) => {
-                let columnId = cell._address.substring(0,1);
-                worksheet.getColumn(columnId).width = columnId == 'A' ? 35 : 10
-                cell.font = { bold: true }
-            })}
-        }
-        return startRow + rows.length;
     }
 
 }

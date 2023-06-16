@@ -1,5 +1,5 @@
-const tipo = 'PREGUNTA';
-const numSerie = 16393;
+const tipo = 'SERIE';
+const numSerie = 6010;
 const codEstudio = 14695;
 const cuestionarioSeleccionado = 17697;
 const preguntaSeleccionada = null;
@@ -17,12 +17,12 @@ const variableCruce2Seleccionada = 980774;
 
 export class DataService {
 
-    getType(){
+    get type(){
         return tipo;
     }
 
-    getVariables(){
-        if(tipo == 'PREGUNTA'){
+    get variables(){
+        if(this.type == 'PREGUNTA'){
             return {
                 type: tipo,
                 id_estudio: codEstudio,
@@ -43,19 +43,18 @@ export class DataService {
 
     getParams(){
         let params;
-        let variables = this.getVariables();
-        switch (variables.type) {
+        switch (this.type) {
             case 'SERIE':
-                params = {'id': variables.id_serie}
+                params = {'id': this.variables.id_serie}
                 break;
             case 'PREGUNTA':
                 params = {
-                    'id_cuestionario': variables.id_cuestionario,
-                    'id_pregunta': variables.id_pregunta,
-                    'id_variable': variables.id_variable,
-                    'id_muestra': variables.id_muestra,
-                    'id_cruce1': variables.id_cruce1,
-                    'id_cruce2': variables.id_cruce2
+                    'id_cuestionario': this.variables.id_cuestionario,
+                    'id_pregunta':this.variables.id_pregunta,
+                    'id_variable': this.variables.id_variable,
+                    'id_muestra': this.variables.id_muestra,
+                    'id_cruce1': this.variables.id_cruce1,
+                    'id_cruce2': this.variables.id_cruce2
                 }
                 break;
         }

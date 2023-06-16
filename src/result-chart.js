@@ -14,7 +14,6 @@ export class ResultChart {
     this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
-    this.variables = this._dataService.getVariables();
     this.cruce2SelectionIndex;
     this.show_legend = true;
 

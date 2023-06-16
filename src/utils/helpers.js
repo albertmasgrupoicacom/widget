@@ -31,7 +31,7 @@ export class Helpers {
     
         worksheet.addImage(logoId, {
             tl: { col: 0, row: 0 },
-            br: { col: 1, row: 3 },
+            br: { col: 1, row: 5 },
             editAs: 'absolute',
         });
     }
@@ -46,9 +46,38 @@ export class Helpers {
     
         worksheet.addImage(imageId, {
             tl: { col: 0, row: startRowChart },
-            br: { col: 6, row: endRowChart },
+            br: { col: 5, row: endRowChart },
             editAs: 'absolute',
         });
+    }
+
+    addTableToWorksheet(table, worksheet, startRow, resizeCols) {
+        const rows = table.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = i === 0 ? row.getElementsByTagName('th') : row.getElementsByTagName('td');
+            const rowData = Array.from(cells).map(cell => cell.innerText);
+            const rowAdded = worksheet.addRow(rowData);
+            if (i === 0) {rowAdded.eachCell((cell) => {
+                cell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
+                let columnId = cell._address.substring(0,1);
+                resizeCols ? worksheet.getColumn(columnId).width = columnId == 'A' ? 35 : 10 : null;
+                cell.font = { bold: true }
+            })}
+        }
+        return startRow + rows.length;
+    }
+
+    getBase64Canvas(index){
+        const originalCanvas = document.getElementById(`graph_chart_${index}`);
+        let inMemoryCanvas = document.createElement('canvas');
+        let ctx = inMemoryCanvas.getContext('2d');
+        inMemoryCanvas.width = originalCanvas.width;
+        inMemoryCanvas.height = originalCanvas.height;
+        ctx.fillStyle = 'rgb(255,255,255)';
+        ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+        ctx.drawImage(originalCanvas, 0, 0);
+        return inMemoryCanvas.toDataURL("image/png");
     }
     
     b64toBlob(b64Data, contentType = '', sliceSize = 512) {

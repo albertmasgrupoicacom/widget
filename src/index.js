@@ -78,7 +78,7 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     if(pdfButton) {pdfButton.onclick = (event => graphic.exportPdf())}
 
     
-    switch (dataService.getVariables().type) {
+    switch (dataService.type) {
         case 'SERIE':
             graphic = new SerieChart();
             break;
