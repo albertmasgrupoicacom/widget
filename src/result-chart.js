@@ -14,7 +14,8 @@ export class ResultChart {
     this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
-    this.cruce2SelectionIndex;
+    this.operacionesSelectionIndex = 0;
+    this.cruce2SelectionIndex = 0;
     this.show_legend = true;
 
   }
@@ -135,13 +136,6 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
-    // const array = [{id: 0, etiqueta:'Valores Absolutos'},
-    //               {id: 1, etiqueta:'Mostrar % (columna)'},
-    //               {id: 2, etiqueta:'Mostrar % (columna - NS/NC)'},
-    //               {id: 3, etiqueta:'Mostrar % (fila)'},
-    //               {id: 4, etiqueta:'Mostrar % (fila - NS/NC)'},
-    //               {id: 5, etiqueta:'Mostrar % (total)'},
-    //               {id: 6, etiqueta:'Mostrar % (total - NS/NC)'}];
     const array = [{id: 0, etiqueta:'Valores Absolutos', delMissing: false},
                   {id: 1, etiqueta:'Mostrar % (columna)', delMissing: false},
                   {id: 2, etiqueta:'Mostrar % (columna - NS/NC)',delMissing: true},
@@ -159,7 +153,8 @@ export class ResultChart {
     selector.addEventListener("change", e => {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
       const delMissing = selector.options[selector.options.selectedIndex].delMissing;
-      let newData = this.calculate(data,parseInt(e.target.value),cruce2,delMissing);
+      this.operacionesSelectionIndex = e.target.value;
+      let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
       // let newData = this.calculate(data, parseInt(e.target.value), cruce2);
       this.removeTable(tableIndex);
       this.printTable(this.getParsedData(newData,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
@@ -174,34 +169,24 @@ export class ResultChart {
     if ( type_value_index == 0) { 
       newdata = cloneData}; // Valores absolutos
     if ( type_value_index == 1) {
-      console.log('Mostrar % (columna)');
-      console.log(cloneData);
-      if(!isCruce2) {
-        let valor = 0;
-        for (let i = 0; i < cloneData.etiqVar.length; i++) {
+      let valor = 0;
+      for (let i = 0; i < cloneData.etiqVar.length; i++) {
           for (let j = 0; j < cloneData.cruce[i].length; j++) {
-            valor = cloneData.cruce[i][j];
-            const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
-            valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j])
-            cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
-          }
-        }
-        newdata = cloneData;
-      }
-      else {
-        // CRUCE2 -> 
-        let valor = 0;
-        for (let i = 0; i < cloneData.etiqVar.length; i++) {
-          for (let j = 0; j < cloneData.cruce[i].length; j++) {
-            valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
-            const index_sum = cloneData.etiqVar.length; // deberia ser etiqCruce1?
-            valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j][this.cruce2SelectionIndex]);
-            cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
-          }
-        }
-        newdata = cloneData;
+            if(!isCruce2) { 
+                  valor = cloneData.cruce[i][j];
+                  const index_sum = cloneData.etiqVar.length;
+                  valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j])
+                  cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+            } else {
+                  valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
+                  const index_sum = cloneData.etiqVar.length;
+                  valor = (valor * 100)/parseFloat(cloneData.cruce[index_sum][j][this.cruce2SelectionIndex]);
+                  cloneData.cruce[i][j][this.cruce2SelectionIndex] = this._helpers.showInDecimal(valor);
+            }
 
+          }
       }
+      newdata = cloneData;
     }
     if ( type_value_index == 2) {
       console.log('Mostrar % (columna - NS/NC)');
@@ -214,15 +199,25 @@ export class ResultChart {
       cloneData.etiqVar = cloneData.etiqVar.filter( x => !x.esMissing);
       for (let i = 0; i < cloneData.etiqVar.length; i++) {
         for (let j = 0; j < cloneData.cruce[i].length; j++) {
-          valor = cloneData.cruce[i][j];
-          const index_sum = cloneData.etiqVar.length;
-
-          let totalnsnc = 0; 
-          positionsToRemove.map( cell => {
-            totalnsnc += data.cruce[cell][j];
-          })
-          valor = (valor * 100)/(parseFloat(cloneData.cruce[index_sum][j]) - parseFloat(totalnsnc));
-          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          if(!isCruce2) { 
+                valor = cloneData.cruce[i][j];
+                const index_sum = cloneData.etiqVar.length;
+                let totalnsnc = 0; 
+                positionsToRemove.map( cell => {
+                  totalnsnc += data.cruce[cell][j];
+                })
+                valor = (valor * 100)/(parseFloat(cloneData.cruce[index_sum][j]) - parseFloat(totalnsnc));
+                cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          } else {
+                valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
+                const index_sum = cloneData.etiqVar.length;
+                let totalnsnc = 0; 
+                positionsToRemove.map( cell => {
+                  totalnsnc += data.cruce[cell][j][this.cruce2SelectionIndex];
+                })
+                valor = (valor * 100)/(parseFloat(cloneData.cruce[index_sum][j][this.cruce2SelectionIndex]) - parseFloat(totalnsnc));
+                cloneData.cruce[i][j][this.cruce2SelectionIndex] = this._helpers.showInDecimal(valor);
+          }
         }
       }
       newdata = cloneData;
@@ -232,10 +227,17 @@ export class ResultChart {
       let valor = 0;
       for (let i = 0; i <= cloneData.etiqVar.length; i++) {
         for (let j = 0; j < cloneData.cruce[i].length-1; j++) {
-          valor = cloneData.cruce[i][j];
-          const index_sum = cloneData.etiqCruce1.length;
-          valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
-          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          if(!isCruce2) { 
+              valor = cloneData.cruce[i][j];
+              const index_sum = cloneData.etiqCruce1.length;
+              valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
+              cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          } else {
+            valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
+            const index_sum = cloneData.etiqCruce1.length;
+            valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum][this.cruce2SelectionIndex]);
+            cloneData.cruce[i][j][this.cruce2SelectionIndex] = this._helpers.showInDecimal(valor);
+          }
         }
       }
       newdata = cloneData;
@@ -251,10 +253,17 @@ export class ResultChart {
       cloneData.etiqVar = cloneData.etiqVar.filter( x => !x.esMissing);
       for (let i = 0; i <= cloneData.etiqVar.length; i++) {
         for (let j = 0; j < cloneData.cruce[i].length-1; j++) {
-          valor = cloneData.cruce[i][j];
-          const index_sum = cloneData.etiqCruce1.length;
-          valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
-          cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          if(!isCruce2) {
+              valor = cloneData.cruce[i][j];
+              const index_sum = cloneData.etiqCruce1.length;
+              valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum]);
+              cloneData.cruce[i][j] = this._helpers.showInDecimal(valor);
+          } else {
+              valor = cloneData.cruce[i][j][this.cruce2SelectionIndex];
+              const index_sum = cloneData.etiqCruce1.length;
+              valor = (valor * 100)/parseFloat(cloneData.cruce[i][index_sum][this.cruce2SelectionIndex]);
+              cloneData.cruce[i][j][this.cruce2SelectionIndex] = this._helpers.showInDecimal(valor);
+          }
         }
       }
       newdata = cloneData;
@@ -273,9 +282,11 @@ export class ResultChart {
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
+      const cruce2 = data.etiqCruce2 ? true : false; // ??
       this.cruce2SelectionIndex = e.target.value;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(data, parseInt(e.target.value)), tableIndex, false, 'PREGUNTA');
+      let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,false);
+      this.printTable(this.getParsedData(newData, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
