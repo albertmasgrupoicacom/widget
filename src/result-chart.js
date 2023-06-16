@@ -32,13 +32,15 @@ export class ResultChart {
 
   getParsedData(data, etiqCruce2_index){
     const cloneData = JSON.parse(JSON.stringify(data));
-    let newData = {datasets: [], titulo: cloneData.titulo};
+    let newData = {datasets: [], titulo: cloneData.titulo, removeColumnsToPaint: 0, removeFilesToPaint:0};
 
     let labels = [];
     let datasets = [];
     let colorIndex = 0;
 
     let filas;
+
+    // LABELS
     if(cloneData.etiqCruce1 ){
       filas = cloneData.etiqCruce1;
       filas.push({etiqueta: 'Total'});
@@ -48,10 +50,17 @@ export class ResultChart {
       filas = [];
       this.show_legend = false;
       filas.push({etiqueta: 'Nº de casos'});
+      filas.push({etiqueta: '% Total'});
       // labels = cloneData.frecuencias.map(label => label.etiqueta);
       labels = cloneData.frecuencias;
+
+      if( cloneData.N) {
+        const n_label = {categoria: '0',esMissing: false,etiqueta: '(N)',etiqueta_abrev:'(N)',n: cloneData.N, total:100};
+        labels.push(n_label);
+      }
     }
 
+    // DATASETS
     if(cloneData.frecuencias ) {
       filas.forEach(fila => {
         datasets.push({label: fila.etiqueta, data: [], backgroundColor: [] , borderColor: []});
@@ -64,6 +73,7 @@ export class ResultChart {
       });
     }
 
+    // VALUES
     if(cloneData.etiqCruce1) {
         cloneData.cruce.slice(0, -1).map(x => {
           filas.map((fila, index) => {
@@ -74,11 +84,19 @@ export class ResultChart {
             } 
           });
         })
-      } else {
+      } else {  //
       cloneData.frecuencias.map((fila, index) => {
           datasets[0].data.push(fila.n);
           datasets[0].backgroundColor.push(colors[colorIndex]);
           index == 6 ? colorIndex = 0 : colorIndex++;
+
+          if( fila.total){
+            datasets[1].data.push(fila.total);
+          }else{
+            const valor = this._helpers.showInDecimal((fila.n * 100)/parseFloat(cloneData.N));
+            datasets[1].data.push(valor);
+          }
+          newData.removeColumnsToPaint = 1;
       });
       // if(data.haymedia){
       //   let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
@@ -295,6 +313,16 @@ export class ResultChart {
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
     data.labels = data.labels.map(label => this._helpers.getEtiqueta(label)); 
+
+    if( data.removeColumnsToPaint >0) {
+      const value = -Math.abs(data.removeColumnsToPaint);
+      // data.datasets[0].data.pop();
+      // data.datasets.pop();
+      // data.labels.pop();
+      data.datasets[0].data = data.datasets[0].data.slice(0,value);
+      data.datasets = data.datasets.slice(0,value);
+      data.labels = data.labels.slice(0,value);
+    }
     this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : buttons[1]);
   }
 
@@ -318,6 +346,7 @@ export class ResultChart {
   // }
 
   printChart(data, tableIndex, config){
+    console.log(data);
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
