@@ -1,6 +1,6 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable'
-//const jsPDF = window.jspdf.jsPDF; // comentar local
+// import jsPDF from 'jspdf';
+// import 'jspdf-autotable'
+const jsPDF = window.jspdf.jsPDF; // comentar local
 import * as ExcelJS from 'exceljs';
 import { Helpers } from './helpers';
 
