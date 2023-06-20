@@ -1,0 +1,58 @@
+<#--
+Widget templates can be used to modify the look of a
+specific application.
+
+Please use the right panel to quickly add commonly used variables.
+Autocomplete is also available and can be invoked by typing "${".
+-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+	<html>
+	
+		<button id="buttonPass">PASS</button>
+		<h1>
+			WIDGET
+		</h1>
+		<select name="variables" id="_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltVariables">
+      <option value="993194">Escala de autoubicación ideológica (1-10)</option>
+      <option value="36502">Recuerdo de voto en las elecciones generales de 2000</option>
+    </select>
+		<select name="cruce1" id="_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltCruce1">
+      <option value="36501">Cruce1</option>
+      <option value="993171">Cruce1 Ok</option>
+    </select>
+		<button class="btn" type="button" id="_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_ocultaCruce1">Quitar variable CRUCE 1</button>
+		<select name="cruce2" id="_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltCruce2">
+      <option value="36506">Cruce2</option>
+      <option value="993301">Cruce2 ok</option>
+    </select>
+		<button class="btn" type="button" id="_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_ocultaCruce2">Quitar variable CRUCE 2</button>
+		
+		
+     <#assign myNavPrefs = freeMarkerPortletPreferences.getPreferences({"type": "SERIE","id_cuestionario": 3400}) />
+		<@liferay_portlet["runtime"]
+		queryString="&instanceId=AAA"
+    defaultPreferences="${myNavPrefs}"
+    portletName="chart1_INSTANCE_ybmn"
+/>
+			<script>
+			var id = 0;
+			var tipo = 'PREGUNTA';
+			var numSerie = "";
+			// var cuestionarioSeleccionado = "3402";
+      // var muestraSeleccionada = "6994";
+      // var preguntaSeleccionada = "406338";
+      // var variableSeleccionada = "36501";
+      // var variableCruce1Seleccionada = "36505";
+      // var variableCruce2Seleccionada = null;
+			var codEstudio = "14695";
+			var cuestionarioSeleccionado = "";
+      var muestraSeleccionada = "";
+      var preguntaSeleccionada = "";
+      var variableSeleccionada = "";
+      var variableCruce1Seleccionada = "";
+      var variableCruce2Seleccionada = "";
+			
+		</script>
+		
+	</html>

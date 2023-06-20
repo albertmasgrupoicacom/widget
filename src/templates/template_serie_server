@@ -1,0 +1,45 @@
+<#--
+Widget templates can be used to modify the look of a
+specific application.
+
+Please use the right panel to quickly add commonly used variables.
+Autocomplete is also available and can be invoked by typing "${".
+-->
+	
+<#assign numSerie = "${paramUtil.get(themeDisplay.getRequest(),'numSerie','0')}"/> 
+<#assign tipo = "SERIE"/>
+<#assign myNavPrefs = freeMarkerPortletPreferences.getPreferences({"type": "SERIE","id_cuestionario": 3400}) />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <script>
+			var graphic;
+			var tipo = 'SERIE';
+      var numSerie = ${numSerie};
+    /*
+        CARGA INICIAL DE DATOS
+    */
+</script>
+<h3>Ficha serie</h3>
+<!-- botones de descarga excel y pdf de las graficas  (va en la plantilla freemarker)-->
+<div class="d-flex justify-content-end mb-3">
+    <span class="d-flex align-items-center mr-3">Exportar a:</span>
+    <button id="exportExcelButton" class="btn btn-primary mr-2">Excel</button>
+    <button id="exportPdfButton" class="btn btn-primary">Pdf</button>
+</div>
+<div class="list-cis">                    
+    <!-- PORTLET DE GRAFICAS DE SERIES -->
+    <@liferay_portlet["runtime"]
+        queryString="&instanceId=AAA"
+        defaultPreferences="${myNavPrefs}"
+        portletName="chart1_INSTANCE_ybmn"
+    />
+</div>
+	<script>
+		let excelButton = document.getElementById("exportExcelButton");
+      if(excelButton) {excelButton.onclick = (event => { 
+				console.log('excelButton');
+				graphic.exportExcel();})}
+
+      let pdfButton = document.getElementById("exportPdfButton");
+      if(pdfButton) {pdfButton.onclick = (event => graphic.exportPdf())}
+	</script>

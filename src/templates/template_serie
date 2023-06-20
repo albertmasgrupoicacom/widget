@@ -1,0 +1,33 @@
+<#assign numSerie = "${paramUtil.get(themeDisplay.getRequest(),'numSerie','0')}"/> 
+   <#assign tipo = "SERIE"/>
+	 <#assign myNavPrefs = freeMarkerPortletPreferences.getPreferences({"type": "SERIE","id_cuestionario": 3400}) />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+	 <script>
+        var tipo = 'SERIE';
+		    var numSerie = ${numSerie};
+        /*
+         CARGA INICIAL DE DATOS
+        */
+   </script>
+	<!-- botones de descarga excel y pdf de las graficas  (va en la plantilla freemarker)-->
+<div class="d-flex justify-content-end mb-3">
+    <span class="d-flex align-items-center mr-3">Exportar a:</span>
+    <button id="exportExcelButton" class="btn btn-primary mr-2">Excel</button>
+    <button id="exportPdfButton" class="btn btn-primary">Pdf</button>
+</div>
+   <div class="container-detalle-estudio">
+        <h3>Serie</h3>        
+                    <div class="card-body">
+                        <div class="row pc-listas content">
+                            <div class="col-md-12">
+                                <!-- PORTLET DE GRAFICAS DE SERIES -->
+																<@liferay_portlet["runtime"]
+		                              queryString="&instanceId=AAA"
+                                  defaultPreferences="${myNavPrefs}"
+                                  portletName="chart1_INSTANCE_ybmn"
+                                />
+                            </div>    
+                        </div>
+                    </div>
+     </div>

@@ -1,0 +1,1894 @@
+<#--
+Widget templates can be used to modify the look of a
+specific application.
+
+Please use the right panel to quickly add commonly used variables.
+Autocomplete is also available and can be invoked by typing "${".
+-->
+	
+   <#assign liferay_ui = PortletJspTagLibs["/META-INF/liferay-ui.tld"] />
+   <#assign liferay_util = PortletJspTagLibs["/META-INF/liferay-util.tld"] />
+   <#assign aui = PortletJspTagLibs["/META-INF/liferay-aui.tld"] />
+   <#assign codEstudio = "${paramUtil.get(themeDisplay.getRequest(),'codEstudio','0')}"/> 
+   <#assign origen = "${paramUtil.get(themeDisplay.getRequest(),'origen','estudio')}"/> 
+   <#assign idPregunta = "${paramUtil.get(themeDisplay.getRequest(),'idPregunta','0')}"/> 
+   <#-- <#assign codEstudio = "14706"/> -->
+	 <#assign urlCurrent = themeDisplay.getURLCurrent()/>
+	 <#assign myNavPrefs = ""/>
+	 <#-- PARAM: ${paramUtil.get(themeDisplay.getRequest(),'codEstudio','0')} -->
+	
+
+  
+<style>        
+        .container-detalle-estudio {
+  /* tablas */
+  /* listado-descargas */
+}
+.container-detalle-estudio .accordion .card-header h4.combo {
+  padding: 1rem 0rem 1rem 1rem;
+}
+.container-detalle-estudio .accordion .card-header h4 a.pointers-none {
+  pointer-events: none;
+}
+.container-detalle-estudio .accordion .card-header select {
+  background: url("/o/portal-cis-theme/images/ico_flecha_azul.svg") no-repeat;
+  background-position-x: 99%;
+  background-position-y: 45%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  color: #005767;
+  padding-right: 30px;
+  padding-left: 15px;
+  text-transform: lowercase;
+  max-width: 75%;
+}
+.container-detalle-estudio .accordion .card-header select option {
+  text-transform: lowercase;
+}
+.container-detalle-estudio h4 label.variable {
+  font-size: 15px;
+}
+.container-detalle-estudio h4 select.variable {
+  font-size: 15px;
+  background: url("/o/portal-cis-theme/images/ico_flecha_azul.svg") no-repeat;
+  background-position-x: 99%;
+  background-position-y: 45%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  color: #005767;
+  padding-right: 30px;
+  padding-left: 15px;
+  text-transform: lowercase;
+  min-height: 26.8px;
+}
+.container-detalle-estudio h4 select.variable option {
+  text-transform: lowercase;
+}
+.container-detalle-estudio .tabla-dinamica-cis.table-responsive {
+  background-color: #ffffff;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-bottom: 20px;
+}
+.container-detalle-estudio .table-responsive {
+  background-color: #F8F8F8;
+  padding: 5px;
+  margin-bottom: 0px;
+}
+.container-detalle-estudio table.table {
+    display: table;
+}
+.container-detalle-estudio table.table thead th {
+  border: none !important;
+}
+.container-detalle-estudio table.table tbody tr {
+  border-bottom: 1px solid #005767 !important;
+}
+.container-detalle-estudio table.table tbody tr:last-child {
+  border-bottom: none !important;
+}
+.container-detalle-estudio table.table tbody tr td {
+  border: none;
+  border-right: 1px solid #005767 !important;
+  font-size: 14px;
+}
+.container-detalle-estudio table.table tbody tr td:last-child {
+  border-right: none !important;
+}
+.container-detalle-estudio table.table tbody tr td ul {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+.container-detalle-estudio table.table tbody tr td label {
+  margin-bottom: 0px;
+}
+.container-detalle-estudio table.table tbody tr td label.semi {
+  font-family: "OpenSansSemi";
+  color: #005767;
+}
+.container-detalle-estudio table.table tbody tr td pre,
+.container-detalle-estudio table.table tbody tr td span {
+  font-size: 14px;
+  color: #005767;
+  font-family: "OpenSans";
+}
+.container-detalle-estudio table.table tbody tr td pre {
+  white-space: break-spaces;
+}
+.container-detalle-estudio table.table.datosPrincipalesEstudio thead th {
+  height: 0px;
+  padding: 0;
+}
+.container-detalle-estudio table.table.datosPrincipalesEstudio tbody td:nth-child(1) {
+  font-family: "OpenSansSemi";
+  color: #005767;
+}
+.container-detalle-estudio .listado-descargas {
+  background-color: #F8F8F8;
+  padding: 15px;
+  height: 100%;
+}
+.container-detalle-estudio .listado-descargas label {
+  font-family: "OpenSansSemi";
+  font-size: 18px;
+  color: #005767;
+  margin-bottom: 15px;
+}
+.container-detalle-estudio .listado-descargas ul {
+  list-style: none;
+  padding-left: 0px;
+}
+.container-detalle-estudio .listado-descargas ul li {
+  padding-bottom: 10px;
+}
+.container-detalle-estudio .listado-descargas ul li a {
+  color: #005767 !important;
+}
+.container-detalle-estudio .listado-descargas ul li a:hover, .container-detalle-estudio .listado-descargas ul li a:focus {
+  color: #005767 !important;
+}
+.container-detalle-estudio .listado-descargas ul li a[imagen] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_generico.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=PDF] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_PDF.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=ZIP] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_zip.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=XLSX] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_excel.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=XLS] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_excel.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=DOC] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_word.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=HTML] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_html.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+
+.container-detalle-estudio .listado-descargas ul li a[imagen=OTRO] {
+    padding: 0 0 0 1.4rem;
+    background: url("/o/portal-cis-theme/images/ico_html.svg") left center no-repeat;
+    margin-right: 0.2rem;
+}
+.container-detalle-estudio .tabla-dinamica-cis .dataTables_wrapper .dataTables_filter {
+    float: none;
+    margin-top: 2px;
+}
+	   
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+   <div class="container-detalle-estudio">
+        <h3>Estudios</h3>        
+		 <!-- botones de descarga excel y pdf de las graficas  (va en la plantilla freemarker)-->
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<span class="mr-auto" id="<@portlet.namespace />BarraEstudio"></span>
+    <span class="d-flex align-items-center mr-3">Exportar a</span>
+    <button id="exportExcelButton" class="btn btn-primary mr-2">Excel</button>
+    <button id="exportPdfButton" class="btn btn-primary">Pdf</button>
+</div>
+        <#-- Funcionalidad datos principales de estudio  -->
+        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />datosPrincipalesEstudio">
+            <div class="card">
+                <div class="card-header" id="heading<@portlet.namespace />datosPrincipalesEstudio">	
+                    <h4 class="mb-0">
+                        <a aria-controls="<@portlet.namespace />datosPrincipalesEstudio" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />datosPrincipalesEstudio" role="button">
+                            <span id="<@portlet.namespace />tituloEstudio"></span>
+                        </a>
+                    </h4>		   
+                </div>
+                <div id="coll<@portlet.namespace />datosPrincipalesEstudio" class="collapse show" aria-labelledby="heading<@portlet.namespace />datosPrincipalesEstudio" data-parent="#<@portlet.namespace />datosPrincipalesEstudio" role="region">
+                    <div class="card-body">
+                        <div class="row pc-listas content">
+                            <div class="col-md-9">
+                                <div class="table-responsive">
+                                    <table class="table datosPrincipalesEstudio">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>                                        
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />numeroEstudio">N&uacute;mero:</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />numeroEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />fechaEstudio">Fecha:</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />fechaEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />tipoEstudio">Tipo de Estudio:</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />tipoEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />autoresEstudio">Autor(es):</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />autoresEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />encargoEstudio">Encargo:</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />encargoEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />paisEstudio">Pa&iacute;s:</label>
+                                                    
+                                                </td>
+                                                <td><span id="<@portlet.namespace />paisEstudio"></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="<@portlet.namespace />indiceEstudio">&Iacute;ndice
+                                                        Tem&aacute;tico:</label>
+                                                </td>
+                                                <td>
+                                                    <span id="<@portlet.namespace />indiceEstudio"></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="listado-descargas">
+                                    <label for="<@portlet.namespace />ficheros">Documentos para descargar:</label>
+                                    <span id="<@portlet.namespace />ficheros"></span>                             
+                                </div>       
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>		
+        </div>
+        <!-- Apartado que muestra los cuestionarios del Estudio -->
+        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />cuestionarios">
+            <div class="card">
+                <div class="card-header" id="heading<@portlet.namespace />cuestionarios">	
+                    <h4 class="mb-0 combo d-flex justify-content-between">
+                        <div style="max-width: 80%;"><label class="mr-2" for="<@portlet.namespace />sltCuestionarios">Cuestionario:</label><select id="<@portlet.namespace />sltCuestionarios"></select></div>
+                        <a class="collapsed pointers-none" aria-controls="<@portlet.namespace />cuestionarios" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />cuestionarios" role="button">
+                            <span id="<@portlet.namespace />tituloEstudio"></span>
+                        </a>
+                    </h4>		   
+                </div>
+                <div id="coll<@portlet.namespace />cuestionarios" class="collapse" aria-labelledby="heading<@portlet.namespace />cuestionarios" data-parent="#<@portlet.namespace />cuestionarios" role="region">
+                    <div class="card-body">
+                        <div id="<@portlet.namespace />contenidoCuestionarios" class="pc-listas content"></div>
+                    </div>
+                </div> 
+            </div>		
+        </div>
+        <div class="card cont-txt-dest" id="<@portlet.namespace />noPreguntas">
+            <h4 class="mb-0 combo d-flex justify-content-between">
+                <label>Consultar a banco de datos sobre la disponibilidad de esta informaci&oacute;n <a href='mailto:bancodedatos@cis.es'>bancodedatos@cis.es</a></label>
+            </h4>
+        </div>
+         <div class="card cont-txt-dest" id="<@portlet.namespace />noVariables">
+            <h4 class="mb-0 combo d-flex justify-content-between">
+                <label>Consultar a banco de datos sobre la disponibilidad de esta informaci&oacute;n <a href='mailto:bancodedatos@cis.es'>bancodedatos@cis.es</a></label>
+            </h4>
+        </div>
+        <!-- Apartado que muestra las muestras de cada cuestionario -->    
+        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />muestras">
+            <div class="card">
+                <div class="card-header" id="heading<@portlet.namespace />muestras">	
+                    <h4 class="mb-0 combo d-flex justify-content-between">
+                        <div style="max-width: 80%;"><label class="mr-2" for="<@portlet.namespace />sltMuestras">Muestra:</label><select id="<@portlet.namespace />sltMuestras"></select></div>
+                        <a class="collapsed pointers-none" aria-controls="<@portlet.namespace />muestras" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />muestras" role="button">
+                            <span id="<@portlet.namespace />tituloEstudio"></span>
+                        </a>
+                    </h4>		   
+                </div>
+                <div id="coll<@portlet.namespace />muestras" class="collapse" aria-labelledby="heading<@portlet.namespace />muestras" data-parent="#<@portlet.namespace />muestras" role="region">
+                    <div class="card-body">
+                        <div id="<@portlet.namespace />contenidoMuestras" class="pc-listas content"></div>
+                    </div>
+                </div> 
+            </div>		
+        </div>
+        <div class="card-body pb-0 pt-0 pr-3 pl-3 mb-3 d-flex justify-content-end" id="<@portlet.namespace />botonesExplorador">
+            <button class="btn btn-secondary p-1 mr-2" type="button" id="<@portlet.namespace />exploradorPreguntas">Explorador de Preguntas</button>
+            <button class="btn btn-secondary p-1" type="button" id="<@portlet.namespace />exploradorVariables">Explorador de Variables</button>
+        </div>
+        <!-- Apartado que muestra las preguntas del cuestionario -->    
+        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />preguntas">
+            <div class="card">
+                <div class="card-header" id="heading<@portlet.namespace />preguntas">	
+                    <h4 class="mb-0 combo d-flex justify-content-between">
+                        <div style="max-width: 80%;"><label class="mr-2" for="<@portlet.namespace />sltPreguntas">Pregunta:</label><select class="w-75" id="<@portlet.namespace />sltPreguntas"></select></div>
+                        <a class="collapsed pointers-none" aria-controls="<@portlet.namespace />preguntas" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />preguntas" role="button">
+                            <span id="<@portlet.namespace />tituloEstudio"></span>
+                        </a>
+                    </h4>		   
+                </div>
+                <div id="coll<@portlet.namespace />preguntas" class="collapse" aria-labelledby="heading<@portlet.namespace />preguntas" data-parent="#<@portlet.namespace />preguntas" role="region">
+                    <div class="card-body">
+                        <div id="<@portlet.namespace />contenidoPreguntas" class="pc-listas content"></div>
+                    </div>
+                </div> 
+            </div>		
+        </div>
+        <!-- Apartado que muestra la consulta de variables  -->
+        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />consultaVariables">
+            <div class="card">
+                <div class="card-header" id="heading<@portlet.namespace />consultaVariables">	
+                    <h4 class="mb-0">
+                        <a aria-controls="<@portlet.namespace />consultaVariables" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />consultaVariables" role="button">
+                            <span id="<@portlet.namespace />tituloConsultaVariables">Consulta de variables</span>
+                        </a>
+                    </h4>		   
+                </div>
+                <div id="coll<@portlet.namespace />consultaVariables" class="collapse show" aria-labelledby="heading<@portlet.namespace />consultaVariables" data-parent="#<@portlet.namespace />consultaVariables" role="region">
+                    <div class="card-body">
+                       <div id="<@portlet.namespace />variables">
+                          <h4 class="mb-3">
+                             <label class="variable mr-2" for="<@portlet.namespace />sltVariables">Variables:</label>
+                             <select class="variable mr-2 w-50" id="<@portlet.namespace />sltVariables"></select>
+                             <button class="btn btn-secondary p-1 d-inline-flex" type="button" id="<@portlet.namespace />buscadorVariables">Buscador de variables</button>
+                          </h4>
+                       </div>
+                       <div id="<@portlet.namespace />capaBuscador"></div>
+                       <div id="<@portlet.namespace />cruce1">
+                            <h4 class="mb-3">
+                                <label class="variable mr-2" for="<@portlet.namespace />sltCruce1">Elija una variable de cruce:</label>
+                                <select class="variable mr-2 w-50" id="<@portlet.namespace />sltCruce1"></select>
+                                <button class="btn btn-secondary p-1 d-inline-flex" type="button" id="<@portlet.namespace />ocultaCruce1">Quitar variable</button>
+                                <button class="btn btn-secondary p-1 d-inline-flex" type="button" id="<@portlet.namespace />buscadorVariablesC1">Buscador de variables</button>
+							</h4>
+                       </div>
+					   <div id="<@portlet.namespace />capaBuscadorC1"></div>
+                       <div id="<@portlet.namespace />cruce2">
+                            <h4 class="mb-3">
+                                <label class="variable mr-2" for="<@portlet.namespace />sltCruce2">Elija una variable de cruce:</label>
+                                <select class="variable mr-2 w-50" id="<@portlet.namespace />sltCruce2"></select>
+                                <button class="btn btn-secondary p-1 d-inline-flex" type="button" id="<@portlet.namespace />ocultaCruce2">Quitar variable</button>
+                                <button class="btn btn-secondary p-1 d-inline-flex" type="button" id="<@portlet.namespace />buscadorVariablesC2">Buscador de variables</button>
+							</h4>
+                       </div>
+                       <div id="<@portlet.namespace />capaBuscadorC2"></div>
+                       <div>
+												  <@liferay_portlet["runtime"]
+                             queryString="&instanceId=AAA"
+                             defaultPreferences="${myNavPrefs}"
+                             portletName="chart1_INSTANCE_ybmn"
+                           /> 
+											 </div>
+
+                        <div class="accordion acordeon ul-pc ol-pc accordion-primary" id="<@portlet.namespace />advertencia">
+                            <div class="card">
+                                <div class="card-header" id="heading<@portlet.namespace />advertencia">	
+                                    <h4 class="mb-0 combo d-flex justify-content-between">
+                                        <div style="max-width: 80%;">Advertencia</div>
+                                        <a class="collapsed" aria-controls="<@portlet.namespace />advertencia" aria-expanded="false" data-toggle="collapse" href="#coll<@portlet.namespace />advertencia" role="button">
+                                            <span id="<@portlet.namespace />tituloEstudio"></span>
+                                        </a>
+                                    </h4>		   
+                                </div>
+                                <div id="coll<@portlet.namespace />advertencia" class="collapse" aria-labelledby="heading<@portlet.namespace />advertencia" data-parent="#<@portlet.namespace />advertencia" role="region">
+                                    <div class="card-body">
+                                        <div id="cookieMessageContainer">
+                                            <p><b>ADVERTENCIA:</b></p>
+                                            <p>El error muestral aumenta conforme disminuye el n&uacute;mero de entrevistas realizadas. T&eacute;ngase presente sobre todo en los cruces de variables y las preguntas filtradas.</p>
+                                            <p>A modo orientativo, bajo la hip&oacute;tesis de muestreo aleatorio simple, P=Q=1/2 y un 95% de intervalo de confianza, v&eacute;ase la siguiente tabla:</p>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr style="background-color:#C6EFCE;color_black;">
+                                                            <td style="width:100px;">
+                                                            <p><strong>N&uacute;mero de entrevistas</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>5</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>10</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>20</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>50</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>75</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>100</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>200</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>400</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>500</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>750</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>1.000</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>1.500</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>2.000</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>2.500</strong></p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr style="background-color:#FFEB9C;color_black;">
+                                                            <td>
+                                                            <p><strong>Error</strong></p>
+
+                                                            <p><strong>muestral &plusmn;</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>44,7%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>31,6%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>22,4%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>14,1%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>11,5%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>10,0%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>7,1%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>5,0%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>4,5%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>3,7%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>3,2%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>2,6%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>2,2%</strong></p>
+                                                            </td>
+                                                            <td>
+                                                            <p><strong>2,0%</strong></p>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <p>El CIS no se har&aacute; responsable del rigor cient&iacute;fico del tratamiento estad&iacute;stico, de las interpretaciones anal&iacute;ticas o de otro tipo, ni de la presentaci&oacute;n que los solicitantes puedan hacer de la informaci&oacute;n facilitada por el banco de datos del centro.(RD 1214/1997, art. 7)</p>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>		
+                        </div>
+
+                    </div>
+                </div> 
+            </div>		
+        </div>
+        <div class="accordion-body">
+            <div class="accordion">
+                
+            </div>
+        </div>
+    </div>
+    <script>
+			  var graphic;
+        //Variables de la REQUEST
+        var codEstudio = ${codEstudio};
+        var idPregunta = ${idPregunta};
+        var origen = '${origen}';
+        console.log("CODEstudio:"+ codEstudio);
+        console.log("idPregunta:"+ idPregunta);
+        console.log("origen:"+ origen);
+        //Variables locales
+		var cuestionarioSeleccionado = "";
+        var muestraSeleccionada = "";
+        var preguntaSeleccionada = "";
+        var preguntaAnteriorSeleccionada = "";
+        var variableSeleccionada = "";
+        var variableCruce1Seleccionada = "";
+        var variableCruce2Seleccionada = "";
+		var tipo = "PREGUNTA";
+		var id = 0;
+        var muestrasEstudio = [];
+        var tienePreguntas = false;
+        var tieneVariables = false;
+        var datosFichaEstudio = "";
+        //URL de acceso a pagina de SERIE
+        var urlSerie = "/plantillas-ficha?numSerie=";
+        //Contiene las variables del cuestionario
+        var variables = "";
+		//Ocultamos / reseteamos valores de inicio
+		resetearEstadoComponentes();
+			let sltPreguntas = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltPreguntas");
+			if(sltPreguntas) {
+         sltPreguntas.addEventListener("change", ()=> {
+            console.log('change pregunta',sltPreguntas.value);
+            preguntaSeleccionada = sltPreguntas.value;
+				    if( graphic ) { graphic.init()}
+          });
+      }
+			let sltCuestionario = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltCuestionarios");
+			if(sltCuestionario) {
+         sltCuestionario.addEventListener("change", ()=> {
+            console.log('change cuestionario',sltCuestionario.value);
+            cuestionarioSeleccionado = sltCuestionario.value;
+				    if( graphic ) { graphic.init()}
+          });
+      }
+			
+		  let sltVariables = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltVariables");
+      if(sltVariables) {
+         sltVariables.addEventListener("change", ()=> {
+            console.log('change variable 2',sltVariables.value);
+            variableSeleccionada = sltVariables.value;
+				    if( graphic ) { graphic.init()}
+          });
+      }
+				
+		  let sltCruce1 = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltCruce1");
+      if(sltCruce1) {
+         sltCruce1.addEventListener("change", ()=> {
+            console.log('change cruce 1',sltCruce1.value);
+					  variableCruce1Seleccionada = sltCruce1.value;
+            if( graphic ) { graphic.init()}
+         });
+			}
+					
+			let sltCruce2 = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_sltCruce2");
+      if(sltCruce2) {
+         sltCruce2.addEventListener("change", ()=> {
+            console.log('change cruce 2',sltCruce2.value);
+					  variableCruce2Seleccionada = sltCruce2.value;
+            if( graphic ) { graphic.init()}
+         });
+		  }
+			
+			let ocultaCruce1 = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_ocultaCruce1");
+         if(ocultaCruce1) {
+            ocultaCruce1.addEventListener("click", ()=> {
+            console.log('oculta cruce 1');
+					  variableCruce1Seleccionada = null;
+            if( graphic ) { graphic.init()}
+         });
+			}
+					
+			let ocultaCruce2 = document.getElementById("_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_A0FERJkYdUPO_ocultaCruce2");
+         if(ocultaCruce2) {
+         ocultaCruce2.addEventListener("click", ()=> {
+            console.log('oculta cruce 2');
+					  variableCruce2Seleccionada = null;
+            if( graphic ) { graphic.init()}
+         });
+      }
+
+			let excelButton = document.getElementById("exportExcelButton");
+      if(excelButton) {excelButton.onclick = (event => graphic.exportExcel())}
+
+      let pdfButton = document.getElementById("exportPdfButton");
+      if(pdfButton) {pdfButton.onclick = (event => graphic.exportPdf())}
+        /*
+         CARGA INICIAL DE DATOS
+        */
+		$(document).ready(function(){
+	    let url = "https://webserver-cis-dev.lfr.cloud/o/cis/estudio/"+codEstudio;
+			console.log("URL: " + url);
+			console.log("URL: " + url);
+			let headers = new Headers();
+            headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+			Liferay.Util.fetch(url, {
+                method: 'GET',
+				mode: "cors",
+				headers: headers
+			})
+			.then(response => response.json())
+			.then(json  => <@portlet.namespace />cargarDatosEstudio(json));
+
+            /* niceSelect desactivado */          
+            setTimeout(function(){
+                $('.container-detalle-estudio select').niceSelect('destroy');
+            }, 1000);
+
+        }); //end document.ready
+			
+			//FUNCION DE RESETEO POR CAMBIO DE CUESTIONARIO O PRIMERA CARGA DE PAGINA
+			function resetearEstadoComponentes(){
+				 //Carga de opciones por defecto PREGUNTAS
+                //Cargamos inicialmente el combo de PREGUNTAS con sus valores
+                $('#<@portlet.namespace />sltPreguntas').append('<option selected value="0" >Seleccione una pregunta</option>');
+                $('#<@portlet.namespace />sltPreguntas').prop('disabled', true);
+                $('#<@portlet.namespace />exploradorPreguntas').prop('disabled', true);
+                $('#<@portlet.namespace />exploradorVariables').prop('disabled', true);
+                $('#<@portlet.namespace />consultaVariables').hide();
+                $('#<@portlet.namespace />noPreguntas').hide();
+                $('#<@portlet.namespace />noVariables').hide();
+                $('#<@portlet.namespace />capaBuscador').hide();
+                $('#<@portlet.namespace />capaBuscadorC1').hide();
+                $('#<@portlet.namespace />capaBuscadorC2').hide();
+            }
+			
+		//FUNCION DE CARGA DE DATOS DEL ESTUDIO 
+	    function <@portlet.namespace />cargarDatosEstudio(datosEstudio){    
+            if (datosEstudio.success == true){
+				console.log(datosEstudio.ficha);
+                //Asignamos en la variables GLOBAL los datos de la FICHA de Estudio
+                datosFichaEstudio =datosEstudio.ficha;
+                console.log("DATOS FICHA ESTUDIO: " + datosFichaEstudio);
+                cargaDatosPrincipalesEstudio (datosEstudio.ficha.estudio);
+                cargaDatosFicheros(datosEstudio.ficha.estudio);
+                cargarCuestionarios(datosEstudio.ficha.cuestionarios);
+				cargarMuestras(datosEstudio.ficha.muestras);
+                //SI HAY UN ORIGEN PREGUNTA
+                if (origen == 'pregunta'){
+                    //Buscamos una PREGUNTA
+                    if(idPregunta != ""){
+                        preguntaSeleccionada = idPregunta;
+                        cargarDatosOrigenPregunta (preguntaSeleccionada);
+                    }
+                    else {
+                        $('#<@portlet.namespace />sltPreguntas').append('<option selected value="0" >Seleccione una pregunta</option>');
+                        $('#<@portlet.namespace />sltPreguntas').prop('disabled', true);
+                        $('#<@portlet.namespace />exploradorPreguntas').prop('disabled', true);
+                        $('#<@portlet.namespace />exploradorVariables').prop('disabled', true);
+                        $('#<@portlet.namespace />consultaVariables').hide();
+                    }
+                }
+             }
+        }
+	
+        /* CARGA DATOS PRINCIPALES DEL ESTUDIO */
+        function cargaDatosPrincipalesEstudio (ficha) {    
+                console.log("---- DATOS PRINCIPALES ---");
+                //var estudio = datosEstudio.ficha.estudio;
+                //Obtenemos los datos basicos del ESTUDIO y los cargamos en sus respectivos objetos
+                $('#<@portlet.namespace />BarraEstudio').append('Estudios / Estudio ' + ficha.codigo);
+                    $('#<@portlet.namespace />tituloEstudio').append('Estudios / Estudio ' + ficha.titulo);
+                $('#<@portlet.namespace />numeroEstudio').append(ficha.codigo);
+                $('#<@portlet.namespace />fechaEstudio').append(ficha.fecha);
+                $('#<@portlet.namespace />tipoEstudio').append(ficha.tipoEstudio);
+                $('#<@portlet.namespace />autoresEstudio').append(ficha.autores[0]);
+                $('#<@portlet.namespace />encargoEstudio').append(ficha.encargo[0]);
+                $('#<@portlet.namespace />paisEstudio').append(ficha.pais);
+                //Leemos el Indice tematico
+                if (ficha.indiceTematico != null && ficha.indiceTematico != 'null' && ficha.indiceTematico.length > 0){
+                    var indiceTematico = ficha.indiceTematico;
+                    var contenidoIndice = "<ul>";
+                        indiceTematico.forEach( function(valor) {
+                        contenidoIndice = contenidoIndice + '<li>' + valor + '</li>';
+                    });
+                    contenidoIndice = contenidoIndice + '</ul>';
+                    console.log(contenidoIndice);
+                    $('#<@portlet.namespace />indiceEstudio').append(contenidoIndice);
+                }
+        }
+
+        /* CARGA DE LOS DATOS DE FICHEROS */
+        function cargaDatosFicheros (fichaEstudio) {    
+            console.log("---- FICHEROS ---");
+            let url = "https://webserver-cis-dev.lfr.cloud/o/ficheros/estudio/" + fichaEstudio.fecha.substr(-4) + "/" + fichaEstudio.codigo;
+			  Liferay.Util.fetch(url, {
+				   method: 'GET',
+					 mode:'no-cors',
+					  headers: {
+						  'Authorization': 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ'
+					 }
+			}).then(response => 
+                response.json().then(data => ({
+                        data: data,
+                        status: response.status
+                })
+                    ).then(res => {
+					    if (res.data.success != false){
+                        var contenidoFicheros = "<ul>";
+                        res.data.forEach( function(valor) {
+                            contenidoFicheros = contenidoFicheros + '<li>';
+                            contenidoFicheros = contenidoFicheros + '<a imagen="'+ valor.extension.toUpperCase() +'" href="' + valor.url + '" target="_blank" alt="' + valor.filename + '">' + valor.fileName + '</a>';
+                            contenidoFicheros = contenidoFicheros +'</li>';
+                        });
+                        contenidoFicheros = contenidoFicheros + '</ul>';
+                        $('#<@portlet.namespace />ficheros').append(contenidoFicheros);
+												}
+            }));   
+        }
+
+        /* CARGA DE LOS DATOS DE LOS CUESTIONARIOS DEL ESTUDIO */
+        function cargarCuestionarios (cuestionarios){
+            console.log("---- CUESTIONARIOS ---");
+            console.log(cuestionarios);
+            //Obtenemos los datos de los cuestionarios
+            if (cuestionarios != null && cuestionarios != 'null' && cuestionarios.length != "0"){
+                //Cargamos inicialmente el combo de CUESTIONARIOS con sus valores
+                $('#<@portlet.namespace />sltCuestionarios').append('<option selected value="0" >Seleccione un cuestionario</option>');
+                cuestionarios.forEach( function(valor) {
+                    if(valor.tiene_preguntas == false){
+                         $('#<@portlet.namespace />sltCuestionarios').append('<option value="' + valor.id + '" class="noPreguntas">' + valor.titulo + '</option>');
+                    }
+                    else {
+                        $('#<@portlet.namespace />sltCuestionarios').append('<option value="' + valor.id + '">' + valor.titulo + '</option>');
+                    }
+                });
+            }
+            else {
+                    $('#<@portlet.namespace />cuestionarios').hide();
+                    $('#<@portlet.namespace />muestras').hide();
+                $('#<@portlet.namespace />preguntas').hide();
+                    $('#<@portlet.namespace />botonesExplorador').hide();
+                $('#<@portlet.namespace />consultaVariables').hide();
+                $('#<@portlet.namespace />exploradorPreguntas').hide();
+                    $('#<@portlet.namespace />exploradorVariables').hide();
+                $('#<@portlet.namespace />noPreguntas').show();
+            }
+            
+                
+            var contenidoCuestionarios = "";
+            cuestionarios.forEach( function(valor) {
+                contenidoCuestionarios += '<div class="table-responsive"><div id="<@portlet.namespace />' + valor.id + '" class="cuestionario" class="col-md-12" style="display:none;">';
+                contenidoCuestionarios += '<table class="table">';
+                contenidoCuestionarios += '<tr>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />fechaInicioCuestionario">Fecha de inicio:</label></td>';
+                contenidoCuestionarios += '<td><span id="<@portlet.namespace />fechaInicioCuestionario">' + valor.fecha_inicio + '</span></td>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />fechaFinCuestionario">Fecha de finalizaci&oacute;n:</label></td>';
+                contenidoCuestionarios += '<td><span id="<@portlet.namespace />fechaFinCuestionario">' + valor.fecha_fin + '</span></td>';
+                contenidoCuestionarios += '</tr>';
+                contenidoCuestionarios += '<tr>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />tipoCuestionario">Tipo de cuestionario:</label></td>';
+                contenidoCuestionarios += '<td colspan="3"><span id="<@portlet.namespace />tipoCuestionario">' + valor.tipo_cuestionario + '</span></td>';
+                contenidoCuestionarios += '</tr>';
+                contenidoCuestionarios += '<tr>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />tipoEntrevista">Tipo de entrevista:</label></td>';
+                contenidoCuestionarios += '<td colspan="3"><span id="<@portlet.namespace />tipoEntrevista">' + valor.tipo_entrevista + '</span></td>';
+                contenidoCuestionarios += '</tr>';
+                contenidoCuestionarios += '<tr>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />variablesSocio">Variables sociodemogr&aacute;ficas:</label></td>';
+                contenidoCuestionarios += '<td colspan="3"><span id="<@portlet.namespace />variablesSocio">' + valor.variables_sociodemograficas + '</span></td>';
+                contenidoCuestionarios += '</tr>';
+                contenidoCuestionarios += '<tr>';
+                contenidoCuestionarios += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />contenidoCuestionario">Contenido:</label></td>';
+                contenidoCuestionarios += '<td colspan="3"><span id="<@portlet.namespace />contenidoCuestionario"><pre>' + valor.contenido + '</pre></span></td>';
+                contenidoCuestionarios += '</tr>';
+                contenidoCuestionarios += '</table>';
+                contenidoCuestionarios += '</div></div>';
+            });
+
+
+            $('#<@portlet.namespace />contenidoCuestionarios').append(contenidoCuestionarios);
+        }
+			
+			
+        /* CARGA DE LOS DATOS DE LAS MUESTRAS DEL ESTUDIO */		
+        function cargarMuestras (muestras){
+            console.log("---- MUESTRAS ---");
+            muestrasEstudio = muestras;
+            //Obtenemos los datos de lasmuestras
+            if (muestras != null && muestras != 'null'){
+                //Cargamos inicialmente el combo de MUESTRAS con el valor por DEFECTO
+                $('#<@portlet.namespace />sltMuestras').append('<option selected value="0" >Seleccione una muestra</option>');
+                $('#<@portlet.namespace />sltMuestras').prop('disabled', true);
+            }
+
+            //Creamos los contenidos para cada cuestionario
+            var contenidoMuestras = "";
+                
+            muestras.forEach( function(valor) {
+                contenidoMuestras += '<div class="table-responsive"><div id="<@portlet.namespace />' + valor.id + '" class="muestra" class="col-md-12" style="display:none;">';
+                contenidoMuestras += '<table class="table">';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />titulo">Muestra:</label></td>';
+                contenidoMuestras += '<td colspan="3"><span id="<@portlet.namespace />titulo">' + valor.titulo + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />ambito">&Aacute;mbito:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />ambito">' + valor.ambito + '</span></td>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />universo">Universo:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />universo">' + valor.universo + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />sexo">Sexo:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />sexo">' + valor.sexo + '</span></td>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />edad">Edad:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />edad">' + valor.edad + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />tamanioReal">Tama&ntilde;o real:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />tamanioReal">' + valor.tamano_real + '</span></td>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />tamanioTeorico">Tama&ntilde;o te&oacute;rico:</label></td>';
+                contenidoMuestras += '<td><span id="<@portlet.namespace />tamanioTeorico">' + valor.tamano_teorico + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />afijacion">Afijaci&oacute;n:</label></td>';
+                contenidoMuestras += '<td colspan="3"><span id="<@portlet.namespace />afijacion">' + valor.afijacion + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />puntosMuestreo">Puntos de muestreo:</label></td>';
+                contenidoMuestras += '<td colspan="3"><span id="<@portlet.namespace />puntosMuestreo">' + valor.puntos_muestreo + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />errorMuestral">Error muestral:</label></td>';
+                contenidoMuestras += '<td colspan="3"><span id="<@portlet.namespace />errorMuestral">' + valor.error_muestral + '</span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '<tr>';
+                contenidoMuestras += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />metodoMuestreo">M&eacute;todo de muestreo:</label></td>';
+                contenidoMuestras += '<td colspan="3"><span id="<@portlet.namespace />metodoMuestreo"><pre>' + valor.metodo_muestreo + '</pre></span></td>';
+                contenidoMuestras += '</tr>';
+                contenidoMuestras += '</table>';
+                contenidoMuestras += '</div></div>';
+            });
+
+
+            $('#<@portlet.namespace />contenidoMuestras').append(contenidoMuestras);
+        }
+			
+	
+   
+
+        function cargarMuestrasCuestionario(idCuestionario){
+            console.log("---- MUESTRAS ---" + idCuestionario);
+            //Obtenemos los datos de las muestras
+            if (muestrasEstudio != null && muestrasEstudio != 'null'){
+                //Limpiamos previamente el combo de muestras
+                $('#<@portlet.namespace />sltMuestras').empty();
+                //Y lo habilitamos
+                $('#<@portlet.namespace />sltMuestras').prop('disabled', false);
+                //Ocultamos todos los DIVs de los elementos de muestra
+                const divsMuestras = document.getElementsByClassName('muestra');
+                for (i=0; i<divsMuestras.length; i++) {
+                        $(divsMuestras[i]).hide();
+                }
+                                            
+                //Cargamos inicialmente el combo de MUESTRAS con sus valores
+                $('#<@portlet.namespace />sltMuestras').append('<option selected value="0" >Seleccione una muestra</option>');
+                muestrasEstudio.forEach( function(valor) {
+                    if (valor.id_cuestionario == idCuestionario){
+                        $('#<@portlet.namespace />sltMuestras').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                    }
+                });
+            }
+
+        }
+
+        /*
+        CARGA EL COMBO DE PREGUNTAS AL SELECCIONAR UN CUESTIONARIO
+        */
+        function cargarPreguntasCuestionario(idCuestionario){
+            console.log("---- PREGUNTAS ---" + idCuestionario);
+            let url = "https://webserver-cis-dev.lfr.cloud/o/cis/preguntas_cuestionario/"+idCuestionario;
+            console.log("URL: " + url);
+            let headers = new Headers();
+            headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+            Liferay.Util.fetch(url, {
+                method: 'GET',
+                headers: headers
+            })
+            .then(response => response.json())
+            .then(json  => <@portlet.namespace />procesarPreguntas(json));
+        }
+			
+        //Carga el Combo de PREGUNTAS para el cuestionario seleccionado    
+        function <@portlet.namespace />procesarPreguntas(preguntas) {
+            console.log("---- PREGUNTAS --- " + JSON.stringify(preguntas));
+            var datosPreguntas = preguntas.lista;
+            console.log("PREGUNTAS: " + datosPreguntas.length);
+            //Obtenemos los datos de las preguntas
+            if (datosPreguntas != null && datosPreguntas != 'null' && datosPreguntas.length > 0){
+                //Tiene preguntas
+                tienePreguntas = true;
+                //Limpiamos previamente el combo de preguntas
+                $('#<@portlet.namespace />sltPreguntas').empty();
+                //Y lo habilitamos
+                $('#<@portlet.namespace />sltPreguntas').prop('disabled', false);
+                //Ocultamos todos los DIVs de los elementos de muestra
+                $('#<@portlet.namespace />contenidoPreguntas').empty();   
+                                    
+                //Cargamos inicialmente el combo de PREGUNTAS con sus valores
+                $('#<@portlet.namespace />sltPreguntas').append('<option selected value="0" >Seleccione una pregunta</option>');
+                datosPreguntas.forEach( function(valor) {
+                    $('#<@portlet.namespace />sltPreguntas').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                });
+            }
+            else {
+                console.log("NO PREGUNTAS------------");
+                $('#<@portlet.namespace />muestras').hide();
+                $('#<@portlet.namespace />preguntas').hide();
+                $('#<@portlet.namespace />botonesExplorador').hide();
+                $('#<@portlet.namespace />consultaVariables').hide();
+                $('#<@portlet.namespace />noPreguntas').show();
+
+            }
+            
+        }
+
+        //Muestra los datos de una PREGUNTA seleccionada en el desplegable
+        function <@portlet.namespace />mostrarFichaPregunta(fichaPregunta) {
+            console.log("FICHA PREGUNTA----");
+            //Obtenemos los datos de la pregunta
+            var datosPregunta = fichaPregunta.ficha;
+            console.log("DATOS PREGUNTA: " + JSON.stringify(datosPregunta));
+            var contenidoPregunta = "";
+            var descriptores = "";
+            var series = "";
+            var id_cuestionario = datosPregunta.id_cuestionario;
+
+            contenidoPregunta += '<div class="table-responsive"><div id="<@portlet.namespace />' + datosPregunta.id + '" class="pregunta" class="col-md-12" style="display:block;">';
+            contenidoPregunta += '<table class="table">';
+            contenidoPregunta += '<tr>';
+            contenidoPregunta += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />pregunta">Pregunta:</label></td>';
+            contenidoPregunta += '<td colspan="3"><span id="<@portlet.namespace />pregunta">' + datosPregunta.codigo + ' - ' + datosPregunta.titulo + '</span></td>';
+            contenidoPregunta += '</tr>';
+            //Construimos los descriptores de la pregunta
+            var datosDescriptores = datosPregunta.descriptores;
+            datosDescriptores.forEach(function(valor){
+                descriptores += valor.descriptor + ";";
+            })
+            contenidoPregunta += '<tr>';
+            contenidoPregunta += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />descriptores">Descriptores:</label></td>';
+            contenidoPregunta += '<td colspan="3"><span id="<@portlet.namespace />descriptores">' + descriptores.substring(0,descriptores.length - 1) + '</span></td>';
+            contenidoPregunta += '</tr>';
+            //Construimos el contenido de las series
+			      var datosSeries = datosPregunta.series;
+					  console.log("SERIES: " + JSON.stringify(datosPregunta.series));
+			      var series = "<ul>";
+            datosSeries.forEach(function(serie){
+                series += '<li>';
+							   ///plantillas-ficha?numSerie=
+                series += '<a href="' + urlSerie + serie.id + '" target="_blank">' + serie.variable + ' ' + serie.titulo + '</a>';
+                series += '</li>';
+            });
+           	series +='</ul>';
+            contenidoPregunta += '<tr>';
+            contenidoPregunta += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />series">Series:</label></td>';
+            contenidoPregunta += '<td colspan="3"><span id="<@portlet.namespace />descriptores">' + series + '</span></td>';
+            contenidoPregunta += '</tr>';
+
+            contenidoPregunta += '<tr>';
+            contenidoPregunta += '<td style="width: 250px; overflow: hidden;"><label class="semi" for="<@portlet.namespace />textoPreguntas">Texto de preguntas:</label></td>';
+            contenidoPregunta += '<td colspan="3"><span id="<@portlet.namespace />textoPreguntas"><pre>' + datosPregunta.texto + '</pre></span></td>';
+            contenidoPregunta += '</tr>';
+            contenidoPregunta += '</table>';
+            contenidoPregunta += '</div></div>';
+
+                    
+            $('#<@portlet.namespace />contenidoPreguntas').append(contenidoPregunta);   
+            const divsPreguntas = document.getElementsByClassName('pregunta');
+            for (i=0; i<divsPreguntas.length; i++) {
+			    $(divsPreguntas[i]).hide();
+            }
+
+            $('#<@portlet.namespace />' + datosPregunta.id).show();
+            $('#<@portlet.namespace />preguntas').addClass('active');
+
+            if ($("#<@portlet.namespace />sltPreguntas option:first-child").is(":selected")) {
+                //console.log("El primer option esta seleccionado.");
+                $('#coll<@portlet.namespace />preguntas').removeClass('show');
+                $('#<@portlet.namespace />preguntas h4 a').addClass('pointers-none');
+                $('#<@portlet.namespace />sltPreguntas').css('background-color','#ffffff');
+            } else {
+                //console.log("El primer option no esta seleccionado.");
+                $('#coll<@portlet.namespace />preguntas').addClass('show');              
+                $('#<@portlet.namespace />preguntas h4 a').removeClass('pointers-none');            
+                $('#<@portlet.namespace />sltPreguntas').css('background-color','var(--secundario-claro)');
+            }
+
+           
+            
+        }
+
+
+        function <@portlet.namespace />mostrarConsultaVariables(datos){
+            console.log("---- PROCESO DE VARIABLES ---");
+            console.log(datos);
+            if (datos.success == true) {
+                var datosVariables = datos.ficha.variables;
+                var datosMuestras = datos.ficha.muestras;
+                //var datosVariables = variables.ficha.variables;
+                console.log(datosVariables);
+                console.log(datosMuestras);
+                //Obtenemos los datos de las variables y de los combos de cruce
+                if (datosVariables != null && datosVariables != 'null' && datosVariables.length > 0){
+                    //Cargamos los datos de las variables en una variable globla
+                    this.variables = datosVariables;
+                    //Limpiamos previamente el combo de variables
+                    $('#<@portlet.namespace />sltVariables').empty();
+                    //Y lo habilitamos
+                    $('#<@portlet.namespace />sltVariables').prop('disabled', false);
+                    //Ocultamos la capa del buscador
+                    $('#<@portlet.namespace />capaBuscador').hide();
+                                        
+                    //Cargamos inicialmente el combo de VARIABLES con sus valores
+                    if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                        $('#<@portlet.namespace />sltVariables').append('<option value="0" >Seleccione una variable</option>');
+                    }
+                    else {
+                        $('#<@portlet.namespace />sltVariables').append('<option selected value="0" >Seleccione una variable</option>');
+                    }
+                    
+                    datosVariables.forEach( function(valor) {
+                        if (preguntaSeleccionada == valor.id_pregunta){
+                            $('#<@portlet.namespace />sltVariables').append('<option selected value="' + valor.id + '" >' + valor.titulo + '</option>');
+                        }
+                        else {
+                            $('#<@portlet.namespace />sltVariables').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                        }
+                    });
+
+                    if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                        $( "#<@portlet.namespace />sltVariables" ).trigger( "change" );
+                    }
+                }
+                else {
+                    $('#<@portlet.namespace />sltVariables').prop('disabled', true);
+                    $('#<@portlet.namespace />consultaVariables').hide();
+                    $('#<@portlet.namespace />noVariables').show();
+                }
+
+
+                //En caso de no haber muestra, cargamos por defecto la primera de la pregunta
+                if (datosMuestras != null && datosMuestras != 'null' && datosMuestras.length > 0){
+                    if (muestraSeleccionada == "" ||muestraSeleccionada == "0"){
+                        datosMuestras.forEach( function(valor) {
+                            muestraSeleccionada = valor.id;
+                            $("#<@portlet.namespace />sltMuestras").val(muestraSeleccionada);
+                            $( "#<@portlet.namespace />sltMuestras" ).trigger( "change" );
+                            $('#coll<@portlet.namespace />muestras').removeClass('show');
+                    });
+
+                    }              
+                    datosVariables.forEach( function(valor) {
+                        if (preguntaSeleccionada == valor.id_pregunta){
+                            $('#<@portlet.namespace />sltVariables').append('<option selected value="' + valor.id + '" >' + valor.titulo + '</option>');
+                        }
+                        else {
+                            $('#<@portlet.namespace />sltVariables').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                        }
+                    });
+
+                    if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                        $( "#<@portlet.namespace />sltVariables" ).trigger( "change" );
+                    }
+                }
+                else {
+                    $('#<@portlet.namespace />sltVariables').prop('disabled', true);
+                    $('#<@portlet.namespace />consultaVariables').hide();
+                    $('#<@portlet.namespace />noVariables').show();
+                }
+
+            }
+            else {
+                //Cargamos los datos de las variables en una variable global
+                //Limpiamos previamente el combo de variables
+                $('#<@portlet.namespace />sltVariables').empty();
+                //Y lo habilitamos
+                $('#<@portlet.namespace />sltVariables').prop('disabled', false);
+                //Ocultamos la capa del buscador
+                $('#<@portlet.namespace />capaBuscador').hide();
+                                    
+                //Cargamos inicialmente el combo de VARIABLES con sus valores
+                if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                    $('#<@portlet.namespace />sltVariables').append('<option value="0" >Seleccione una variable</option>');
+                }
+                else {
+                    $('#<@portlet.namespace />sltVariables').append('<option selected value="0" >Seleccione una variable</option>');
+                }
+                
+                this.variables.forEach( function(valor) {
+                    if (preguntaSeleccionada == valor.id_pregunta){
+                        $('#<@portlet.namespace />sltVariables').append('<option selected value="' + valor.id + '" >' + valor.titulo + '</option>');
+                    }
+                    else {
+                        $('#<@portlet.namespace />sltVariables').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                    }
+                });
+
+                if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                    var selectedOperation = $("#<@portlet.namespace />sltVariables option:eq(1)").val();
+                    console.log("POS: " + selectedOperation);
+                    //Cargamos la pregunta en el combo de PREGUNTAS
+                    variableSeleccionada = selectedOperation;
+                    $('#<@portlet.namespace />sltVariables').val(selectedOperation);
+                    $( "#<@portlet.namespace />sltVariables" ).trigger( "change" );
+                }
+            }
+           //else {
+           //     $('#<@portlet.namespace />sltVariables').prop('disabled', true);
+           //     $('#<@portlet.namespace />consultaVariables').hide();
+           //     $('#<@portlet.namespace />noVariables').show();
+           // }
+
+
+            
+        }
+
+
+        function <@portlet.namespace />actualizarExploradorVariables() {
+            console.log("---- EXPLORADOR VARIABLES----");
+              
+            //Deshabillitamos la exploracion de preguntas
+            $('#<@portlet.namespace />preguntas').hide();
+            //Habilitamos la exploracion de variables
+            $('#<@portlet.namespace />consultaVariables').show();
+
+            //Obtenemos los datos de la pregunta seleccionada
+            console.log("---- VARIABLES ---" );
+            //PREGUNTAMOS SI HAY AL MENOS UN CUESTIONARIO SELECCIONADO
+            if (cuestionarioSeleccionado != "") {
+                //$('#coll<@portlet.namespace />consultaVariables').addClass('show'); 
+                //$('#<@portlet.namespace />consultaVariables').removeClass('pointers-none');
+                let url = "https://webserver-cis-dev.lfr.cloud/o/cis/resultados";
+                console.log("URL: " + url);
+                var searchParams = new URLSearchParams();
+                searchParams.append("id_cuestionario", cuestionarioSeleccionado);  
+                if (muestraSeleccionada != "" && muestraSeleccionada != "0"){
+                searchParams.append("id_muestra", muestraSeleccionada);
+                }
+                if (preguntaSeleccionada != "" && preguntaSeleccionada != "0"){
+                    searchParams.append("id_pregunta", preguntaSeleccionada);
+                }
+                console.log("cuestionarioSeleccionado: " + cuestionarioSeleccionado);
+                console.log("muestraSeleccionada: " + muestraSeleccionada);
+                console.log("preguntaSeleccionada: " + preguntaSeleccionada);
+            
+                let headers = new Headers();
+                headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+                headers.append('Content-Type', 'application/x-www-form-urlencoded');
+                Liferay.Util.fetch(url, {
+                    method: 'POST',
+                    body: searchParams.toString(),
+                    headers: headers
+                })
+                .then(response => response.json())
+                .then(json  => <@portlet.namespace />mostrarConsultaVariables(json));
+            }
+            else {
+                console.log("NO CUESTIONARIO");
+            }
+        }
+
+
+        function <@portlet.namespace />buscadorDatosVariables(tipo){
+            console.log("---- BUSCADOR VARIABLES----");
+              
+            let url = "https://webserver-cis-dev.lfr.cloud/o/cis/resultados";
+            var searchParams = new URLSearchParams();
+            searchParams.append("id_cuestionario", cuestionarioSeleccionado);  
+            if (muestraSeleccionada != ""){
+                searchParams.append("id_muestra", muestraSeleccionada);
+            }
+            if (preguntaSeleccionada != ""){
+                searchParams.append("id_pregunta", preguntaSeleccionada);
+            }
+             console.log("cuestionarioSeleccionado: " + cuestionarioSeleccionado);
+                console.log("muestraSeleccionada: " + muestraSeleccionada);
+                console.log("preguntaSeleccionada: " + preguntaSeleccionada);
+            let headers = new Headers();
+            headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+            headers.append('Content-Type', 'application/x-www-form-urlencoded');
+            Liferay.Util.fetch(url, {
+                method: 'POST',
+                body: searchParams.toString(),
+                headers: headers
+            })
+            .then(response => response.json())
+            .then(json  => {
+                if (tipo == "buscador"){
+                    <@portlet.namespace />construirTablaBuscador(json);
+                }
+                if (tipo == "buscadorC1"){
+                    <@portlet.namespace />construirTablaBuscadorC1(json);
+                }
+                if (tipo == "buscadorC2"){
+                    <@portlet.namespace />construirTablaBuscadorC2(json);
+                }
+            })
+        }
+
+        function <@portlet.namespace />construirTablaBuscador(datos){
+            console.log("---- PROCESO DE VARIABLES BUSCADOR ---");
+            console.log(datos);
+            //Obtenemos las variables  
+            var datosVariables = datos.ficha.variables;
+            //var datosVariables = variables.ficha.variables;
+            console.log(datosVariables);
+                   
+            $('#<@portlet.namespace />capaBuscador').html( '<div class="tabla-dinamica-cis table-responsive col-ddm col-md-12"><table class="display" style="width:100%" id="buscador"></table></div>' );
+    
+            $('#buscador').dataTable( {
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay informaci&acuteo;n",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                "data": variables,
+                "columns": [
+                     { "data": "id", "name": "Codigo","title": "Codigo", render: function (data, type, row, meta) {
+                        return '<a id="btnEdit" onclick="selectOptionVariable(' + data + ')">' + data + '<i class="fa fa-edit"></i></a>';
+                    } },
+                    { "data": "variable", "name": "Variable","title": "Variable" },
+                    { "data": "titulo", "name": "Titulo","title": "Titulo" },
+                ]
+            } );  
+
+            $('#<@portlet.namespace />capaBuscador').show();                
+			
+						  
+        }
+			
+		function selectOptionVariable(variable){
+			$('#<@portlet.namespace />sltVariables').val(variable);
+            $('#<@portlet.namespace />buscadorVariables').html('Buscador de variables');
+			$('#<@portlet.namespace />capaBuscador').hide();
+		}
+
+
+        function <@portlet.namespace />construirTablaBuscadorC1(datos){
+            console.log("---- PROCESO DE VARIABLES BUSCADOR C1 ---");
+            console.log(datos);
+            //Obtenemos las variables  
+            var datosVariables = datos.ficha.variables;
+            //var datosVariables = variables.ficha.variables;
+            console.log(datosVariables);
+         
+        
+            $('#<@portlet.namespace />capaBuscadorC1').html( '<div class="tabla-dinamica-cis table-responsive col-ddm col-md-12"><table class="display" style="width:100%" id="buscadorC1"></table></div>' );
+    
+            $('#buscadorC1').dataTable( {
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay informaci&acuteo;n",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                "data": variables,
+                "columns": [
+                     { "data": "id", "name": "Codigo","title": "Codigo", render: function (data, type, row, meta) {
+                        return '<a id="btnEdit" onclick="selectOptionVariableC1(' + data + ',\'' + row.titulo + '\')">' + data + '<i class="fa fa-edit"></i></a>';
+                    } },
+                    { "data": "variable", "name": "Variable","title": "Variable" },
+                    { "data": "titulo", "name": "Titulo","title": "Titulo" },
+                ]
+            } );                  
+			
+			$('#<@portlet.namespace />capaBuscadorC1').show();
+						  
+        }
+			
+		function selectOptionVariableC1(variable, titulo){
+			//$('#<@portlet.namespace />sltCruce1').val(variable);
+            $(new Option(titulo, variable)).appendTo('#<@portlet.namespace />sltCruce1');
+            $('#<@portlet.namespace />sltCruce1').val(variable);
+            variableCruce1Seleccionada =variable;
+            $( "#<@portlet.namespace />sltCruce1" ).trigger( "change" );
+            $('#<@portlet.namespace />buscadorVariablesC1').html('Buscador de variables');
+			$('#<@portlet.namespace />capaBuscadorC1').hide();
+		}
+
+
+        function <@portlet.namespace />construirTablaBuscadorC2(datos){
+            console.log("---- PROCESO DE VARIABLES BUSCADOR C2 ---");
+            console.log(datos);
+            //Obtenemos las variables  
+            var datosVariables = datos.ficha.variables;
+            //var datosVariables = variables.ficha.variables;
+            console.log(datosVariables);
+         
+        
+            $('#<@portlet.namespace />capaBuscadorC2').html( '<div class="tabla-dinamica-cis table-responsive col-ddm col-md-12"><table class="display" style="width:100%" id="buscadorC2"></table></div>' );
+    
+            $('#buscadorC2').dataTable( {
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay informaci&acuteo;n",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                },
+                "data": variables,
+                "columns": [
+                     { "data": "id", "name": "Codigo","title": "Codigo", render: function (data, type, row, meta) {
+                        return '<a id="btnEdit" onclick="selectOptionVariableC2(' + data + ',\'' + row.titulo + '\')">' + data + '<i class="fa fa-edit"></i></a>';
+                    } },
+                    { "data": "variable", "name": "Variable","title": "Variable" },
+                    { "data": "titulo", "name": "Titulo","title": "Titulo" },
+                ]
+            } );                  
+			
+            $('#<@portlet.namespace />capaBuscadorC2').show();
+						  
+        }
+			
+		function selectOptionVariableC2(variable, titulo){
+            $(new Option(titulo, variable)).appendTo('#<@portlet.namespace />sltCruce2');
+            $('#<@portlet.namespace />sltCruce2').val(variable);
+			variableCruce2Seleccionada =variable;
+            $( "#<@portlet.namespace />sltCruce2" ).trigger( "change" );
+            $('#<@portlet.namespace />buscadorVariablesC2').html('Buscador de variables');
+			$('#<@portlet.namespace />capaBuscadorC2').hide();
+		}
+
+
+      //Evento que actua cuando se selecciona el boton de EXPLORAR PREGUNTAS
+    function cargarDatosOrigenPregunta (codigoPregunta) {
+        console.log("---- cargarDatosOrigenPregunta ---- " + codigoPregunta);
+        preguntaSeleccionada = codigoPregunta;
+        //Obtenemos los datos de la pregunta seleccionada
+        let url = "https://webserver-cis-dev.lfr.cloud/o/cis/pregunta/"+preguntaSeleccionada;
+        console.log("URL: " + url);
+        let headers = new Headers();
+        headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+        Liferay.Util.fetch(url, {
+            method: 'GET',
+            headers: headers
+        })
+        .then(response => response.json())
+        .then(function(json) {
+            //Obtenemos los datos de la variable
+			console.log("JSON: " + JSON.stringify(json));
+            cuestionarioSeleccionado =  json.ficha.id_cuestionario;
+            cargarPreguntasCuestionario(cuestionarioSeleccionado);
+            $( "#<@portlet.namespace />sltPreguntas" ).val(preguntaSeleccionada);
+            $( "#<@portlet.namespace />exploradorVariables").trigger("click");
+            $('#<@portlet.namespace />exploradorPreguntas').prop('disabled', false);
+            $('#<@portlet.namespace />exploradorVariables').prop('disabled', false);
+            $('#<@portlet.namespace />sltCuestionarios').val(cuestionarioSeleccionado);
+            cargarMuestrasCuestionario(cuestionarioSeleccionado);
+            const divsCuestionarios = document.getElementsByClassName('cuestionario');
+            for (i=0; i<divsCuestionarios.length; i++) {
+                    $(divsCuestionarios[i]).hide();
+            }
+            //Cuestionarios
+            $('#coll<@portlet.namespace />cuestionarios').addClass('show');              
+            $('#<@portlet.namespace />cuestionarios h4 a').removeClass('pointers-none');            
+            $('#<@portlet.namespace />sltCuestionarios').css('background-color','var(--secundario-claro)');
+            $('#<@portlet.namespace />' + cuestionarioSeleccionado).show();  
+             $('#coll<@portlet.namespace />cuestionarios').removeClass('show');
+            //Muestras
+            $("#<@portlet.namespace />sltMuestras option:eq(1)").selected();
+            $('#coll<@portlet.namespace />muestras').removeClass('show');
+        });
+
+    }
+
+
+                
+
+     /*
+      ----------------- EVENTOS -----------------------
+    */
+
+    //Evento que actua cuando se selecciona un valor en el combo de CUESTIONARIOS
+    $('#<@portlet.namespace />sltCuestionarios').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        var classOption = $('#<@portlet.namespace />sltCuestionarios option:selected').attr('class');
+        var valueSelected = this.value;
+        console.log("CUESTIONARIO PREGUNTAS::" + classOption);
+        cuestionarioSeleccionado = valueSelected;
+		console.log ("CUESTIONARIO SELECCIONADO3:: " + cuestionarioSeleccionado);
+        muestraSeleccionada = "";
+        preguntaSeleccionada = "";
+        variableSeleccionada = "";
+
+        //Mostramos los datos del cuestionario seleccionado
+        const divsCuestionarios = document.getElementsByClassName('cuestionario');
+        for (i=0; i<divsCuestionarios.length; i++) {
+                $(divsCuestionarios[i]).hide();
+        }
+        if ($("#<@portlet.namespace />sltCuestionarios option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");
+            $('#coll<@portlet.namespace />cuestionarios').removeClass('show');
+            $('#<@portlet.namespace />cuestionarios h4 a').addClass('pointers-none');
+            $('#<@portlet.namespace />sltCuestionarios').css('background-color','#ffffff');
+            $('#coll<@portlet.namespace />muestras').removeClass('show');
+            $('#<@portlet.namespace />muestras h4 a').addClass('pointers-none');
+            $('#<@portlet.namespace />sltMuestras').css('background-color','#ffffff');
+            $('#coll<@portlet.namespace />preguntas').removeClass('show');
+            $('#<@portlet.namespace />preguntas h4 a').addClass('pointers-none');
+            $('#<@portlet.namespace />sltPreguntas').css('background-color','#ffffff');
+            $('#<@portlet.namespace />sltPreguntas').empty();
+        } else {
+            //console.log("El primer option no esta seleccionado.");
+            $('#coll<@portlet.namespace />cuestionarios').addClass('show');              
+            $('#<@portlet.namespace />cuestionarios h4 a').removeClass('pointers-none');            
+            $('#<@portlet.namespace />sltCuestionarios').css('background-color','var(--secundario-claro)');
+        }	
+        $('#<@portlet.namespace />' + valueSelected).show();
+        console.log("Tipo Estudio: " + datosFichaEstudio.estudio);
+        console.log("Tipo Estudio: " + datosFichaEstudio.estudio.tipoEstudio);
+           
+        //SI NO TIENE PREGUNTAS NO CARGAMOS NI MUESTRAS NI PREGUNTAS
+        if (classOption == 'noPreguntas' && datosFichaEstudio.estudio.tipoEstudio == 'Cualitativo'){
+            console.log("CUESTIONARIO NO TIENE PREGUNTAS------------");
+            $('#<@portlet.namespace />muestras').hide();
+            $('#<@portlet.namespace />preguntas').hide();
+            $('#<@portlet.namespace />botonesExplorador').hide();
+            $('#<@portlet.namespace />consultaVariables').hide();
+            $('#<@portlet.namespace />noPreguntas').show();
+        }
+        else {
+            //Cargamos las MUESTRAS del cuestionario seleccionado
+            cargarMuestrasCuestionario(valueSelected);
+            //Cargamos las PREGUNTAS del cuestionario seleccionado
+            cargarPreguntasCuestionario(valueSelected);
+            $('#<@portlet.namespace />exploradorPreguntas').prop('disabled', false);
+            $('#<@portlet.namespace />exploradorVariables').prop('disabled', true);
+        }
+     
+        			
+    });
+			
+	
+    //Evento que actua cuando se selecciona un valor en el combo de MUESTRAS
+    $('#<@portlet.namespace />sltMuestras').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        muestraSeleccionada = valueSelected;
+			console.log ("MUESTRA SELECCIONADA: " + muestraSeleccionada);
+        const divsMuestras = document.getElementsByClassName('muestra');
+        for (i=0; i<divsMuestras.length; i++) {
+				     $(divsMuestras[i]).hide();
+        }
+
+        $('#<@portlet.namespace />' + valueSelected).show();
+        $('#<@portlet.namespace />muestras').addClass('active');
+
+        if ($("#<@portlet.namespace />sltMuestras option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");
+            $('#coll<@portlet.namespace />muestras').removeClass('show');
+            $('#<@portlet.namespace />muestras h4 a').addClass('pointers-none');
+            $('#<@portlet.namespace />sltMuestras').css('background-color','#ffffff');
+            $('#<@portlet.namespace />exploradorVariables').prop('disabled', true);
+        } else {
+            //console.log("El primer option no esta seleccionado.");
+            $('#coll<@portlet.namespace />muestras').addClass('show');              
+            $('#<@portlet.namespace />muestras h4 a').removeClass('pointers-none');            
+            $('#<@portlet.namespace />sltMuestras').css('background-color','var(--secundario-claro)');
+            $('#<@portlet.namespace />exploradorVariables').prop('disabled', false);
+        }
+
+        //Actualizamos la informacion del explorador de variables
+        if ($('#<@portlet.namespace />consultaVariables').is(':visible')){
+            //Ha cambiado la muestra. Actualizamos la informacion de CONSULTA DE VARIABLES
+            //Se mantienen la PREGUNTA y VARIABLE que estuviera seleccionada
+            //Se resetean los datos para la VARIABLE seleccionada (sus variables de cruce)
+            variableCruce1Seleccionada = "0";
+            variableCruce2Seleccionada = "0";  
+            <@portlet.namespace />actualizarExploradorVariables();
+        }
+});	
+
+	
+    //Evento que actua cuando se selecciona un valor en el combo de PREGUNTAS
+    $('#<@portlet.namespace />sltPreguntas').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        if (idPregunta != ""){
+            preguntaSeleccionada = idPregunta;
+            idPregunta = "";
+        }
+        else {
+             preguntaSeleccionada = this.value;
+        }
+        //var pregunta = this.value;
+        //preguntaSeleccionada = pregunta;
+		console.log ("PREGUNTA SELECCIONADA: " + preguntaSeleccionada);
+        if (preguntaAnteriorSeleccionada == "" || preguntaAnteriorSeleccionada != preguntaSeleccionada){
+            preguntaAnteriorSeleccionada = preguntaSeleccionada;
+            //Reiniciamos las variables de cruce (si estuvieran seleccionadas previamente)
+			variableCruce1Seleccionada = "";
+			variableCruce2Seleccionada = "";
+        }
+		
+        //Obtenemos los datos de la pregunta seleccionada
+        console.log("---- PREGUNTA ---" + preguntaSeleccionada);
+        let url = "https://webserver-cis-dev.lfr.cloud/o/cis/pregunta/"+preguntaSeleccionada;
+        console.log("URL: " + url);
+        let headers = new Headers();
+        headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+        Liferay.Util.fetch(url, {
+            method: 'GET',
+            headers: headers
+        })
+        .then(response => response.json())
+        .then(json  => <@portlet.namespace />mostrarFichaPregunta(json));
+		
+    });	
+			
+    //Evento que actua cuando se selecciona un valor en el combo de VARIABLES
+    $('#<@portlet.namespace />sltVariables').on('change', function (e) {
+        console.log("----change VARIABLES ----");
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        variableSeleccionada = valueSelected;
+			  console.log ("VARIABLE SELECCIONADA: " + variableSeleccionada);
+        var datosVariables = variables;
+        //console.log("variableCruce1Seleccionada:" + variableCruce1Seleccionada);
+        //console.log("variableCruce2Seleccionada:" + variableCruce2Seleccionada);
+        //variableCruce1Seleccionada
+        //Habillitamos la seleccion de la variable1 de cruce
+        $('#<@portlet.namespace />cruce1').show();
+        if (variableCruce2Seleccionada != "" && variableCruce2Seleccionada != "0"){
+            $('#<@portlet.namespace />cruce2').show();
+        }
+        else {
+            $('#<@portlet.namespace />cruce2').hide();
+        }
+        //Cargamos los combos de las VARIABLE 1 DE CRUCE
+        if (variableCruce1Seleccionada != "" && variableCruce1Seleccionada != "0"){
+            $('#<@portlet.namespace />sltCruce1').append('<option value="0" >Seleccione una variable de cruce</option>');
+        }
+        else {
+            $('#<@portlet.namespace />sltCruce1').append('<option selected value="0" >Seleccione una variable de cruce</option>');
+        }
+        
+        //$('#<@portlet.namespace />sltCruce2').append('<option selected value="0" >Seleccione una variable de cruce</option>');
+        datosVariables.forEach( function(valor) {
+            if (valor.escruce == true && valor.cruce_defecto == true) {
+                //Vemos si es la seleccionada o no
+                if (variableCruce1Seleccionada == valor.id){
+                    $('#<@portlet.namespace />sltCruce1').append('<option selected value="' + valor.id + '" >' + valor.titulo + '</option>');
+                }
+                else {
+                    $('#<@portlet.namespace />sltCruce1').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                }
+            }
+        });
+
+        if (variableCruce1Seleccionada != "" && variableCruce1Seleccionada != "0"){
+            $( "#<@portlet.namespace />sltCruce1" ).trigger( "change" );
+        }
+
+        if ($("#<@portlet.namespace />sltVariables option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");                                
+            $('#<@portlet.namespace />sltVariables').css('background-color','#ffffff');
+        } else {
+            //console.log("El primer option no esta seleccionado.");                                
+            $('#<@portlet.namespace />sltVariables').css('background-color','var(--secundario-claro)');
+        }
+ 		
+    });	
+
+    //Evento que actua cuando se selecciona un valor en el combo de VARIABLE 1 DE CRUCE
+    $('#<@portlet.namespace />sltCruce1').on('change', function (e) {
+        console.log("----change selectvble C1----");
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        variableCruce1Seleccionada = valueSelected;
+			  console.log ("VARIABLE CRUCE 1 SELECCIONADA: " + variableCruce1Seleccionada);
+        var datosVariables = variables;
+        //console.log(datosVariables);
+       
+        //Habillitamos la seleccion de la variable1 de cruce
+        $('#<@portlet.namespace />cruce2').show();
+        $('#<@portlet.namespace />operaciones').show();
+
+        //Cargamos los combos de las VARIABLE 1 DE CRUCE
+        if (variableCruce2Seleccionada != "" && variableCruce2Seleccionada != "0"){
+            $('#<@portlet.namespace />sltCruce2').append('<option value="0" >Seleccione una variable de cruce</option>');
+            $('#<@portlet.namespace />sltCruce2').css('background-color','#ffffff');
+        }
+        else {
+            $('#<@portlet.namespace />sltCruce2').append('<option selected value="0" >Seleccione una variable de cruce</option>');
+        }
+        datosVariables.forEach( function(valor) {
+            if (valor.escruce == true && valor.cruce_defecto == true) {
+                if (variableCruce2Seleccionada == valor.id){
+                    $('#<@portlet.namespace />sltCruce2').append('<option selected value="' + valor.id + '" >' + valor.titulo + '</option>');
+                }
+                else {
+                    $('#<@portlet.namespace />sltCruce2').append('<option value="' + valor.id + '" >' + valor.titulo + '</option>');
+                }
+               
+            }
+        });
+
+        if ($("#<@portlet.namespace />sltCruce1 option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce1').css('background-color','#ffffff');
+        } else {
+            //console.log("El primer option no esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce1').css('background-color','var(--secundario-claro)');
+        }
+  	
+    });	
+
+    //Evento que actua cuando se selecciona un valor en el combo de VARIABLE 2 DE CRUCE
+    $('#<@portlet.namespace />sltCruce2').on('change', function (e) {
+        console.log("----change selectvble C1----");
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        variableCruce2Seleccionada = valueSelected;
+			 console.log ("VARIABLE CRUCE 2 SELECCIONADA: " + variableCruce2Seleccionada);
+        var datosVariables = variables;
+        //console.log(datosVariables);
+     
+        //Habillitamos la seleccion de la variable2 de cruce
+        $('#<@portlet.namespace />cruce2').show();
+        
+            if ($("#<@portlet.namespace />sltCruce2 option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");                                
+                $('#<@portlet.namespace />sltCruce2').css('background-color','#ffffff');
+            } else {
+                //console.log("El primer option no esta seleccionado.");                                
+                $('#<@portlet.namespace />sltCruce2').css('background-color','var(--secundario-claro)');
+            }
+       
+        
+    });	
+
+
+    //Evento que actua cuando se selecciona el boton de ocultar variable CRUCE1
+    $('#<@portlet.namespace />ocultaCruce1').on('click', function (e) {
+        console.log("----oculta C1----");
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        variableCruce1Seleccionada = 0;
+         console.log ("VARIABLE CRUCE 1 SELECCIONADA: " + variableCruce1Seleccionada);
+        //Cargamos la opcion por defecto VARIABLE 1 DE CRUCE
+        $('#<@portlet.namespace />sltCruce1').val("0");
+        if ($("#<@portlet.namespace />sltCruce1 option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce1').css('background-color','#ffffff');
+        } else {
+            //console.log("El primer option no esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce1').css('background-color','var(--secundario-claro)');
+        }
+    	
+    });	
+
+
+    //Evento que actua cuando se selecciona el boton de ocultar variable CRUCE2
+    $('#<@portlet.namespace />ocultaCruce2').on('click', function (e) {        
+       console.log("----oculta C2----");
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+        variableCruce2Seleccionada = 0;
+         console.log ("VARIABLE CRUCE 2 SELECCIONADA: " + variableCruce2Seleccionada);
+        //Cargamos la opcion por defecto VARIABLE 2 DE CRUCE
+        $('#<@portlet.namespace />sltCruce2').val("0");
+        $( "#<@portlet.namespace />sltCruce1" ).trigger( "change" );
+        $( "#<@portlet.namespace />sltCruce2" ).trigger( "change" );
+        if ($("#<@portlet.namespace />sltCruce2 option:first-child").is(":selected")) {
+            //console.log("El primer option esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce2').css('background-color','#ffffff');
+        } else {
+            //console.log("El primer option no esta seleccionado.");                                
+            $('#<@portlet.namespace />sltCruce2').css('background-color','var(--secundario-claro)');
+        }
+        
+    });	
+
+    //Evento que actua cuando se selecciona el boton de EXPLORAR PREGUNTAS
+    $('#<@portlet.namespace />exploradorPreguntas').on('click', function (e) {
+       console.log("---- EXPLORADOR PREGUNTAS----");
+              
+        //Deshabillitamos la exploracion de variables
+        $('#<@portlet.namespace />consultaVariables').hide();
+        //Si existe una variable seleccionada
+            //1. Buscamos la pregunta de esa variable
+            //1.1. Si tiene pregunta, la marcamos como seleccionada
+            //1.2. Si no la tiene, marcamos la primera pregunta por defecto 
+        if (variableSeleccionada != "" && variableSeleccionada != "0"){
+            //1. Buscamos la pregunta de esa variable
+            let url = "https://webserver-cis-dev.lfr.cloud/o/cis/resultados";
+            var searchParams = new URLSearchParams();
+            searchParams.append("id_variable", variableSeleccionada);
+            let headers = new Headers();
+            headers.append('Authorization', 'Basic Y3VzdG9tZXI6eUkyc0ZxRnh0UkxKNVZOUWVYRnpmMXA4R1dNTDZZ');
+            headers.append('Content-Type', 'application/x-www-form-urlencoded');
+            Liferay.Util.fetch(url, {
+                method: 'POST',
+                    body: searchParams.toString(),
+                    headers: headers
+                })
+            .then(response => response.json())
+            .then(function(json) {
+                //Obtenemos los datos de la variable
+				console.log("JSON: " + JSON.stringify(json));
+                if (json.success == true) {
+                    var variable = json.ficha.variable;
+                    //EXISTE PREGUNTA ASOCIADA A LA VARIABLE
+                    if (variable.id_pregunta != ""){
+                        preguntaSeleccionada = variable.id_pregunta;
+                        //Cargamos la pregunta en el combo de PREGUNTAS
+                        $('#<@portlet.namespace />sltPreguntas').val(preguntaSeleccionada);
+                        $( "#<@portlet.namespace />sltPreguntas" ).trigger( "change" );
+                    }
+                }
+                else {
+                    //NO EXISTE PREGUNTA ASOCIADA A LA VARIABLE. MOSTRAMOS LA PRIMERA POR DEFECTO
+                    var selectedOperation = $("#<@portlet.namespace />sltPreguntas option:eq(1)").val();
+                    console.log("POS: " + selectedOperation);
+                    preguntaSeleccionada = selectedOperation
+                    //Cargamos la pregunta en el combo de PREGUNTAS
+                    $('#<@portlet.namespace />sltPreguntas').val(preguntaSeleccionada);
+                    $( "#<@portlet.namespace />sltPreguntas" ).trigger( "change" );
+                }
+                
+
+            });
+
+        }
+
+
+        //Habilitamos la exploracion de preguntas
+        $('#<@portlet.namespace />preguntas').show();
+
+    });	
+
+    //Evento que actua cuando se selecciona el boton de EXPLORAR VARIABLES
+    $('#<@portlet.namespace />exploradorVariables').on('click', function (e) {
+        console.log("---- EXPLORADOR VARIABLES----");
+        <@portlet.namespace />actualizarExploradorVariables()
+    });	
+
+
+    //BUSCADOR VARIABLES
+    $('#<@portlet.namespace />buscadorVariables').on('click', function (e){
+        console.log('CARGANDO BUSCADOR VARIABLES');
+        if ($('#<@portlet.namespace />capaBuscador').is(':visible')){
+            $('#<@portlet.namespace />capaBuscador').hide();
+            $('#<@portlet.namespace />buscadorVariables').html('Buscador de variables');
+        }
+        else {
+            $('#<@portlet.namespace />buscadorVariables').html('Cerrar buscador');
+            <@portlet.namespace />buscadorDatosVariables("buscador");
+        }
+        
+    });
+			
+	
+    //BUSCADOR VARIABLES C1
+    $('#<@portlet.namespace />buscadorVariablesC1').on('click', function (e){
+        console.log('CARGANDO BUSCADOR VARIABLES C1');
+        if ($('#<@portlet.namespace />capaBuscadorC1').is(':visible')){
+            $('#<@portlet.namespace />capaBuscadorC1').hide();
+            $('#<@portlet.namespace />buscadorVariablesC1').html('Buscador de variables');
+        }
+        else {
+            $('#<@portlet.namespace />buscadorVariablesC1').html('Cerrar buscador');
+            <@portlet.namespace />buscadorDatosVariables("buscadorC1");
+        }
+       
+    });
+			
+	
+    //BUSCADOR VARIABLES C2
+    $('#<@portlet.namespace />buscadorVariablesC2').on('click', function (e){
+        console.log('CARGANDO BUSCADOR VARIABLES C2');
+         if ($('#<@portlet.namespace />capaBuscadorC2').is(':visible')){
+            $('#<@portlet.namespace />capaBuscadorC2').hide();
+            $('#<@portlet.namespace />buscadorVariablesC2').html('Buscador de variables');
+        }
+        else {
+            $('#<@portlet.namespace />buscadorVariablesC2').html('Cerrar buscador');
+             <@portlet.namespace />buscadorDatosVariables("buscadorC2");;
+        }
+       
+    });
+			
+		
+		
+			
+
+  
+	</script>
