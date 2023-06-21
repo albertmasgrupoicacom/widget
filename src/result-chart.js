@@ -182,8 +182,7 @@ export class ResultChart {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
       this.cruce2SelectionIndex = e.target.value;
       this.removeTable(tableIndex);
-      let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,false);
-      this.printTable(this.getParsedData(newData, this.operacionesSelectedTable, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
+      this.printTable(this.getParsedData(data, this.operacionesSelectedTable, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
