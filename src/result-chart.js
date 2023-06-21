@@ -15,6 +15,7 @@ export class ResultChart {
     this._exportUtils = new ResultExport();
     this.data;
     this.operacionesSelectionIndex = 0;
+    this.operacionesSelectedTable = 'cruce';
     this.cruce2SelectionIndex = 0;
     this.show_legend = true;
 
@@ -133,7 +134,7 @@ export class ResultChart {
       let tableData = data.ficha.tabla[tableIndex];
       if(!tableData.frecuencias) {this.addSelectorOperaciones(tableData, tableIndex)};
       if(tableData.etiqCruce2){this.printTableSelector(tableData, tableIndex)};
-      this.printTable(this.getParsedData(tableData, 'cruce', this.cruce2SelectionIndex), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
+      this.printTable(this.getParsedData(tableData, this.operacionesSelectedTable, this.cruce2SelectionIndex), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
   }
 
   
@@ -141,28 +142,30 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
-    const array = [{id: 0, etiqueta:'Valores Absolutos', delMissing: false},
-                  {id: 1, etiqueta:'Mostrar % (columna)', delMissing: false},
-                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)',delMissing: true},
-                  {id: 3, etiqueta:'Mostrar % (fila)',delMissing: false},
-                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)',delMissing: true},
-                  {id: 5, etiqueta:'Mostrar % (total)',delMissing: false},
-                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)',delMissing: true}];
+    const array = [{id: 0, etiqueta:'Valores Absolutos', delMissing: false, data: 'cruce'},
+                  {id: 1, etiqueta:'Mostrar % (columna)', delMissing: false , data: 'cruceV'},
+                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)',delMissing: true, data: 'cruceV_NSNC'},
+                  {id: 3, etiqueta:'Mostrar % (fila)',delMissing: false, data: 'cruceH'},
+                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)',delMissing: true, data: 'cruceH_NSNC'},
+                  {id: 5, etiqueta:'Mostrar % (total)',delMissing: false, data: 'cruceT'},
+                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)',delMissing: true ,data: 'cruceT_NSNC'}];
     for (var i = 0; i < array.length; i++) {
       let option = document.createElement("option");
       option.value = parseInt(i); //array[i].categoria;
       option.text = array[i].etiqueta;
       option.delMissing = array[i].delMissing;
+      option.data = array[i].data;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
       const delMissing = selector.options[selector.options.selectedIndex].delMissing;
       this.operacionesSelectionIndex = e.target.value;
-      let newData = this.calculate2(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
+      this.operacionesSelectedTable = selector.options[selector.options.selectedIndex].data;
+      // let newData = this.calculate2(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
       // let newData = this.calculate(data, parseInt(e.target.value), cruce2);
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(newData,'cruce',this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
+      this.printTable(this.getParsedData(data,this.operacionesSelectedTable,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
       // this.printTable(this.getParsedData(newData), tableIndex);
    })
    container.appendChild(selector);
@@ -304,7 +307,7 @@ export class ResultChart {
       this.cruce2SelectionIndex = e.target.value;
       this.removeTable(tableIndex);
       let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,false);
-      this.printTable(this.getParsedData(newData, 'cruce', parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
+      this.printTable(this.getParsedData(newData, this.operacionesSelectedTable, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
