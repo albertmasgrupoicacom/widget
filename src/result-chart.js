@@ -14,11 +14,9 @@ export class ResultChart {
     this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
-    this.operacionesSelectionIndex = 0;
     this.operacionesSelectedTable = 'cruce';
-    this.cruce2SelectionIndex = 0;
+    this.cruce2SelectedTable = 0;
     this.show_legend = true;
-
   }
   
   init(){
@@ -31,90 +29,60 @@ export class ResultChart {
     });
   }
 
-  getParsedData(data, origin , etiqCruce2_index){
-    const cloneData = JSON.parse(JSON.stringify(data));
-    let newData = {datasets: [], titulo: cloneData.titulo, removeColumnsToPaint: 0, removeFilesToPaint:0};
-
-    let labels = [];
-    let datasets = [];
+  getParsedData(rawData, valueMode, cruce2Index){
+    const data = JSON.parse(JSON.stringify(rawData));
+    console.log(data);
+    let newData = {datasets: [], titulo: data.titulo, labels: [], removeColumnsToPaint: 0, removeFilesToPaint:0};
     let colorIndex = 0;
-
-    let filas;
-
-    // LABELS
-    if(cloneData.etiqCruce1 ){
-      filas = cloneData.etiqCruce1;
-      // filas.push({etiqueta: 'Total'});
-      // labels = cloneData.etiqVar.map(label => label.etiqueta);
-      labels = cloneData.etiqVar;
-    } else if(cloneData.frecuencias ){
-      filas = [];
+    if(data.frecuencias){
       this.show_legend = false;
-      filas.push({etiqueta: 'Nº de casos'});
-      filas.push({etiqueta: '% Total'});
-      // labels = cloneData.frecuencias.map(label => label.etiqueta);
-      labels = cloneData.frecuencias;
-
-      if( cloneData.N) {
-        const n_label = {categoria: '0',esMissing: false,etiqueta: '(N)',etiqueta_abrev:'(N)',n: cloneData.N, total:100};
-        labels.push(n_label);
-      }
-    }
-
-    // DATASETS
-    if(cloneData.frecuencias ) {
-      filas.forEach(fila => {
-        datasets.push({label: fila.etiqueta, data: [], backgroundColor: [] , borderColor: []});
-        colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-      });
-    } else {
-      filas.forEach(fila => {
-        datasets.push({label: fila.etiqueta, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
-        colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-      });
-    }
-
-    // VALUES
-    if(cloneData.etiqCruce1 && !cloneData.etiqCruce2) {
-        cloneData[origin].map(x => {
-          filas.map((fila, index) => {
-              datasets[index].data.push(x[index]);
-          });
-        })
-      } else if(cloneData.etiqCruce2) {
-        const x = cloneData[origin][etiqCruce2_index];
-        x.forEach(element => {
-          for (let index = 0; index < element.length -1; index++) {
-            const valor = element[index];
-            datasets[index].data.push(valor);
-          }
+      let headers = [{etiqueta: 'N. de casos'}, {etiqueta: 'Total (%)'}];
+      headers.forEach((header, index) => {
+        let filaData = [];
+        data.frecuencias.forEach(freq => {
+          if(index == 0){newData.labels.push(freq.etiqueta_abrev || freq.etiqueta)};
+          filaData.push(index == 0 ? freq.n : freq.porcentaje);
         });
-        
-      } else {  //
-      cloneData.frecuencias.map((fila, index) => {
-          datasets[0].data.push(fila.n);
-          datasets[0].backgroundColor.push(colors[colorIndex]);
-          index == 6 ? colorIndex = 0 : colorIndex++;
+        newData.datasets.push({label: header.etiqueta, data: filaData, backgroundColor: colors[colorIndex] , borderColor: []});
+        colorIndex++;
+      })
 
-          if( fila.total){
-            datasets[1].data.push(fila.total);
-          }else{
-            const valor = this._helpers.showInDecimal((fila.n * 100)/parseFloat(cloneData.N));
-            datasets[1].data.push(valor);
-          }
-          newData.removeColumnsToPaint = 1;
-      });
-      // if(data.haymedia){
-      //   let vars = [{id: 'base', name: '(N)'}, {id: 'desvEstandar', name: 'Desviación típica'}, {id: 'media', name: 'Media'},{id: 'n', name: 'N'}]
-      //   vars.forEach(item => labels.push(item.name));
-      //   datasets[0].data.push(this._helpers.showInDecimal(data.N));
-      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.desvEstandar));
-      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.media));
-      //   datasets[0].data.push(this._helpers.showInDecimal(data.media.base));
-      // }
+      if(data.N){
+        newData.labels.push('(N)');
+        newData.datasets[0].data.push(`(${data.N})`)
+      };
+
+      if(data.haymedia){
+        let mediaItems = [{id: 'media', label: 'Media'}, {id: 'desvEstandar', label: 'Desviación típica'}, {id: 'base', label: 'N', bracets: true}];
+        mediaItems.forEach(item => {
+          newData.labels.push(item.label);
+          newData.datasets[0].data.push(item.bracets ? `(${data.media[item.id]})` : data.media[item.id])
+        })
+      }
+
     }
-    newData.labels = labels;
-    newData.datasets = datasets;
+
+    if(data.etiqCruce1){
+      newData.labels = data.etiqVar.map(item => item.etiqueta_abrev || item.etiqueta);
+      data.etiqCruce1.forEach((etiq, index) => {
+        let filaData = [];
+        let array = data.etiqCruce2 ? data[valueMode][cruce2Index] : data[valueMode];
+        array.forEach(value => {filaData.push(value[index])});
+        newData.datasets.push({label: etiq.etiqueta_abrev || etiq.etiqueta, data: filaData, backgroundColor: colors[colorIndex] , borderColor: []});
+        colorIndex++;
+      })
+
+      if(valueMode.includes('_NSNC')){
+        newData.labels = newData.labels.filter(label => !['N.S.', 'N.C.'].some(row => row == label));
+      }
+      
+      if(newData.labels.length < newData.datasets[0].data.length){
+        newData.labels.push(data.etiqCruce2 ? `(N) ${data.etiqCruce2[cruce2Index].etiqueta_abrev}` : '(N)')
+      };
+
+    }
+
+    console.log(newData);
     return newData;
   }
 
@@ -134,7 +102,7 @@ export class ResultChart {
       let tableData = data.ficha.tabla[tableIndex];
       if(!tableData.frecuencias) {this.addSelectorOperaciones(tableData, tableIndex)};
       if(tableData.etiqCruce2){this.printTableSelector(tableData, tableIndex)};
-      this.printTable(this.getParsedData(tableData, this.operacionesSelectedTable, this.cruce2SelectionIndex), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
+      this.printTable(this.getParsedData(tableData, this.operacionesSelectedTable, this.cruce2SelectedTable), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
   }
 
   
@@ -142,28 +110,26 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
-    const array = [{id: 0, etiqueta:'Valores Absolutos', delMissing: false, data: 'cruce'},
-                  {id: 1, etiqueta:'Mostrar % (columna)', delMissing: false , data: 'cruceV'},
-                  {id: 2, etiqueta:'Mostrar % (columna - NS/NC)',delMissing: true, data: 'cruceV_NSNC'},
-                  {id: 3, etiqueta:'Mostrar % (fila)',delMissing: false, data: 'cruceH'},
-                  {id: 4, etiqueta:'Mostrar % (fila - NS/NC)',delMissing: true, data: 'cruceH_NSNC'},
-                  {id: 5, etiqueta:'Mostrar % (total)',delMissing: false, data: 'cruceT'},
-                  {id: 6, etiqueta:'Mostrar % (total - NS/NC)',delMissing: true ,data: 'cruceT_NSNC'}];
+    const array = [
+      {id: 0, etiqueta:'Valores Absolutos', data: 'cruce'},
+      {id: 1, etiqueta:'Mostrar % (columna)', data: 'cruceV'},
+      {id: 2, etiqueta:'Mostrar % (columna - NS/NC)', data: 'cruceV_NSNC'},
+      {id: 3, etiqueta:'Mostrar % (fila)', data: 'cruceH'},
+      {id: 4, etiqueta:'Mostrar % (fila - NS/NC)', data: 'cruceH_NSNC'},
+      {id: 5, etiqueta:'Mostrar % (total)', data: 'cruceT'},
+      {id: 6, etiqueta:'Mostrar % (total - NS/NC)', data: 'cruceT_NSNC'}
+    ];
     for (var i = 0; i < array.length; i++) {
       let option = document.createElement("option");
-      option.value = parseInt(i); //array[i].categoria;
+      option.value = parseInt(i);
       option.text = array[i].etiqueta;
-      option.delMissing = array[i].delMissing;
       option.data = array[i].data;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
-      const cruce2 = data.etiqCruce2 ? true : false; // ??
-      const delMissing = selector.options[selector.options.selectedIndex].delMissing;
-      this.operacionesSelectionIndex = e.target.value;
       this.operacionesSelectedTable = selector.options[selector.options.selectedIndex].data;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(data,this.operacionesSelectedTable,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
+      this.printTable(this.getParsedData(data, this.operacionesSelectedTable, this.cruce2SelectedTable), tableIndex);
    })
    container.appendChild(selector);
   }
@@ -179,16 +145,14 @@ export class ResultChart {
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
-      const cruce2 = data.etiqCruce2 ? true : false; // ??
-      this.cruce2SelectionIndex = e.target.value;
+      this.cruce2SelectedTable = e.target.value;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(data, this.operacionesSelectedTable, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
+      this.printTable(this.getParsedData(data, this.operacionesSelectedTable, this.cruce2SelectedTable), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
 
-  // data , tableIndex, delMissing(boolean), tipoTabla (FREQ,PREGUNTA)
-  printTable(data, tableIndex, delMissing, tipoTabla){
+  printTable(data, tableIndex){
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;
@@ -211,7 +175,7 @@ export class ResultChart {
 
     data.labels.forEach((label, index) => {
       const row = document.createElement('tr');
-      this.addCell(row, this._helpers.getEtiqueta(label));
+      this.addCell(row, label);
       data.datasets.forEach(dataset => {this.addCell(row, dataset.data[index]);})
       tblBody.appendChild(row);
     })
@@ -220,13 +184,9 @@ export class ResultChart {
     tbl.appendChild(tblTable);
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
-    data.labels = data.labels.map(label => this._helpers.getEtiqueta(label)); 
 
     if( data.removeColumnsToPaint >0) {
       const value = -Math.abs(data.removeColumnsToPaint);
-      // data.datasets[0].data.pop();
-      // data.datasets.pop();
-      // data.labels.pop();
       data.datasets[0].data = data.datasets[0].data.slice(0,value);
       data.datasets = data.datasets.slice(0,value);
       data.labels = data.labels.slice(0,value);
@@ -249,12 +209,7 @@ export class ResultChart {
     row.appendChild(cell);
   }
 
-  // showInDecimal(number) {
-  //   return number !== Math.round(number) ? parseFloat(number.toFixed(2)) : number;
-  // }
-
   printChart(data, tableIndex, config){
-    console.log(data);
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
