@@ -30,7 +30,7 @@ export class ResultChart {
     });
   }
 
-  getParsedData(data, etiqCruce2_index){
+  getParsedData(data, origin , etiqCruce2_index){
     const cloneData = JSON.parse(JSON.stringify(data));
     let newData = {datasets: [], titulo: cloneData.titulo, removeColumnsToPaint: 0, removeFilesToPaint:0};
 
@@ -75,33 +75,20 @@ export class ResultChart {
 
     // VALUES
     if(cloneData.etiqCruce1 && !cloneData.etiqCruce2) {
-        // cloneData.crucesZ.slice(0, -1).map(x => {
-        cloneData.cruce.map(x => {
-          console.log(x);
+        cloneData[origin].map(x => {
           filas.map((fila, index) => {
-            // if( cloneData.etiqCruce2) {
-            //   datasets[index].data.push(x[index][this.cruce2SelectionIndex]);
-            // } else {
               datasets[index].data.push(x[index]);
-            // } 
           });
         })
       } else if(cloneData.etiqCruce2) {
-        cloneData.cruce.map(x => {
-
-          x.forEach(element => {
-            // element.forEach( valor => {
-            //   datasets[index].data.push(valor);
-            // })
-            for (let index = 0; index < element.length -1; index++) {
-              const valor = element[index];
-              datasets[index].data.push(valor);
-            }
-          });
-          // cloneData.etiqVar.map((fila,index) => {
-          //   datasets[index].data.push(x[this.cruce2SelectionIndex][index]);
-          // })
+        const x = cloneData[origin][etiqCruce2_index];
+        x.forEach(element => {
+          for (let index = 0; index < element.length -1; index++) {
+            const valor = element[index];
+            datasets[index].data.push(valor);
+          }
         });
+        
       } else {  //
       cloneData.frecuencias.map((fila, index) => {
           datasets[0].data.push(fila.n);
@@ -146,7 +133,7 @@ export class ResultChart {
       let tableData = data.ficha.tabla[tableIndex];
       if(!tableData.frecuencias) {this.addSelectorOperaciones(tableData, tableIndex)};
       if(tableData.etiqCruce2){this.printTableSelector(tableData, tableIndex)};
-      this.printTable(this.getParsedData(tableData, tableData.etiqCruce2 ? 0 : undefined), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
+      this.printTable(this.getParsedData(tableData, 'cruce', this.cruce2SelectionIndex), tableIndex, false, !tableData.frecuencias ? 'PREGUNTA':'FREQ');
   }
 
   
@@ -175,7 +162,7 @@ export class ResultChart {
       let newData = this.calculate2(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
       // let newData = this.calculate(data, parseInt(e.target.value), cruce2);
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(newData,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
+      this.printTable(this.getParsedData(newData,'cruce',this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
       // this.printTable(this.getParsedData(newData), tableIndex);
    })
    container.appendChild(selector);
@@ -183,6 +170,7 @@ export class ResultChart {
 
   calculate2(data, type_value_index, isCruce2, delMissing){
     let newdata;
+    // this.cruce2SelectionIndex 
     const cloneData = JSON.parse(JSON.stringify(data));
     if ( type_value_index == 0) {
       newdata = cloneData; // Valores absolutos
@@ -316,7 +304,7 @@ export class ResultChart {
       this.cruce2SelectionIndex = e.target.value;
       this.removeTable(tableIndex);
       let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,false);
-      this.printTable(this.getParsedData(newData, parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
+      this.printTable(this.getParsedData(newData, 'cruce', parseInt(this.cruce2SelectionIndex)), tableIndex, false, 'PREGUNTA');
     })
     container.appendChild(selector);
   }
