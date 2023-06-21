@@ -79,11 +79,11 @@ export class ResultChart {
         cloneData.cruce.map(x => {
           console.log(x);
           filas.map((fila, index) => {
-            if( cloneData.etiqCruce2) {
-              datasets[index].data.push(x[index][this.cruce2SelectionIndex]);
-            } else {
+            // if( cloneData.etiqCruce2) {
+            //   datasets[index].data.push(x[index][this.cruce2SelectionIndex]);
+            // } else {
               datasets[index].data.push(x[index]);
-            } 
+            // } 
           });
         })
       } else if(cloneData.etiqCruce2) {
@@ -172,13 +172,25 @@ export class ResultChart {
       const cruce2 = data.etiqCruce2 ? true : false; // ??
       const delMissing = selector.options[selector.options.selectedIndex].delMissing;
       this.operacionesSelectionIndex = e.target.value;
-      let newData = this.calculate(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
+      let newData = this.calculate2(data,parseInt(this.operacionesSelectionIndex),cruce2,delMissing);
       // let newData = this.calculate(data, parseInt(e.target.value), cruce2);
       this.removeTable(tableIndex);
       this.printTable(this.getParsedData(newData,this.cruce2SelectionIndex),tableIndex,delMissing, 'PREGUNTA');
       // this.printTable(this.getParsedData(newData), tableIndex);
    })
    container.appendChild(selector);
+  }
+
+  calculate2(data, type_value_index, isCruce2, delMissing){
+    let newdata;
+    const cloneData = JSON.parse(JSON.stringify(data));
+    if ( type_value_index == 0) {
+      newdata = cloneData; // Valores absolutos
+    }
+    if ( type_value_index == 1) {
+
+    }
+    return newdata;
   }
 
   calculate(data, type_value_index, isCruce2, delMissing){
