@@ -43,7 +43,7 @@ export class ResultChart {
     // LABELS
     if(cloneData.etiqCruce1 ){
       filas = cloneData.etiqCruce1;
-      filas.push({etiqueta: 'Total'});
+      // filas.push({etiqueta: 'Total'});
       // labels = cloneData.etiqVar.map(label => label.etiqueta);
       labels = cloneData.etiqVar;
     } else if(cloneData.frecuencias ){
@@ -74,16 +74,34 @@ export class ResultChart {
     }
 
     // VALUES
-    if(cloneData.etiqCruce1) {
-        cloneData.cruce.slice(0, -1).map(x => {
+    if(cloneData.etiqCruce1 && !cloneData.etiqCruce2) {
+        // cloneData.crucesZ.slice(0, -1).map(x => {
+        cloneData.cruce.map(x => {
+          console.log(x);
           filas.map((fila, index) => {
-            if( etiqCruce2_index >= 0) {
-              datasets[index].data.push(x[index][etiqCruce2_index]);
+            if( cloneData.etiqCruce2) {
+              datasets[index].data.push(x[index][this.cruce2SelectionIndex]);
             } else {
               datasets[index].data.push(x[index]);
             } 
           });
         })
+      } else if(cloneData.etiqCruce2) {
+        cloneData.cruce.map(x => {
+
+          x.forEach(element => {
+            // element.forEach( valor => {
+            //   datasets[index].data.push(valor);
+            // })
+            for (let index = 0; index < element.length -1; index++) {
+              const valor = element[index];
+              datasets[index].data.push(valor);
+            }
+          });
+          // cloneData.etiqVar.map((fila,index) => {
+          //   datasets[index].data.push(x[this.cruce2SelectionIndex][index]);
+          // })
+        });
       } else {  //
       cloneData.frecuencias.map((fila, index) => {
           datasets[0].data.push(fila.n);

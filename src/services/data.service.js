@@ -1,12 +1,12 @@
-// const tipo = 'PREGUNTA';
-// const numSerie = 6010;
-// const codEstudio = 14695;
-// const cuestionarioSeleccionado = 17697;
-// const preguntaSeleccionada = null;
-// const muestraSeleccionada = null; 
-// const variableSeleccionada = 980820;
-// const variableCruce1Seleccionada = 980773;
-// const variableCruce2Seleccionada = 980774;
+const tipo = 'PREGUNTA';
+const numSerie = 6010;
+const codEstudio = 14695;
+const cuestionarioSeleccionado = 17697;
+const preguntaSeleccionada = null;
+const muestraSeleccionada = null; 
+const variableSeleccionada = 980820; //980820;
+const variableCruce1Seleccionada = 980774; //980773;
+const variableCruce2Seleccionada = 980773; //980774;
 
 //sexo: 980773
 //edad: 980774
