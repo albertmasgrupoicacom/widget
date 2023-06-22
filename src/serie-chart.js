@@ -25,24 +25,48 @@ export class SerieChart {
         });
     }
 
-    getParsedData(rawData){
+    getParsedData(rawData, multiVariable){
         const data = JSON.parse(JSON.stringify(rawData));
 
         let labels = data.ficha.serie_temporal.map(label => label.fecha);
         
-        let filas = data.ficha.filas.slice(0, -1);
+        let filas = data.ficha.filas; //.slice(0, -1);
+        let columnas = data.ficha.columnas;
         let datasets = [];
         let colorIndex = 0;
-        filas.forEach(fila => {
-            datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
-            colorIndex == 6 ? colorIndex = 0 : colorIndex++;
-        });
+        if ( multiVariable) { //MULTIVARIABLE
 
-        data.ficha.serie_temporal.map(x => {
-            filas.map ((fila, index) => {datasets[index].data.push(x.datos[index])});
-        })
+            filas.forEach(fila => {
+                datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex],subLabels: []});
+                colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+            });
 
-        return {titulo: data.ficha.titulo, labels: labels, datasets: datasets};
+            
+            data.ficha.serie_temporal.map(x => {
+                filas.map ((fila, index) => {
+                    let variable = [];
+                    // columnas.slice(0,-1).map( (columna ,index_col) => {
+                    columnas.map( (columna ,index_col) => {
+                        variable.push(x.datos[index][index_col]);
+                        // datasets[index].data.push(x.datos[index][index_col])
+                    })
+                    datasets[index].data.push(variable);
+                    // datasets[index].subLabels = (columnas.slice(0,-1)) //TODO: (N) falta al quitar la ultima
+                });
+            })
+
+        } else {
+            filas.forEach(fila => {
+                datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
+                colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+            });
+
+            data.ficha.serie_temporal.map(x => {
+                filas.map ((fila, index) => {datasets[index].data.push(x.datos[index])});
+            })
+        }
+
+        return {titulo: data.ficha.titulo, labels: labels, datasets: datasets, subLabels: columnas };
     }
 
     printContainer(data){
@@ -61,10 +85,11 @@ export class SerieChart {
             <div><h4>Pregunta:</h4>${data.ficha.pregunta || '-'}</div>
             <div><h4>Notas:</h4><p>${data.ficha.notas || '-'}</p></div>`;
         container.insertAdjacentHTML( 'afterbegin', htmlHeader);
-        this.printTable(this.getParsedData(data));
+        const multivariable = data.ficha.multiVariable;
+        this.printTable(this.getParsedData(data, multivariable),multivariable);
     }
 
-    printTable(data){
+    printTable(data,multivariable){
         const container = document.getElementById(`graph_container`);
         const tbl = document.createElement('div');
         tbl.id = `graph_table`;
@@ -78,31 +103,63 @@ export class SerieChart {
         const headerrow = document.createElement('tr');
 
         this.addHeaderCell(headerrow, '');
-        data.labels.forEach(label => this.addHeaderCell(headerrow, label))
+        data.labels.forEach(label => this.addHeaderCell(headerrow, label , data.subLabels ? data.subLabels.length : 0))
 
         tThead.appendChild(headerrow);
+
+
+        //SUBHEADER
+        if ( multivariable ) {
+            const subHeaderrow = document.createElement('tr');
+            this.addHeaderCell(subHeaderrow, '' , 0);
+            data.datasets[0].data.map((dataset,index) => {
+                console.log(index)
+                data.subLabels.forEach(item => {
+                    this.addHeaderCell(subHeaderrow, item , 0);
+                })
+            });
+            tThead.appendChild(subHeaderrow);
+        }
+
         tblTable.appendChild(tThead);
+
+        
         
         const tblBody = document.createElement('tbody');
 
-        data.datasets.forEach(dataset => {
-            const row = document.createElement('tr');
-            this.addCell(row, dataset.label);
-            dataset.data.forEach(item => this.addCell(row, item))
-            tblBody.appendChild(row);
-        })
+        if ( multivariable ) {  // MULTIVARIABLE
+
+            data.datasets.forEach(dataset => {
+                const row = document.createElement('tr');
+                this.addCell(row, dataset.label);
+                dataset.data.forEach(item => this.addCellWithColumns(row, item))
+                tblBody.appendChild(row);
+            })
+
+        }else{
+            data.datasets.forEach(dataset => {
+                const row = document.createElement('tr');
+                this.addCell(row, dataset.label);
+                dataset.data.forEach(item => this.addCell(row, item))
+                tblBody.appendChild(row);
+            })
+        }
+       
 
         tblTable.appendChild(tblBody);
         tbl.appendChild(tblTable);
         container.appendChild(tbl);
         let chartConfig = container.getAttribute('config')
-        this.printChart(data, chartConfig ? JSON.parse(chartConfig) : serieButtons[0]);
+        if(!multivariable) {
+            this.printChart(data, chartConfig ? JSON.parse(chartConfig) : serieButtons[0]);
+        }
     }
 
-    addHeaderCell(row, contenido) {
+    addHeaderCell(row, contenido, colspan) {
         const headerCell = document.createElement('th');
         const cellText = document.createTextNode(contenido);
         headerCell.appendChild(cellText);
+        headerCell.colSpan = colspan;
         row.appendChild(headerCell);
     }
 
@@ -112,6 +169,16 @@ export class SerieChart {
         cell.appendChild(cellText);
         cell.classList.add('td');
         row.appendChild(cell);
+    }
+
+    addCellWithColumns(row, contenido) {
+        contenido.forEach(item => {
+            const cell = document.createElement('td');
+            const cellText = document.createTextNode(item);
+            cell.appendChild(cellText);
+            cell.classList.add('td');
+            row.appendChild(cell);
+        })
     }
 
     printChart(data, config){
