@@ -216,6 +216,9 @@ export class ResultChart {
   }
 
   printChart(data, tableIndex, config){
+    let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
+    data.labels.splice(totalColumnIndex, 1);
+    data.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
