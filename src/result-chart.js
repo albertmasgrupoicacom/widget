@@ -16,7 +16,7 @@ export class ResultChart {
     this.data;
     this.operacionesSelectedTable = 'cruce';
     this.cruceSelectedTable = 0;
-    this.show_legend = true;
+    this.legend = true;
   }
   
   init(){
@@ -39,53 +39,69 @@ export class ResultChart {
     let result = {datasets: [], titulo: tableData.titulo, labels: [], removeColumnsToPaint: 0, removeFilesToPaint:0};
     let colorIndex = 0;
     let headers = [];
+    let n = [];
     switch (tableData.tipo_resultado) {
       case 'marginales':
         if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
           result.labels = data.ficha.componentes.map(item => item.titulo).concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
-            let row = []
-            result.labels.forEach((label, index) => {row.push(header.porcentaje[index])})
-            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex] , borderColor: []});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1
-          })
+            if(!this.checkNSNC(header.etiqueta)){
+              let row = [...result.labels].map((label, index) => header.porcentaje[index]);
+              result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+              colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            }
+          });
+          n = [...result.labels].map(item => tableData.N);
+          result.datasets.push({label: '(N)', data: n});
         }else{
           result.labels = ['N. de casos'].concat('Total');
           headers = tableData.frecuencias;
-          headers.forEach((header, index) => {
-            let row = [header.n, header.porcentaje]
-            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex] , borderColor: []});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1
+          headers.forEach(header => {
+            if(!this.checkNSNC(header.etiqueta)){
+              let row = [header.n, header.porcentaje];
+              result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+              colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            }
           })
+          n = [tableData.N, '100%'];
+          result.datasets.push({label: '(N)', data: n});
         }
         break;
       case 'cruce1':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          let row = tableData[operationSelected][index];
-          result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex] , borderColor: []});
-          colorIndex = colorIndex == 5 ? 0 : colorIndex +1
+          if(!this.checkNSNC(header.etiqueta)){
+            let row = tableData[operationSelected][index];
+            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+          }
         })
+        n = tableData[operationSelected][tableData[operationSelected].length-1];
+        result.datasets.push({label: '(N)', data: n});
         break;
       case 'cruce2':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          let row = tableData[operationSelected][cruceSelected][index];
-          result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex] , borderColor: []});
-          colorIndex = colorIndex == 5 ? 0 : colorIndex +1
+          if(!this.checkNSNC(header.etiqueta)){
+            let row = tableData[operationSelected][cruceSelected][index] || [];
+            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+          }
         })
+        n = tableData[operationSelected][cruceSelected][tableData[operationSelected][cruceSelected].length-1];
+        result.datasets.push({label: `(N) ${tableData.etiqCruce2[cruceSelected].etiqueta}`, data: n});
         break;
-    }
-
-    if(operationSelected.includes('_NSNC')){
-      result.datasets = result.datasets.filter(dataset => !['N.S.', 'N.C.'].some(row => row == dataset.label));
     }
 
     console.log(result);
     return result;
+  }
+
+  checkNSNC(label){
+    return this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
   }
 
   printContainers(data){
@@ -216,11 +232,6 @@ export class ResultChart {
   }
 
   printChart(data, tableIndex, config){
-    let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
-    if(totalColumnIndex >= 0) { 
-      data.labels.splice(totalColumnIndex, 1);
-      data.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
-    }
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
@@ -228,7 +239,7 @@ export class ResultChart {
     table.insertAdjacentElement('beforeend', canvas);
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: data,
+      data: this.removeTotalAndN(data),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
@@ -240,7 +251,7 @@ export class ResultChart {
             font: {size: 16}
           },
           legend: {
-            display: this.show_legend,
+            display: this.legend,
             position: 'bottom',
           },
         },
@@ -254,6 +265,16 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     container.setAttribute('config', JSON.stringify(config));
     this.printChartSelectionButtons(data, tableIndex);
+  }
+
+  removeTotalAndN(data){
+    let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
+    if(totalColumnIndex >= 0) { 
+      data.labels.splice(totalColumnIndex, 1);
+      data.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
+    }
+    data.datasets.pop();
+    return data;
   }
 
   printChartSelectionButtons(data, tableIndex){
