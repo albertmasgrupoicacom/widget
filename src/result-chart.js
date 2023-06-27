@@ -16,6 +16,7 @@ export class ResultChart {
     this.data;
     this.operacionesSelectedTable = 'cruce';
     this.cruceSelectedTable = 0;
+    this.pieSelectedDataset;
     this.legend = true;
   }
   
@@ -29,32 +30,20 @@ export class ResultChart {
     });
   }
 
-  // MV, MR, MD, N o blanco (multivariable, multirespuesta, dicotómica, continua o normal)
-  getTypesToPaint(tipo_variable) {
-    let retorno = [];
-    if (tipo_variable === '') { 
-      retorno.push('N')
-    } else {
-      retorno.push(tipo_variable);
-    }
-    return retorno;
-  }
-
-  getParsedData(rawData, rawTableData){
+  getParsedData(rawTableData){
     const operationSelected = this.operacionesSelectedTable;
     const cruceSelected = this.cruceSelectedTable;
-    const data = JSON.parse(JSON.stringify(rawData));
+    const data = JSON.parse(JSON.stringify(this.data));
     const tableData = JSON.parse(JSON.stringify(rawTableData));
     console.log(data);
     console.log(tableData);
-    let result = {datasets: [], titulo: tableData.titulo, labels: [], type_graph:[]};
+    let result = {datasets: [], titulo: tableData.titulo, labels: [], type_graph: tableData.tipo_variable || 'N'};
     let colorIndex = 0;
     let headers = [];
     let n = [];
     switch (tableData.tipo_resultado) {
       case 'marginales':
         if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
-          result.type_graph = tableData.tipo_variable || 'N' ; //this.getTypesToPaint(tableData.tipo_variable);
           result.labels = data.ficha.componentes.map(item => item.titulo).concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
@@ -68,7 +57,6 @@ export class ResultChart {
           result.datasets.push({label: '(N)', data: n });
 
         }else{
-          result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
           result.labels = ['N. de casos'].concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
@@ -88,7 +76,6 @@ export class ResultChart {
         }
         break;
       case 'cruce1':
-        result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
@@ -107,7 +94,6 @@ export class ResultChart {
         }
         break;
       case 'cruce2':
-        result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
@@ -150,17 +136,16 @@ export class ResultChart {
     page.appendChild(container);
     let tableData = data.ficha.tabla[tableIndex];
     if(tableData.tipo_resultado == 'cruce1'){
-      this.printOperationsSelector(data, tableData, tableIndex);
+      this.printOperationsSelector(tableData, tableIndex);
     };
     if(tableData.tipo_resultado == 'cruce2'){
-      this.printOperationsSelector(data, tableData, tableIndex);
-      this.printTableSelector(data, tableData, tableIndex);
+      this.printOperationsSelector(tableData, tableIndex);
+      this.printTableSelector(tableData, tableIndex);
     };
-    let parsedData = this.getParsedData(data, tableData);
-    this.printTable(parsedData, tableIndex);
+    this.printTable(this.getParsedData(tableData), tableIndex);
   }
 
-  printOperationsSelector(data, tableData, tableIndex) {
+  printOperationsSelector(tableData, tableIndex) {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
@@ -182,12 +167,12 @@ export class ResultChart {
     selector.addEventListener("change", e => {
       this.operacionesSelectedTable = e.target.value;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(data, tableData), tableIndex)
+      this.printTable(this.getParsedData(tableData), tableIndex)
    })
    container.appendChild(selector);
   }
 
-  printTableSelector(data, tableData, tableIndex){
+  printTableSelector(tableData, tableIndex){
     const container = document.getElementById(`graph_container_${tableIndex}`);
     let selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_${tableIndex}`)
@@ -200,9 +185,31 @@ export class ResultChart {
     selector.addEventListener("change", e => {
       this.cruceSelectedTable = e.target.value;
       this.removeTable(tableIndex)
-      this.printTable(this.getParsedData(data, tableData), tableIndex)
+      this.printTable(this.getParsedData(tableData), tableIndex)
     })
     container.appendChild(selector);
+  }
+
+  printPieDatasetSelector(tableData, tableIndex) {
+    const container = document.getElementById(`graph_container_${tableIndex}`);
+    const selector = document.createElement('select');
+    selector.setAttribute('id', `graph_selector_pie_${tableIndex}`);
+    let array = [...tableData.datasets].map(dataset => dataset.label);
+
+    for (var i = 0; i < array.length; i++) {
+      let option = document.createElement("option");
+      option.value = i;
+      option.text = array[i];
+      selector.appendChild(option);
+    }
+    selector.addEventListener("change", e => {
+      let config = JSON.parse(container.getAttribute('config'));
+      this.pieDatasetSelected = e.target.value;
+      this.removeChart(tableIndex);
+      this.printChart(tableData, tableIndex, config);
+   })
+   const table = document.getElementById(`graph_table_${tableIndex}`);
+   table.insertAdjacentElement('beforebegin', selector);
   }
 
   printTable(data, tableIndex){
@@ -271,7 +278,7 @@ export class ResultChart {
     let dataCopy = JSON.parse(JSON.stringify(data));
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: this.removeTotalNAndMedia(dataCopy),
+      data: config && config.type == 'pie' ? this.getPieData(dataCopy) : this.removeTotalNAndMedia(dataCopy),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
@@ -299,6 +306,15 @@ export class ResultChart {
     this.printChartSelectionButtons(data, tableIndex);
   }
 
+  getPieData(data){
+    const dataCopy = this.removeTotalNAndMedia(JSON.parse(JSON.stringify(data)));
+    let dataset = dataCopy.datasets[this.pieDatasetSelected];
+    console.log(data, dataset, this.pieDatasetSelected);
+    dataset.backgroundColor = ['#fff', '#000', '#eee'];
+    dataCopy.datasets = [dataset];
+    return dataCopy
+  }
+
   removeTotalNAndMedia(data){
     let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
     if(totalColumnIndex >= 0) { 
@@ -317,15 +333,19 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
-    console.log(data);
-    // TODO: filter config MR or MV
-    const values = data.type_graph;
-    const showButtons = resultButtons.filter(f => values.some(item => f.showCondition.includes(item)));
+    const showButtons = resultButtons.filter(f => f.showCondition.includes(data.type_graph));
     showButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
       button.style.background = `url(${config.icon}) no-repeat`;
       button.onclick = () => {
+        this.removePieDatasetSelector(tableIndex)
+        if(config.type == 'pie'){
+          this.pieDatasetSelected = 0;
+          this.printPieDatasetSelector(data, tableIndex);
+        }else{
+          this.pieDatasetSelected = undefined;
+        }
         this.removeChart(tableIndex);
         this.printChart(data, tableIndex, config);
       }
@@ -341,6 +361,11 @@ export class ResultChart {
 
   removeTable(tableIndex) {
     document.getElementById(`graph_table_${tableIndex}`).remove();
+  }
+
+  removePieDatasetSelector(tableIndex) {
+    let pieSelector = document.getElementById(`graph_selector_pie_${tableIndex}`)
+    if(pieSelector){pieSelector.remove()}
   }
 
   removeChart(tableIndex) {
