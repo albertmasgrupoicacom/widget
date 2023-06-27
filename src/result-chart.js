@@ -31,14 +31,13 @@ export class ResultChart {
 
   // MV, MR, MD, N o blanco (multivariable, multirespuesta, dicotómica, continua o normal)
   getTypesToPaint(tipo_variable) {
-    console.log('tipo_variable',tipo_variable);
     let retorno = [];
     if (tipo_variable === '') { 
       retorno.push('N')
     } else {
       retorno.push(tipo_variable);
     }
-    return  retorno;
+    return retorno;
   }
 
   getParsedData(rawData, rawTableData){
@@ -55,7 +54,7 @@ export class ResultChart {
     switch (tableData.tipo_resultado) {
       case 'marginales':
         if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
-          result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
+          result.type_graph = tableData.tipo_variable || 'N' ; //this.getTypesToPaint(tableData.tipo_variable);
           result.labels = data.ficha.componentes.map(item => item.titulo).concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
