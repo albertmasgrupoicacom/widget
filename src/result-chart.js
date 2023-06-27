@@ -29,7 +29,9 @@ export class ResultChart {
     });
   }
 
+  // MV, MR, MD, N o blanco (multivariable, multirespuesta, dicotómica, continua o normal)
   getTypesToPaint(tipo_variable) {
+    console.log('tipo_variable',tipo_variable);
     return ['MV','MD'];
   }
 
@@ -314,8 +316,6 @@ export class ResultChart {
     // TODO: filter config MR or MV
     const values = data.type_graph;
     const showButtons = resultButtons.filter(f => values.some(item => f.showCondition.includes(item)));
-    console.log(showButtons);
-
     showButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
