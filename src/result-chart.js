@@ -255,7 +255,7 @@ export class ResultChart {
     let dataCopy = JSON.parse(JSON.stringify(data));
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: this.removeTotalNAndMedia(data),
+      data: this.removeTotalNAndMedia(dataCopy),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
