@@ -29,6 +29,10 @@ export class ResultChart {
     });
   }
 
+  getTypesToPaint(tipo_variable) {
+    return ['MV','MD'];
+  }
+
   getParsedData(rawData, rawTableData){
     const operationSelected = this.operacionesSelectedTable;
     const cruceSelected = this.cruceSelectedTable;
@@ -36,13 +40,14 @@ export class ResultChart {
     const tableData = JSON.parse(JSON.stringify(rawTableData));
     console.log(data);
     console.log(tableData);
-    let result = {datasets: [], titulo: tableData.titulo, labels: [], removeColumnsToPaint: 0, removeFilesToPaint:0};
+    let result = {datasets: [], titulo: tableData.titulo, labels: [], type_graph:[]};
     let colorIndex = 0;
     let headers = [];
     let n = [];
     switch (tableData.tipo_resultado) {
       case 'marginales':
         if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
+          result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
           result.labels = data.ficha.componentes.map(item => item.titulo).concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
@@ -53,8 +58,10 @@ export class ResultChart {
             }
           });
           n = [...result.labels].map(item => `(${tableData.N})`);
-          result.datasets.push({label: '(N)', data: n});
+          result.datasets.push({label: '(N)', data: n });
+
         }else{
+          result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
           result.labels = ['N. de casos'].concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
@@ -74,6 +81,7 @@ export class ResultChart {
         }
         break;
       case 'cruce1':
+        result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
@@ -92,6 +100,7 @@ export class ResultChart {
         }
         break;
       case 'cruce2':
+        result.type_graph = this.getTypesToPaint(tableData.tipo_variable);
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
@@ -222,12 +231,12 @@ export class ResultChart {
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
 
-    if( data.removeColumnsToPaint >0) {
-      const value = -Math.abs(data.removeColumnsToPaint);
-      data.datasets[0].data = data.datasets[0].data.slice(0,value);
-      data.datasets = data.datasets.slice(0,value);
-      data.labels = data.labels.slice(0,value);
-    }
+    // if( data.removeColumnsToPaint >0) {
+    //   const value = -Math.abs(data.removeColumnsToPaint);
+    //   data.datasets[0].data = data.datasets[0].data.slice(0,value);
+    //   data.datasets = data.datasets.slice(0,value);
+    //   data.labels = data.labels.slice(0,value);
+    // }
     this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[0]);
   }
 
@@ -301,8 +310,9 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
+    console.log(data);
     // TODO: filter config MR or MV
-    const values = ['all','pie'];
+    const values = data.type_graph;
     const showButtons = resultButtons.filter(f => values.some(item => f.showCondition.includes(item)));
     console.log(showButtons);
 
