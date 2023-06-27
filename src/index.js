@@ -12,8 +12,11 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     <button id="exportExcel">EXCEL</button>
     <div id="graph_page" class="cis-caja-tot"></div>
     `;
+    // node.innerHTML =`
+    // <div id="graph_page" class="cis-caja-tot"></div>
+    // `;  // TODO: descomentar
 
-    let graphic; // comentar
+    let graphic; // TODO: comentar
     switch (dataService.type) {
         case 'SERIE':
             graphic = new SerieChart();
