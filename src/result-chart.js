@@ -32,7 +32,13 @@ export class ResultChart {
   // MV, MR, MD, N o blanco (multivariable, multirespuesta, dicotómica, continua o normal)
   getTypesToPaint(tipo_variable) {
     console.log('tipo_variable',tipo_variable);
-    return ['MV','MD'];
+    let retorno = [];
+    if (tipo_variable === '') { 
+      retorno.push('N')
+    } else {
+      retorno.push(tipo_variable);
+    }
+    return  retorno;
   }
 
   getParsedData(rawData, rawTableData){
