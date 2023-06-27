@@ -233,8 +233,8 @@ export class ResultExport {
                         const tbl = document.getElementById(`graph_table_${index}`).firstChild;
                         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
 
-                        const chart = this._helpers.getBase64Canvas(index);
-                        this._helpers.addImageToWorkbook(workbook, ws1, offset, chart).then(() => {
+                        const base64 = this._helpers.getBase64Canvas(index);
+                        this._helpers.addImageToWorkbook(workbook, ws1, offset, base64.img).then(() => {
                             this.saveExcel(workbook);
                         })
                     })
