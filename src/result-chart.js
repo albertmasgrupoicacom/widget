@@ -237,9 +237,10 @@ export class ResultChart {
     canvas.id = `graph_chart_${tableIndex}`;
     canvas.classList.add('graph_chart')
     table.insertAdjacentElement('beforeend', canvas);
+    let dataCopy = JSON.parse(JSON.stringify(data));
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: this.removeTotalAndN(data),
+      data: this.removeTotalAndN(dataCopy),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
