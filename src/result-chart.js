@@ -52,7 +52,7 @@ export class ResultChart {
               colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
             }
           });
-          n = [...result.labels].map(item => tableData.N);
+          n = [...result.labels].map(item => `(${tableData.N})`);
           result.datasets.push({label: '(N)', data: n});
         }else{
           result.labels = ['N. de casos'].concat('Total');
@@ -64,8 +64,13 @@ export class ResultChart {
               colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
             }
           })
-          n = [tableData.N, '100%'];
+          n = [`(${tableData.N})`, '100%'];
           result.datasets.push({label: '(N)', data: n});
+          if(tableData.haymedia && tableData.media){
+            result.datasets.push({label: 'Media', data: ['-', tableData.media.media]});
+            result.datasets.push({label: 'Desviación típica', data: ['-', tableData.media.desvEstandar]});
+            result.datasets.push({label: 'N', data: ['-', tableData.media.base]});
+          }
         }
         break;
       case 'cruce1':
@@ -78,21 +83,31 @@ export class ResultChart {
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
           }
         })
-        n = tableData[operationSelected][tableData[operationSelected].length-1];
+        n = [...tableData[operationSelected][tableData[operationSelected].length-1]].map(item => `(${item})`);
         result.datasets.push({label: '(N)', data: n});
+        if(tableData.hayMediaVar && tableData.mediasVariable){
+          result.datasets.push({label: 'Media', data: [...tableData.mediasVariable].map(item => item.media)});
+          result.datasets.push({label: 'Desviación típica', data: [...tableData.mediasVariable].map(item => item.desvEstandar)});
+          result.datasets.push({label: 'N', data: [...tableData.mediasVariable].map(item => item.base)});
+        }
         break;
       case 'cruce2':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
           if(!this.checkNSNC(header.etiqueta)){
-            let row = tableData[operationSelected][cruceSelected][index] || [];
+            let row = tableData[operationSelected][cruceSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
           }
         })
-        n = tableData[operationSelected][cruceSelected][tableData[operationSelected][cruceSelected].length-1];
+        n = [...tableData[operationSelected][cruceSelected][tableData[operationSelected][cruceSelected].length-1]].map(item => `(${item})`);
         result.datasets.push({label: `(N) ${tableData.etiqCruce2[cruceSelected].etiqueta}`, data: n});
+        if(tableData.haymediaVariable && tableData.mediasVariable){
+          result.datasets.push({label: 'Media', data: [...tableData.mediasVariable[cruceSelected]].map(item => item.media)});
+          result.datasets.push({label: 'Desviación típica', data: [...tableData.mediasVariable[cruceSelected]].map(item => item.desvEstandar)});
+          result.datasets.push({label: 'N', data: [...tableData.mediasVariable[cruceSelected]].map(item => item.base)});
+        }
         break;
     }
 
@@ -240,7 +255,7 @@ export class ResultChart {
     let dataCopy = JSON.parse(JSON.stringify(data));
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: this.removeTotalAndN(dataCopy),
+      data: this.removeTotalNAndMedia(data),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
@@ -268,11 +283,15 @@ export class ResultChart {
     this.printChartSelectionButtons(data, tableIndex);
   }
 
-  removeTotalAndN(data){
+  removeTotalNAndMedia(data){
     let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
     if(totalColumnIndex >= 0) { 
       data.labels.splice(totalColumnIndex, 1);
       data.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
+    }
+    let mediaRowIndex = data.datasets.findIndex(item => item.label == 'Media');
+    if(mediaRowIndex >= 0){
+      data.datasets.splice(mediaRowIndex, 3);
     }
     data.datasets.pop();
     return data;

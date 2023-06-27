@@ -68,7 +68,7 @@ export class Helpers {
         return startRow + rows.length;
     }
 
-    getBase64Canvas(index){
+    getBase64Canvas(index, maxWidth){
         const originalCanvas = document.getElementById(`graph_chart_${index}`);
         let inMemoryCanvas = document.createElement('canvas');
         let ctx = inMemoryCanvas.getContext('2d');
@@ -77,7 +77,12 @@ export class Helpers {
         ctx.fillStyle = 'rgb(255,255,255)';
         ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
         ctx.drawImage(originalCanvas, 0, 0);
-        return inMemoryCanvas.toDataURL("image/png");
+        return {img: inMemoryCanvas.toDataURL("image/png"), size: this.calculateAspectRatioFit(inMemoryCanvas.width, inMemoryCanvas.height, maxWidth)}
+    }
+
+    calculateAspectRatioFit(srcWidth, srcHeight, maxWidth) {
+        var ratio = (maxWidth / srcWidth);
+        return { width: srcWidth*ratio, height: srcHeight*ratio };
     }
     
     b64toBlob(b64Data, contentType = '', sliceSize = 512) {
@@ -122,11 +127,6 @@ export class Helpers {
         var tmp = document.createElement("DIV");
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || "";
-    }
-
-    calculateAspectRatioFit(srcWidth, srcHeight, maxWidth) {
-        var ratio = (maxWidth / srcWidth);
-        return { width: srcWidth*ratio, height: srcHeight*ratio };
     }
 
     showInDecimal(number) {

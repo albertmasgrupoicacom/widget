@@ -8,7 +8,9 @@ export default function main({portletNamespace, contextPath, portletElementId,co
 
     const node = document.getElementById(portletElementId);
     node.innerHTML =`
-        <div id="graph_page" class="cis-caja-tot"></div>
+    <button id="exportPdf">PDF</button>
+    <button id="exportExcel">EXCEL</button>
+    <div id="graph_page" class="cis-caja-tot"></div>
     `;
 
     let graphic; // comentar
@@ -22,5 +24,13 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     }
 
     graphic.init();
+
+    document.getElementById('exportPdf').onclick = () => {
+        graphic.exportPdf();
+    }
+
+    document.getElementById('exportExcel').onclick = () => {
+        graphic.exportExcel();
+    }
     
 }

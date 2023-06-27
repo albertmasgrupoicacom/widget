@@ -1,13 +1,13 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
-// const jsPDF = window.jspdf.jsPDF; // comentar local
+//const jsPDF = window.jspdf.jsPDF; // comentar local
 import * as ExcelJS from 'exceljs';
 import { HttpClient } from './http-client';
 import { base_url } from '../environments/environment.prod';
 import { Helpers } from './helpers';
 import { DataService } from '../services/data.service';
 
-jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39'}, theme: "grid"})
+jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39'}, columnStyles: {0: {cellWidth: 10, fillColor: '#eeeeee'}}, theme: "grid"})
 
 export class ResultExport {
 
@@ -290,9 +290,6 @@ export class ResultExport {
             doc.autoTable({
                 startY: 80,
                 body: estudioData,
-                didParseCell: function(data) {
-                    if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
-                },
             });
 
             if(this._dataService.variables.id_cuestionario){
@@ -313,10 +310,7 @@ export class ResultExport {
         
                     doc.autoTable({
                         startY: 30,
-                        body: cuestionarioData,
-                        didParseCell: function(data) {
-                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
-                        },
+                        body: cuestionarioData
                     });
                 }
             }
@@ -344,10 +338,7 @@ export class ResultExport {
             
                     doc.autoTable({
                         startY: 30, 
-                        body: muestraData,
-                        didParseCell: function(data) {
-                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
-                        }
+                        body: muestraData
                     }); 
                 }
             }
@@ -366,10 +357,7 @@ export class ResultExport {
             
                     doc.autoTable({
                         startY: 30,
-                        body: preguntaData,
-                        didParseCell: function(data) {
-                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
-                        }
+                        body: preguntaData
                     });
                 }
             }
@@ -386,13 +374,13 @@ export class ResultExport {
                     doc.autoTable({
                         html: tbl,
                         startY: 50,
-                        horizontalPageBreak: true, 
-                        horizontalPageBreakRepeat: 0,
-                        didDrawCell: (data) => {
-                            if (data.section === 'body' && data.column.index === 0) {data.cell.styles.fontStyle = 'bold'}
-                            if (data.column.index === 0) {data.cell.x = 100}
-                        }
+                        horizontalPageBreak: true
                     });
+
+                    doc.addPage();
+                    const base64 = this._helpers.getBase64Canvas(index, doc.internal.pageSize.width - 20);
+                    doc.addImage(base64.img, 'PNG', 10, 20, base64.size.width, base64.size.height);
+
                 })
             }
             doc.save(`FichaEstudio.pdf`);
