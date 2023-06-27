@@ -212,7 +212,7 @@ export class ResultChart {
    table.insertAdjacentElement('beforebegin', selector);
   }
 
-  printTable(data, tableIndex){
+  printTable(tableData, tableIndex){
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;
@@ -226,14 +226,14 @@ export class ResultChart {
     const headerrow = document.createElement('tr');
 
     this.addHeaderCell(headerrow, '');
-    data.labels.forEach(label => {this.addHeaderCell(headerrow, label)})
+    tableData.labels.forEach(label => {this.addHeaderCell(headerrow, label)})
 
     tThead.appendChild(headerrow);
     tblTable.appendChild(tThead);
     
     const tblBody = document.createElement('tbody');
 
-    data.datasets.forEach(dataset => {
+    tableData.datasets.forEach(dataset => {
       const row = document.createElement('tr');
       this.addCell(row, dataset.label);
       dataset.data.forEach(item => this.addCell(row, item))
@@ -245,13 +245,7 @@ export class ResultChart {
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
 
-    // if( data.removeColumnsToPaint >0) {
-    //   const value = -Math.abs(data.removeColumnsToPaint);
-    //   data.datasets[0].data = data.datasets[0].data.slice(0,value);
-    //   data.datasets = data.datasets.slice(0,value);
-    //   data.labels = data.labels.slice(0,value);
-    // }
-    this.printChart(data, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[0]);
+    this.printChart(tableData, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[0]);
   }
 
   addHeaderCell(row, contenido) {
@@ -269,22 +263,22 @@ export class ResultChart {
     row.appendChild(cell);
   }
 
-  printChart(data, tableIndex, config){
+  printChart(tableData, tableIndex, config){
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
     canvas.classList.add('graph_chart')
     table.insertAdjacentElement('beforeend', canvas);
-    let dataCopy = JSON.parse(JSON.stringify(data));
+    let tableDataCopy = JSON.parse(JSON.stringify(tableData));
     new Chart(canvas, {
       type: config && config.type ? config.type : 'bar',
-      data: config && config.type == 'pie' ? this.getPieData(dataCopy) : this.removeTotalNAndMedia(dataCopy),
+      data: config && config.type == 'pie' ? this.getPieData(tableDataCopy) : this.removeTotalNAndMedia(tableDataCopy),
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
           title: {
             display: true,
-            text: data.titulo,
+            text: tableData.titulo,
             position: 'top',
             color: '#005767',
             font: {size: 16}
@@ -303,37 +297,36 @@ export class ResultChart {
     });
     const container = document.getElementById(`graph_container_${tableIndex}`);
     container.setAttribute('config', JSON.stringify(config));
-    this.printChartSelectionButtons(data, tableIndex);
+    this.printChartSelectionButtons(tableData, tableIndex);
   }
 
-  getPieData(data){
-    const dataCopy = this.removeTotalNAndMedia(JSON.parse(JSON.stringify(data)));
+  getPieData(tableData){
+    const dataCopy = this.removeTotalNAndMedia(JSON.parse(JSON.stringify(tableData)));
     let dataset = dataCopy.datasets[this.pieDatasetSelected];
-    console.log(data, dataset, this.pieDatasetSelected);
-    dataset.backgroundColor = ['#fff', '#000', '#eee'];
+    dataset.backgroundColor = colors;
     dataCopy.datasets = [dataset];
     return dataCopy
   }
 
-  removeTotalNAndMedia(data){
-    let totalColumnIndex = data.labels.findIndex(label => label == 'Total');
+  removeTotalNAndMedia(tableData){
+    let totalColumnIndex = tableData.labels.findIndex(label => label == 'Total');
     if(totalColumnIndex >= 0) { 
-      data.labels.splice(totalColumnIndex, 1);
-      data.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
+      tableData.labels.splice(totalColumnIndex, 1);
+      tableData.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
     }
-    let mediaRowIndex = data.datasets.findIndex(item => item.label == 'Media');
+    let mediaRowIndex = tableData.datasets.findIndex(item => item.label == 'Media');
     if(mediaRowIndex >= 0){
-      data.datasets.splice(mediaRowIndex, 3);
+      tableData.datasets.splice(mediaRowIndex, 3);
     }
-    data.datasets.pop();
-    return data;
+    tableData.datasets.pop();
+    return tableData;
   }
 
-  printChartSelectionButtons(data, tableIndex){
+  printChartSelectionButtons(tableData, tableIndex){
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
-    const showButtons = resultButtons.filter(f => f.showCondition.includes(data.type_graph));
+    const showButtons = resultButtons.filter(f => f.showCondition.includes(tableData.type_graph));
     showButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
@@ -342,12 +335,12 @@ export class ResultChart {
         this.removePieDatasetSelector(tableIndex)
         if(config.type == 'pie'){
           this.pieDatasetSelected = 0;
-          this.printPieDatasetSelector(data, tableIndex);
+          this.printPieDatasetSelector(tableData, tableIndex);
         }else{
           this.pieDatasetSelected = undefined;
         }
         this.removeChart(tableIndex);
-        this.printChart(data, tableIndex, config);
+        this.printChart(tableData, tableIndex, config);
       }
       buttonsContainer.appendChild(button);
     });
