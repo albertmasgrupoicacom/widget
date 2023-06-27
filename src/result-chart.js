@@ -301,7 +301,12 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
-    resultButtons.forEach(config => {
+    // TODO: filter config MR or MV
+    const values = ['all','pie'];
+    const showButtons = resultButtons.filter(f => values.some(item => f.showCondition.includes(item)));
+    console.log(showButtons);
+
+    showButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
       button.style.background = `url(${config.icon}) no-repeat`;
