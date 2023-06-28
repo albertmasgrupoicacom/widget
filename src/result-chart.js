@@ -190,13 +190,22 @@ export class ResultChart {
     container.appendChild(selector);
   }
 
+  removeLabelsPie(array) {
+    let newArray = array.filter( x => x != 'Media' && x != 'Desviación típica' && x != 'N');
+    const indexN = newArray.findIndex(label => label == '(N)');
+    if(indexN >= 0) { 
+      newArray[indexN] = 'Total';
+    }
+    return newArray;
+  }
+
   printPieDatasetSelector(tableData, tableIndex) {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_pie_${tableIndex}`);
     // remove label: 'Media','Desviación típica','N',
     // rename label: '(N)' -> 'Total'
-    let array = [...tableData.datasets].map(dataset => dataset.label);
+    let array = this.removeLabelsPie([...tableData.datasets].map(dataset => dataset.label));
 
     for (var i = 0; i < array.length; i++) {
       let option = document.createElement("option");
@@ -302,11 +311,21 @@ export class ResultChart {
     this.printChartSelectionButtons(tableData, tableIndex);
   }
 
+  removeTotalParentesis(datasetObject) {
+    let newDatasetObject = datasetObject;
+    newDatasetObject.data = newDatasetObject.data.map( data => data.slice(1,-1))
+    return newDatasetObject;
+  }
+
   getPieData(tableData){
     const dataCopy = this.removeTotalNAndMedia(JSON.parse(JSON.stringify(tableData)));
     let dataset = dataCopy.datasets[this.pieDatasetSelected];
     dataset.backgroundColor = colors;
+    if( dataset.label == '(N)') {
+      dataset = this.removeTotalParentesis(dataset);
+    }
     dataCopy.datasets = [dataset];
+    
     return dataCopy
   }
 
@@ -320,7 +339,7 @@ export class ResultChart {
     if(mediaRowIndex >= 0){
       tableData.datasets.splice(mediaRowIndex, 3);
     }
-    tableData.datasets.pop(); // TODO: quitar
+    //tableData.datasets.pop(); // TODO: quitar
     return tableData;
   }
 
