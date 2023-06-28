@@ -80,7 +80,7 @@ export class SerieChart {
     printHeader(data){
         const container = document.getElementById("graph_container");
         const htmlHeader = `
-            <div><h4>Serie:</h4><p>${data.ficha.codigo || '-'}</p><p>${data.ficha.titulo || '-'}</p></div>
+            <div><h4>Serie:</h4><p>${data.ficha.codigo || '-'}</p>&nbsp;-&nbsp;<p>${data.ficha.titulo || '-'}</p></div>
             <div><h4>Muestra:</h4><p>${data.ficha.muestra || '-'}</p></div>
             <div><h4>Pregunta:</h4>${data.ficha.pregunta || '-'}</div>
             <div><h4>Notas:</h4><p>${data.ficha.notas || '-'}</p></div>`;
