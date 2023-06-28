@@ -194,6 +194,8 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_pie_${tableIndex}`);
+    // remove label: 'Media','Desviación típica','N',
+    // rename label: '(N)' -> 'Total'
     let array = [...tableData.datasets].map(dataset => dataset.label);
 
     for (var i = 0; i < array.length; i++) {
@@ -318,7 +320,7 @@ export class ResultChart {
     if(mediaRowIndex >= 0){
       tableData.datasets.splice(mediaRowIndex, 3);
     }
-    tableData.datasets.pop();
+    tableData.datasets.pop(); // TODO: quitar
     return tableData;
   }
 

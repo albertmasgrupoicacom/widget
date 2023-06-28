@@ -6,7 +6,7 @@ const preguntaSeleccionada = null;
 const muestraSeleccionada = null;
 const variableSeleccionada = 980820;
 const variableCruce1Seleccionada = 980768;
-const variableCruce2Seleccionada = 980943;
+const variableCruce2Seleccionada = null;//980943;
 
 // const tipo = 'PREGUNTA';  //MV
 // const numSerie = 4797; //6010;
