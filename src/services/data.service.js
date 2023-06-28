@@ -4,9 +4,9 @@ const codEstudio = 14695;
 const cuestionarioSeleccionado = 17664;//17697
 const preguntaSeleccionada = null;
 const muestraSeleccionada = null;
-const variableSeleccionada = 961577//980820;
-const variableCruce1Seleccionada = null//980768;
-const variableCruce2Seleccionada = null//980773;
+const variableSeleccionada = 980820;
+const variableCruce1Seleccionada = 980768;
+const variableCruce2Seleccionada = 980773;
 
 // const tipo = 'PREGUNTA';  //MV
 // const numSerie = 4797; //6010;

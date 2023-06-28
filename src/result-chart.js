@@ -350,6 +350,10 @@ export class ResultChart {
 
   removeAllContainers() {
     document.getElementById('graph_page').innerHTML = '';
+    this.data = undefined;
+    this.operacionesSelectedTable = 'cruce';
+    this.cruceSelectedTable = 0;
+    this.pieSelectedDataset = undefined;
   }
 
   removeTable(tableIndex) {
