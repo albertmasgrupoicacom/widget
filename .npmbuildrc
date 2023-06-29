@@ -1,5 +1,5 @@
 {
-	"liferayDir": "/Users/albert.mas/liferay-ce-portal-7.4.3.75-ga75",
+	"liferayDir": "C:/Users/sergio.asensio/develop/liferay",
 	"webpack": {
 		"rules": [
 			{

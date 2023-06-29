@@ -50,7 +50,7 @@ export class ResultChart {
     switch (tableData.tipo_resultado) {
       case 'marginales':
         if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
-          result.labels = data.ficha.componentes.map(item => item.titulo).concat('Total');
+          result.labels = data.ficha.componentes.map(item => item.titulo);
           headers = tableData.frecuencias;
           headers.forEach(header => {
             if(!this.checkNSNC(header.etiqueta)){
@@ -167,7 +167,7 @@ export class ResultChart {
     selector.addEventListener("change", e => {
       this.operacionesSelectedTable = e.target.value;
       this.removeTable(tableIndex);
-      this.printTable(this.getParsedData(tableData), tableIndex)
+      this.printTable(this.getParsedData(tableData), tableIndex);
    })
    container.appendChild(selector);
   }
@@ -221,6 +221,15 @@ export class ResultChart {
 
     tableData.totals.forEach(dataset => {
       const row = document.createElement('tr');
+      row.classList.add('table_highlight_background')
+      this.addCell(row, dataset.label);
+      dataset.data.forEach(item => this.addCell(row, item))
+      tblBody.appendChild(row);
+    })
+
+    tableData.medias.forEach((dataset, index) => {
+      const row = document.createElement('tr');
+      row.classList.add(index == tableData.medias.length - 1 ? 'table_highlight_background' : 'table_highlight_text')
       this.addCell(row, dataset.label);
       dataset.data.forEach(item => this.addCell(row, item))
       tblBody.appendChild(row);
