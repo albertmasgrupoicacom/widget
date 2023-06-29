@@ -271,6 +271,16 @@ export class ResultChart {
       options: {
         indexAxis: config && config.axis ? config.axis : 'x',
         plugins: {
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                let label = context.dataset.label || context.dataset.labels[context.dataIndex] || '';
+                label += ': ' || '';
+                label += this.operacionesSelectedTable != 'cruce' ? `${context.formattedValue || '-'}%` : context.formattedValue || '-';
+                return label;
+            }
+            }
+          },
           title: {
             display: true,
             text: tableData.titulo,
@@ -299,7 +309,7 @@ export class ResultChart {
     let dataCopy = JSON.parse(JSON.stringify(tableData));
     let datasets = JSON.parse(JSON.stringify(dataCopy.datasets))
     dataCopy.labels = datasets.map(d => d.label)
-    let dataset = {data: datasets.map(dataset => dataset.data[this.pieDatasetSelected != undefined ? this.pieDatasetSelected : 1]), backgroundColor: colors}
+    let dataset = {labels: dataCopy.labels, data: datasets.map(dataset => dataset.data[this.pieDatasetSelected != undefined ? this.pieDatasetSelected : 1]), backgroundColor: colors}
     dataCopy.datasets = [dataset];
     return dataCopy
   }
