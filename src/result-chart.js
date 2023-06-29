@@ -18,16 +18,23 @@ export class ResultChart {
     this.cruceSelectedTable = 0;
     this.pieSelectedDataset;
     this.legend = true;
+    this.loading = false;
   }
   
   init(){
+    console.log('***** INIT *****');
     this.removeAllContainers();
-    this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
-      this.data = data;
-      if(data && data.ficha) {this.printContainers(data)};
-    }).catch(error => {
-      console.error('Error', error);
-    });
+    if( !this.loading ) {
+      this.loading = true;
+      this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
+        this.data = data;
+        this.loading = false;
+        if(data && data.ficha) {this.printContainers(data)};
+      }).catch(error => {
+        console.error('Error', error);
+        this.loading = false;
+      });
+    }
   }
 
   getParsedData(rawTableData){
@@ -184,6 +191,7 @@ export class ResultChart {
   }
 
   printTable(tableData, tableIndex){
+    console.log('****** PRINT TABLE *******');
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;

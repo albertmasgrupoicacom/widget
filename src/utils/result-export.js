@@ -1,6 +1,6 @@
-import jsPDF from 'jspdf';
-import 'jspdf-autotable'
-//const jsPDF = window.jspdf.jsPDF; // TODO: comentar local
+// import jsPDF from 'jspdf';
+// import 'jspdf-autotable'
+const jsPDF = window.jspdf.jsPDF; // TODO: comentar local
 import * as ExcelJS from 'exceljs';
 import { HttpClient } from './http-client';
 import { base_url } from '../environments/environment.prod';
@@ -367,13 +367,16 @@ export class ResultExport {
                     doc.addPage();
                     doc.setFontSize(14);
                     doc.text(table.titulo, 10, 20);
-                    doc.text(`Cruce 1: ${table.tituloCruce1}`, 10, 30);
-                    doc.text(`Cruce 2: ${table.tituloCruce2}`, 10, 40);
+                    let incrementoY = 0;
+                    if( table.tituloCruce) { doc.text(`Cruce: ${table.tituloCruce}`, 10, 30); incrementoY = 10;}
+                    if( table.tituloCruce1) { doc.text(`Cruce 1: ${table.tituloCruce1}`, 10, 30); incrementoY = 20; }
+                    if( table.tituloCruce2) { doc.text(`Cruce 2: ${table.tituloCruce2}`, 10, 40); incrementoY = 20; }
+
                     
                     const tbl = document.getElementById(`graph_table_${index}`).firstChild;
                     doc.autoTable({
                         html: tbl,
-                        startY: 50,
+                        startY: 30 + incrementoY,
                         horizontalPageBreak: true
                     });
 
