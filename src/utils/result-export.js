@@ -216,19 +216,29 @@ export class ResultExport {
                     dataCell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
                     ws1.mergeCells(`A${offset}:B${offset}`);
                     offset ++;
-    
+
                     rawData.ficha.tabla.forEach((table, index) => {
                         ws1.getCell(`A${offset}`).value = 'Título';
                         ws1.getCell(`B${offset}`).value = table.titulo;
                         offset++;
 
-                        ws1.getCell(`A${offset}`).value = 'Cruce 1';
-                        ws1.getCell(`B${offset}`).value = table.tituloCruce1;
-                        offset++;
+                        if( table.tituloCruce) {
+                            ws1.getCell(`A${offset}`).value = 'Cruce';
+                            ws1.getCell(`B${offset}`).value = table.tituloCruce;
+                            offset++;
+                        }
+
+                        if( table.tituloCruce1) {
+                            ws1.getCell(`A${offset}`).value = 'Cruce 1';
+                            ws1.getCell(`B${offset}`).value = table.tituloCruce1;
+                            offset++;
+                        }
         
-                        ws1.getCell(`A${offset}`).value = 'Cruce 2';
-                        ws1.getCell(`B${offset}`).value = table.tituloCruce2;
-                        offset += 2;
+                        if( table.tituloCruce2) {
+                            ws1.getCell(`A${offset}`).value = 'Cruce 2';
+                            ws1.getCell(`B${offset}`).value = table.tituloCruce2;
+                            offset += 2;
+                        }
     
                         const tbl = document.getElementById(`graph_table_${index}`).firstChild;
                         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
