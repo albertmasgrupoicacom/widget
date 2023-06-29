@@ -225,7 +225,7 @@ export class ResultExport {
                         if( table.tituloCruce) {
                             ws1.getCell(`A${offset}`).value = 'Cruce';
                             ws1.getCell(`B${offset}`).value = table.tituloCruce;
-                            offset++;
+                            offset += 2;
                         }
 
                         if( table.tituloCruce1) {
