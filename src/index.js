@@ -7,34 +7,34 @@ export default function main({portletNamespace, contextPath, portletElementId,co
     const dataService = new DataService();
 
     const node = document.getElementById(portletElementId);
-    // node.innerHTML =`
-    // <button id="exportPdf">PDF</button>
-    // <button id="exportExcel">EXCEL</button>
-    // <div id="graph_page" class="cis-caja-tot"></div>
-    // `;
     node.innerHTML =`
+    <button id="exportPdf">PDF</button>
+    <button id="exportExcel">EXCEL</button>
     <div id="graph_page" class="cis-caja-tot"></div>
-    `;  // TODO: descomentar
+    `;
+    // node.innerHTML =`
+    // <div id="graph_page" class="cis-caja-tot"></div>
+    // `;  // TODO: descomentar
 
-    // let graphic; // TODO: comentar
+    let graphic; // TODO: comentar
     switch (dataService.type) {
         case 'SERIE':
             graphic = new SerieChart();
-            graphic.init();
+            // graphic.init();
             break;
         case 'PREGUNTA':
             graphic = new ResultChart();
             break;
     }
 
-    // graphic.init();
+    graphic.init();
 
-    // document.getElementById('exportPdf').onclick = () => {
-    //     graphic.exportPdf();
-    // }
+    document.getElementById('exportPdf').onclick = () => {
+        graphic.exportPdf();
+    }
 
-    // document.getElementById('exportExcel').onclick = () => {
-    //     graphic.exportExcel();
-    // }
+    document.getElementById('exportExcel').onclick = () => {
+        graphic.exportExcel();
+    }
     
 }

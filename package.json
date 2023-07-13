@@ -24,7 +24,8 @@
 		"jspdf-autotable": "^3.5.29",
 		"liferay-npm-bundler-plugin-inject-peer-dependencies": "^2.31.2",
 		"xlsx": "^0.18.5",
-		"xlsx-populate": "^1.21.0"
+		"xlsx-populate": "^1.21.0",
+		"chartjs-plugin-datalabels": "^2.2.0"
 	},
 	"scripts": {
 		"build": "babel --source-maps -d build src && npm run copy-assets && liferay-npm-bundler",

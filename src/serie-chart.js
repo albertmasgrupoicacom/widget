@@ -29,6 +29,7 @@ export class SerieChart {
         const data = JSON.parse(JSON.stringify(rawData));
 
         let labels = data.ficha.serie_temporal.map(label => label.fecha);
+        let secondfileLabels = data.ficha.serie_temporal.map(sublabel => `${sublabel.estudio} ${sublabel.codigo}`);
         
         let filas = data.ficha.filas; //.slice(0, -1);
         let columnas = data.ficha.columnas;
@@ -66,7 +67,7 @@ export class SerieChart {
             })
         }
 
-        return {titulo: data.ficha.titulo, labels: labels, datasets: datasets, subLabels: columnas };
+        return {titulo: data.ficha.titulo, labels: labels, secondfileLabels: secondfileLabels, datasets: datasets, subLabels: columnas };
     }
 
     printContainer(data){
@@ -103,7 +104,7 @@ export class SerieChart {
         const headerrow = document.createElement('tr');
 
         this.addHeaderCell(headerrow, '');
-        data.labels.forEach(label => this.addHeaderCell(headerrow, label , data.subLabels ? data.subLabels.length : 0))
+        data.labels.forEach((label,index) => this.addHeaderCell(headerrow, label , data.secondfileLabels[index], data.subLabels ? data.subLabels.length : 0))
 
         tThead.appendChild(headerrow);
 
@@ -113,7 +114,7 @@ export class SerieChart {
             const subHeaderrow = document.createElement('tr');
             this.addHeaderCell(subHeaderrow, '' , 0);
             data.datasets[0].data.map((dataset,index) => {
-                console.log(index)
+                // console.log(index)
                 data.subLabels.forEach(item => {
                     this.addHeaderCell(subHeaderrow, item , 0);
                 })
@@ -155,10 +156,18 @@ export class SerieChart {
         }
     }
 
-    addHeaderCell(row, contenido, colspan) {
+    addHeaderCell(row, contenido, secondfileLabel, colspan) {
         const headerCell = document.createElement('th');
-        const cellText = document.createTextNode(contenido);
-        headerCell.appendChild(cellText);
+        let cellText;
+        if( secondfileLabel) {
+            const paragraph = document.createElement('div');
+            paragraph.insertAdjacentHTML('beforeend', `<div>${contenido}</div>`);
+            paragraph.insertAdjacentHTML('beforeend', `<div class="secondFile">${secondfileLabel}</div>`);
+            headerCell.appendChild(paragraph);
+        } else {
+            cellText = document.createTextNode(contenido);
+            headerCell.appendChild(cellText);
+        }
         headerCell.colSpan = colspan;
         row.appendChild(headerCell);
     }

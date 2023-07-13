@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { resultButtons, colors } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
@@ -266,6 +267,7 @@ export class ResultChart {
     table.insertAdjacentElement('beforeend', canvas);
     let tableDataCopy = JSON.parse(JSON.stringify(tableData));
     new Chart(canvas, {
+      plugins: [ChartDataLabels],
       type: config && config.type ? config.type : 'bar',
       data: config && config.type == 'pie' ? this.getPieData(tableDataCopy) : this.removeTotalColumn(tableDataCopy),
       options: {
@@ -281,16 +283,40 @@ export class ResultChart {
             }
             }
           },
-          title: {
-            display: true,
-            text: tableData.titulo,
-            position: 'top',
-            color: '#005767',
-            font: {size: 16}
-          },
-          legend: {
-            display: this.legend,
-            position: 'bottom',
+          // legend: {
+          //   labels: {
+          //     padding: 10
+          //   }
+          // },
+          datalabels: {
+            labels: {
+                name: config.type !== 'bar' ? {
+                  align: 'top',
+                  anchor: 'end',
+                  display: 'auto',
+                  font: {size: 16},
+                  color: this.printLabel,
+                  font: this.fontFunction,
+                  formatter: function(value, context) {
+                          // if(context.dataset.type === 'bar'){ return null;}
+                          return `${context.chart.data.labels[context.dataIndex]}`;
+                        }
+                }: '',
+                value: config.type !== 'bar' ? {
+                  align: 'bottom',
+                  anchor: 'end',
+                  borderColor: this.printLabel,
+                  borderWidth: 1,
+                  borderRadius: 3,
+                  color: this.printLabel,
+                  formatter: (value,context) => {
+                    let retorn = context.dataset.data[context.dataIndex] || '';
+                    retorn += (this.operacionesSelectedTable != 'cruce' && retorn != '') ? `%` : context.formattedValue || '';
+                    return retorn;
+                  },
+                  padding: 2
+                } : ''
+            }
           },
         },
         responsive: true,
@@ -404,5 +430,35 @@ export class ResultChart {
   exportPdf(){
     if(this.data){this._exportUtils.exportToPDF(this.data)}
   }
+
+  printLabel (data) {
+    let  rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(data.dataset.backgroundColor[data.dataIndex]);
+    if( rgb ) {
+        const rgbR = {r: parseInt(rgb[1], 16), g: parseInt(rgb[2], 16), b: parseInt(rgb[3], 16)};
+        let threshold = 140;
+        let luminance = 0.299 * rgbR.r + 0.587 * rgbR.g + 0.114 * rgbR.b;
+        return luminance > threshold ? 'black' : 'white';
+    } else {
+        return 'white';
+    }
+  }
+
+  alignFunction(data) {
+    let align = 'center'
+    return align;
+  }
+
+  anchorFunction(data) {
+    let anchor = 'center'
+    return anchor;
+  }
+
+  fontFunction(context) {
+          var w = context.chart.width;
+          return {
+            size: w < 512 ? 12 : 14,
+            weight: 'bold',
+          };
+    }
 
 }
