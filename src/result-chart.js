@@ -50,7 +50,7 @@ export class ResultChart {
     let headers = [];
     switch (tableData.tipo_resultado) {
       case 'marginales':
-        if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD'){
+        if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD' && !tableData.frecuencias) {
           result.labels = data.ficha.componentes.map(item => item.titulo);
           headers = tableData.frecuencias;
           headers.forEach(header => {

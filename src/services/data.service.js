@@ -11,10 +11,10 @@
 const tipo = 'PREGUNTA';  //MV
 const numSerie = 4797; //6010;
 const codEstudio = 3101; //14664;
-const cuestionarioSeleccionado = 17048; //17664;
+const cuestionarioSeleccionado = 17697; //17048; //17664;
 const preguntaSeleccionada = null; //630886;
 const muestraSeleccionada = null;
-const variableSeleccionada = 642625; //642626; //961602;
+const variableSeleccionada = 642626; //642626; //961602;
 const variableCruce1Seleccionada = null//961618;
 const variableCruce2Seleccionada = null//961556;
 
