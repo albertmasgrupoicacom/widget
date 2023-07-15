@@ -55,7 +55,7 @@ export class ResultChart {
           headers = tableData.frecuencias;
           headers.forEach(header => {
             if(!this.checkNSNC(header.etiqueta)){
-              let row = [...result.labels].map((label, index) => header.porcentaje[index]);
+              let row = [...result.labels].map((label, index) => header.porcentaje[index] || header.porcentaje ); //TODO: possible solucion multirespuesta!
               result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
               colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
             }
