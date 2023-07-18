@@ -85,10 +85,10 @@ export class ResultChart {
         break;
       case 'cruce1':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
-        result.labels = result.labels.filter( x => !this.checkNSNC(x));
+        result.labels = result.labels.filter( x => !this.checkNSNC(x, this.checkDefaultNSNC(result.labels)));
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          if(!this.checkNSNC(header.etiqueta)){
+          if(!this.checkNSNC(header.etiqueta, this.checkDefaultNSNC(headers))){
             let row = tableData[operationSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
@@ -103,11 +103,10 @@ export class ResultChart {
         break;
       case 'cruce2':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
-        result.labels = result.labels.filter( x => !this.checkNSNC(x,result.labels.find(x=> ['N.S.', 'N.C.', 'Ninguno'].includes(x))))
+        result.labels = result.labels.filter( x => !this.checkNSNC(x, this.checkDefaultNSNC(result.labels)));
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          // ['N.S.', 'N.C.', 'Ninguno']
-          if(!this.checkNSNC(header.etiqueta)){
+          if(!this.checkNSNC(header.etiqueta, this.checkDefaultNSNC(headers))){
             let row = tableData[operationSelected][cruceSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
@@ -125,8 +124,12 @@ export class ResultChart {
     return result;
   }
 
-  checkNSNC(label, incluyeEtiquetaNombreReservado=false){
-    return incluyeEtiquetaNombreReservado ?  this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false : true;
+  checkDefaultNSNC(array){
+    return array.find(item => ['N.S.', 'N.C.', 'Ninguno'].includes(item)) ? true : false;
+  }
+
+  checkNSNC(label, hasNSNC){
+    return hasNSNC ? false : this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
   }
 
   printContainers(data){
