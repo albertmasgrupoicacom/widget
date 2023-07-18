@@ -130,6 +130,8 @@ export class ResultChart {
 
   checkNSNC(label, hasNSNC){
     return hasNSNC ? false : this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
+    // const f = hasNSNC ? this.operacionesSelectedTable.includes('_NSNC'): false;
+    // return f ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
   }
 
   printContainers(data){
@@ -300,9 +302,9 @@ export class ResultChart {
           // },
           datalabels: {
             labels: {
-                name: config.type !== 'bar' ? {
+                name: config.type !== 'bar' ? {  //PIE NAME
                   align: 'top',
-                  anchor: 'end',
+                  anchor: 'center',
                   display: 'auto',
                   font: {size: 16},
                   color: this.printLabel,
@@ -312,9 +314,9 @@ export class ResultChart {
                           return `${context.chart.data.labels[context.dataIndex]}`;
                         }
                 }: '',
-                value: config.type !== 'bar' ? {
+                value: config.type !== 'bar' ? {  // PIE VALUE
                   align: 'bottom',
-                  anchor: 'end',
+                  anchor: 'center',
                   borderColor: this.printLabel,
                   borderWidth: 1,
                   borderRadius: 3,
@@ -325,7 +327,24 @@ export class ResultChart {
                     return retorn;
                   },
                   padding: 2
-                } : ''
+                } : {    // BAR VALUE
+                  align: this.alignFunction(config.stacked),
+                  anchor: this.anchorFunction(config.stacked),
+                  font: {
+                    weight: 'bold'
+                  },
+                  color: (context) => {
+                    let backgroundColor = context.dataset.backgroundColor;
+                    if( config.stacked ) { backgroundColor = this.printLabelStacked(context);}
+                    return backgroundColor;
+                  },
+                  formatter: (value,context) => {
+                    let retorn = context.dataset.data[context.dataIndex] || '';
+                    retorn += (this.operacionesSelectedTable != 'cruce' && retorn != '') ? `%` : context.formattedValue || '';
+                    return retorn;
+                  },
+                  padding: 0
+                }
             }
           },
         },
@@ -352,17 +371,6 @@ export class ResultChart {
 
   removeTotalColumn(tableData){
     const dataCopy = JSON.parse(JSON.stringify(tableData));
-    // let totalColumnIndex = dataCopy.labels.findIndex(label => label == 'Total');
-    // if(totalColumnIndex >= 0) {
-    //   if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD') {
-    //     dataCopy.labels.splice(totalColumnIndex, 1);
-    //     dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex,1));
-    //   } else {
-    //     dataCopy.labels = ['Total'];
-    //     dataCopy.datasets.map(dataset => dataset.data.splice(0,totalColumnIndex));
-    //   }
-     
-    // }
     let totalColumnIndex = dataCopy.labels.findIndex(label => label == 'Total');
     switch (tableData.tipo_resultado) {
       case 'marginales':
@@ -488,13 +496,27 @@ export class ResultChart {
     }
   }
 
-  alignFunction(data) {
-    let align = 'center'
+  printLabelStacked (data) {
+    let  rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(Array.isArray(data.dataset.backgroundColor[data.dataIndex]) ? data.dataset.backgroundColor[data.dataIndex] : data.dataset.backgroundColor);
+    if( rgb ) {
+        const rgbR = {r: parseInt(rgb[1], 16), g: parseInt(rgb[2], 16), b: parseInt(rgb[3], 16)};
+        let threshold = 140;
+        let luminance = 0.299 * rgbR.r + 0.587 * rgbR.g + 0.114 * rgbR.b;
+        return luminance > threshold ? 'black' : 'white';
+    } else {
+        return 'white';
+    }
+  }
+
+  alignFunction(stacked) {
+    let align = 'center';
+    if( !stacked ) {align = 'end';}
     return align;
   }
 
-  anchorFunction(data) {
-    let anchor = 'center'
+  anchorFunction(stacked) {
+    let anchor = 'center';
+    if( !stacked ) {anchor = 'end';}
     return anchor;
   }
 
