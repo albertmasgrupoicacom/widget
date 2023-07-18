@@ -45,17 +45,21 @@ export class ResultChart {
     const tableData = JSON.parse(JSON.stringify(rawTableData));
     console.log(data);
     console.log(tableData);
-    let result = {datasets: [], totals: [], medias: [], titulo: tableData.titulo, labels: [], type_graph: tableData.tipo_variable || 'N'};
+    let result = {datasets: [], totals: [], medias: [], titulo: tableData.titulo, labels: [], tipo_variable: tableData.tipo_variable || 'N', tipo_resultado: tableData.tipo_resultado};
     let colorIndex = 0;
     let headers = [];
     switch (tableData.tipo_resultado) {
       case 'marginales':
-        if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD' && !tableData.frecuencias) {
+        if(tableData.tipo_variable == 'MV' ) {  // && !tableData.frecuencias  //|| tableData.tipo_variable == 'MD'
           result.labels = data.ficha.componentes.map(item => item.titulo);
+          if( tableData.frecuencias[0].n.length > result.labels.length ) {
+            //add Total
+            result.labels.push('Total');
+          }
           headers = tableData.frecuencias;
           headers.forEach(header => {
             if(!this.checkNSNC(header.etiqueta)){
-              let row = [...result.labels].map((label, index) => header.porcentaje[index] || header.porcentaje ); //TODO: possible solucion multirespuesta!
+              let row = [...result.labels].map((label, index) => header.porcentaje[index]  );
               result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
               colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
             }
@@ -81,6 +85,7 @@ export class ResultChart {
         break;
       case 'cruce1':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
+        result.labels = result.labels.filter( x => !this.checkNSNC(x));
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
           if(!this.checkNSNC(header.etiqueta)){
@@ -98,8 +103,10 @@ export class ResultChart {
         break;
       case 'cruce2':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
+        result.labels = result.labels.filter( x => !this.checkNSNC(x,result.labels.find(x=> ['N.S.', 'N.C.', 'Ninguno'].includes(x))))
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
+          // ['N.S.', 'N.C.', 'Ninguno']
           if(!this.checkNSNC(header.etiqueta)){
             let row = tableData[operationSelected][cruceSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
@@ -118,8 +125,8 @@ export class ResultChart {
     return result;
   }
 
-  checkNSNC(label){
-    return this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
+  checkNSNC(label, incluyeEtiquetaNombreReservado=false){
+    return incluyeEtiquetaNombreReservado ?  this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false : true;
   }
 
   printContainers(data){
@@ -342,10 +349,45 @@ export class ResultChart {
 
   removeTotalColumn(tableData){
     const dataCopy = JSON.parse(JSON.stringify(tableData));
+    // let totalColumnIndex = dataCopy.labels.findIndex(label => label == 'Total');
+    // if(totalColumnIndex >= 0) {
+    //   if(tableData.tipo_variable == 'MV' || tableData.tipo_variable == 'MD') {
+    //     dataCopy.labels.splice(totalColumnIndex, 1);
+    //     dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex,1));
+    //   } else {
+    //     dataCopy.labels = ['Total'];
+    //     dataCopy.datasets.map(dataset => dataset.data.splice(0,totalColumnIndex));
+    //   }
+     
+    // }
     let totalColumnIndex = dataCopy.labels.findIndex(label => label == 'Total');
-    if(totalColumnIndex >= 0) {
-      dataCopy.labels.splice(totalColumnIndex, 1);
-      dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex, 1));
+    switch (tableData.tipo_resultado) {
+      case 'marginales':
+        if(tableData.tipo_variable == 'MV' ) {  // && !tableData.frecuencias //|| tableData.tipo_variable == 'MD'
+          if(totalColumnIndex >= 0) {
+            dataCopy.labels.splice(totalColumnIndex, 1);
+            dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex,1));
+          }
+        }else{
+          if(totalColumnIndex >= 0) {
+            dataCopy.labels = ['Total'];
+            dataCopy.datasets.map(dataset => dataset.data.splice(0,totalColumnIndex));
+          }
+        }
+        break;
+      case 'cruce1':
+        
+        if(totalColumnIndex >= 0) {
+          dataCopy.labels.splice(totalColumnIndex, 1);
+          dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex,1));
+        }
+        break;
+      case 'cruce2':
+        if(totalColumnIndex >= 0) {
+          dataCopy.labels.splice(totalColumnIndex, 1);
+          dataCopy.datasets.map(dataset => dataset.data.splice(totalColumnIndex,1));
+        }
+        break;
     }
     return dataCopy;
   }
@@ -354,7 +396,7 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
-    const showButtons = resultButtons.filter(f => f.showCondition.includes(tableData.type_graph));
+    const showButtons = resultButtons.filter(f => f.showCondition.includes(tableData.tipo_variable));
     showButtons.forEach(config => {
       let button = document.createElement('button');
       button.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
