@@ -15,6 +15,7 @@ export class ResultChart {
     this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
+    // this.operacionesSelectedTable = 'cruce';
     this.operacionesSelectedTable;
     this.cruceSelectedTable = 0;
     this.pieSelectedDataset;
@@ -29,6 +30,9 @@ export class ResultChart {
       this.loading = true;
       this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
         this.data = data;
+        if( data.ficha.tabla[0].tipo_resultado == 'cruce1') {
+          this.operacionesSelectedTable = 'cruce';
+        }
         this.loading = false;
         if(data && data.ficha) {this.printContainers(data)};
       }).catch(error => {
@@ -121,6 +125,7 @@ export class ResultChart {
   }
 
   checkNSNC(label){
+    if( !this.operacionesSelectedTable) return false;
     return this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
   }
 
@@ -447,6 +452,7 @@ export class ResultChart {
   removeAllContainers() {
     document.getElementById('graph_page').innerHTML = '';
     this.data = undefined;
+    // this.operacionesSelectedTable = 'cruce';
     this.operacionesSelectedTable = undefined;
     this.cruceSelectedTable = 0;
     this.pieSelectedDataset = undefined;
