@@ -357,6 +357,7 @@ export class ResultChart {
             }
           },
         },
+        radius: '70%',
         responsive: true,
         scales: {
           x: {stacked: config && config.stacked != undefined ? config.stacked : false},
