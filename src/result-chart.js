@@ -67,6 +67,17 @@ export class ResultChart {
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
           });
           result.totals.push({label: '(N)', data: [...result.labels].map(item => tableData.N)})
+          if(tableData.haymedia && tableData.media){
+            if(Array.isArray(tableData.media) ) {
+              result.medias.push({label: 'Media', data: tableData.media.map( x => x.media)});
+              result.medias.push({label: 'Desviación típica', data: tableData.media.map(x => x.desvEstandar)});
+              result.medias.push({label: 'N', data: tableData.media.map(x => x.base)});
+            } else {
+              result.medias.push({label: 'Media', data: ['-', tableData.media.media]});
+              result.medias.push({label: 'Desviación típica', data: ['-', tableData.media.desvEstandar]});
+              result.medias.push({label: 'N', data: ['-', tableData.media.base]});
+            }
+          }
         }else{
           result.labels = ['N. de casos'].concat('Total');
           headers = tableData.frecuencias;
@@ -325,6 +336,7 @@ export class ResultChart {
                 } : {    // BAR VALUE
                   align: this.alignFunction(config.stacked),
                   anchor: this.anchorFunction(config.stacked),
+                  display: 'auto',
                   font: {
                     weight: 'bold'
                   },
@@ -334,8 +346,10 @@ export class ResultChart {
                     return backgroundColor;
                   },
                   formatter: (value,context) => {
+                    // const numBars = tableData.datasets.length * tableData.datasets[0].data.length;
                     let retorn = context.dataset.data[context.dataIndex] || '';
                     retorn += (this.operacionesSelectedTable != 'cruce' && retorn != '') ? `%` : context.formattedValue || '';
+                    // return numBars < 189 ? retorn : '';
                     return retorn;
                   },
                   padding: 0
