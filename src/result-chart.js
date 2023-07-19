@@ -318,7 +318,7 @@ export class ResultChart {
                   color: this.printLabel,
                   formatter: (value, context) => {
                     let visibleValue = value < 5 ? undefined : value;
-                    let result = (this.operacionesSelectedTable != 'cruce' && value && visibleValue) ? `${visibleValue}%` : '';
+                    let result = (this.operacionesSelectedTable != 'cruce' && value && visibleValue) ? `${visibleValue}%` : `${visibleValue}`;
                     return result;
                   },
                   padding: 2
