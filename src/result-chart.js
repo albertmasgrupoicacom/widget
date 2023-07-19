@@ -30,7 +30,7 @@ export class ResultChart {
       this.loading = true;
       this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
         this.data = data;
-        if( data.ficha.tabla[0].tipo_resultado == 'cruce1') {
+        if( data.ficha.tabla[0].tipo_resultado == 'cruce1' || data.ficha.tabla[0].tipo_resultado == 'cruce2') {
           this.operacionesSelectedTable = 'cruce';
         }
         this.loading = false;
@@ -318,7 +318,7 @@ export class ResultChart {
                   color: this.printLabel,
                   formatter: (value, context) => {
                     let visibleValue = value < 5 ? undefined : value;
-                    let result = (this.operacionesSelectedTable != 'cruce' && value && visibleValue) ? `${visibleValue}%` : `${visibleValue}`;
+                    let result = (this.operacionesSelectedTable != 'cruce' && value && visibleValue) ? `${visibleValue}%` : visibleValue ?`${visibleValue}`: '';
                     return result;
                   },
                   padding: 2
