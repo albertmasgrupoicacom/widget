@@ -15,7 +15,7 @@ export class ResultChart {
     this._helpers = new Helpers();
     this._exportUtils = new ResultExport();
     this.data;
-    this.operacionesSelectedTable = 'cruce';
+    this.operacionesSelectedTable;
     this.cruceSelectedTable = 0;
     this.pieSelectedDataset;
     this.legend = true;
@@ -58,22 +58,18 @@ export class ResultChart {
           }
           headers = tableData.frecuencias;
           headers.forEach(header => {
-            if(!this.checkNSNC(header.etiqueta)){
-              let row = [...result.labels].map((label, index) => header.porcentaje[index]  );
-              result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-              colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
-            }
+            let row = [...result.labels].map((label, index) => header.porcentaje[index]  );
+            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
           });
           result.totals.push({label: '(N)', data: [...result.labels].map(item => tableData.N)})
         }else{
           result.labels = ['N. de casos'].concat('Total');
           headers = tableData.frecuencias;
           headers.forEach(header => {
-            if(!this.checkNSNC(header.etiqueta)){
-              let row = [header.n, header.porcentaje];
-              result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-              colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
-            }
+            let row = [header.n, header.porcentaje];
+            result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
+            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
           })
           result.totals.push({label: '(N)', data: [tableData.N, '100%']})
           if(tableData.haymedia && tableData.media){
@@ -85,10 +81,10 @@ export class ResultChart {
         break;
       case 'cruce1':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
-        result.labels = result.labels.filter( x => !this.checkNSNC(x, this.checkDefaultNSNC(result.labels)));
+        result.labels = result.labels.filter( x => !this.checkNSNC(x));
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          if(!this.checkNSNC(header.etiqueta, this.checkDefaultNSNC(headers))){
+          if(!this.checkNSNC(header.etiqueta)){
             let row = tableData[operationSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
@@ -103,10 +99,10 @@ export class ResultChart {
         break;
       case 'cruce2':
         result.labels = tableData.etiqCruce1.map(item => item.etiqueta_abrev || item.etiqueta).concat('Total');
-        result.labels = result.labels.filter( x => !this.checkNSNC(x, this.checkDefaultNSNC(result.labels)));
+        result.labels = result.labels.filter( x => !this.checkNSNC(x));
         headers = tableData.etiqVar;
         headers.forEach((header, index) => {
-          if(!this.checkNSNC(header.etiqueta, this.checkDefaultNSNC(headers))){
+          if(!this.checkNSNC(header.etiqueta)){
             let row = tableData[operationSelected][cruceSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
             colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
@@ -124,14 +120,8 @@ export class ResultChart {
     return result;
   }
 
-  checkDefaultNSNC(array){
-    return array.find(item => ['N.S.', 'N.C.', 'Ninguno'].includes(item)) ? true : false;
-  }
-
-  checkNSNC(label, hasNSNC){
-    return hasNSNC ? false : this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
-    // const f = hasNSNC ? this.operacionesSelectedTable.includes('_NSNC'): false;
-    // return f ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
+  checkNSNC(label){
+    return this.operacionesSelectedTable.includes('_NSNC') ? ['N.S.', 'N.C.', 'Ninguno'].includes(label) : false;
   }
 
   printContainers(data){
@@ -303,28 +293,28 @@ export class ResultChart {
           datalabels: {
             labels: {
                 name: config.type !== 'bar' ? {  //PIE NAME
-                  align: 'top',
-                  anchor: 'center',
+                  anchor: 'end',
                   display: 'auto',
                   font: {size: 16},
-                  color: this.printLabel,
+                  color: '#000',
                   font: this.fontFunction,
                   formatter: function(value, context) {
-                          // if(context.dataset.type === 'bar'){ return null;}
-                          return `${context.chart.data.labels[context.dataIndex]}`;
-                        }
-                }: '',
+                    let label = context.chart.data.labels[context.dataIndex];
+                    return label || ''
+                  }
+                } : '',
                 value: config.type !== 'bar' ? {  // PIE VALUE
-                  align: 'bottom',
-                  anchor: 'center',
                   borderColor: this.printLabel,
-                  borderWidth: 1,
+                  borderWidth: (context) => {
+                    let value = context.dataset.data[context.dataIndex];
+                    return value < 5 ? 0 : 1;
+                  },
                   borderRadius: 3,
                   color: this.printLabel,
-                  formatter: (value,context) => {
-                    let retorn = context.dataset.data[context.dataIndex] || '';
-                    retorn += (this.operacionesSelectedTable != 'cruce' && retorn != '') ? `%` : context.formattedValue || '';
-                    return retorn;
+                  formatter: (value, context) => {
+                    let visibleValue = value < 5 ? undefined : value;
+                    let result = (this.operacionesSelectedTable != 'cruce' && value && visibleValue) ? `${visibleValue}%` : '';
+                    return result;
                   },
                   padding: 2
                 } : {    // BAR VALUE
@@ -457,7 +447,7 @@ export class ResultChart {
   removeAllContainers() {
     document.getElementById('graph_page').innerHTML = '';
     this.data = undefined;
-    this.operacionesSelectedTable = 'cruce';
+    this.operacionesSelectedTable = undefined;
     this.cruceSelectedTable = 0;
     this.pieSelectedDataset = undefined;
   }
