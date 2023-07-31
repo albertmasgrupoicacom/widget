@@ -30,13 +30,13 @@ export class SerieChart {
 
         let labels = data.ficha.serie_temporal.map(label => label.fecha);
         let secondfileLabels = data.ficha.serie_temporal.map(sublabel => `${sublabel.estudio} ${sublabel.codigo}`);
+        let anchors = data.ficha.serie_temporal.map(item => this.getUrl(item.idEstudio, item.idPregunta, item.idVariable));
         
         let filas = data.ficha.filas; //.slice(0, -1);
         let columnas = data.ficha.columnas;
         let datasets = [];
         let colorIndex = 0;
         if ( multiVariable) { //MULTIVARIABLE
-
             filas.forEach(fila => {
                 datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex],subLabels: []});
                 colorIndex == 6 ? colorIndex = 0 : colorIndex++;
@@ -63,11 +63,16 @@ export class SerieChart {
             });
 
             data.ficha.serie_temporal.map(x => {
-                filas.map ((fila, index) => {datasets[index].data.push(x.datos[index])});
+                filas.map ((fila, index) => {
+                    let a = x.datos[index];
+                    a = a.replace('(', '')
+                    a = a.replace(')', '')
+                    datasets[index].data.push(a)
+                });
             })
         }
 
-        return {titulo: data.ficha.titulo, labels: labels, secondfileLabels: secondfileLabels, datasets: datasets, subLabels: columnas };
+        return {titulo: data.ficha.titulo, labels: labels, anchors: anchors, secondfileLabels: secondfileLabels, datasets: datasets, subLabels: columnas };
     }
 
     printContainer(data){
@@ -104,19 +109,17 @@ export class SerieChart {
         const headerrow = document.createElement('tr');
 
         this.addHeaderCell(headerrow, '');
-        data.labels.forEach((label,index) => this.addHeaderCell(headerrow, label , data.secondfileLabels[index], data.subLabels ? data.subLabels.length : 0))
-
+        console.log(data);
+        data.labels.forEach((label,index) => this.addHeaderCell(headerrow, label, data.anchors[index], data.secondfileLabels[index], data.subLabels ? data.subLabels.length : 0))
         tThead.appendChild(headerrow);
-
 
         //SUBHEADER
         if ( multivariable ) {
             const subHeaderrow = document.createElement('tr');
-            this.addHeaderCell(subHeaderrow, '' , 0);
+            this.addHeaderCell(subHeaderrow, '', true, 0);
             data.datasets[0].data.map((dataset,index) => {
-                // console.log(index)
                 data.subLabels.forEach(item => {
-                    this.addHeaderCell(subHeaderrow, item , 0);
+                    this.addHeaderCell(subHeaderrow, item, 0);
                 })
             });
             tThead.appendChild(subHeaderrow);
@@ -132,16 +135,16 @@ export class SerieChart {
 
             data.datasets.forEach(dataset => {
                 const row = document.createElement('tr');
-                this.addCell(row, dataset.label);
-                dataset.data.forEach(item => this.addCellWithColumns(row, item))
+                this.addCell(row, dataset.label, dataset.label);
+                dataset.data.forEach(item => this.addCellWithColumns(row, item, dataset.label))
                 tblBody.appendChild(row);
             })
 
         }else{
             data.datasets.forEach(dataset => {
                 const row = document.createElement('tr');
-                this.addCell(row, dataset.label);
-                dataset.data.forEach(item => this.addCell(row, item))
+                this.addCell(row, dataset.label, dataset.label);
+                dataset.data.forEach(item => this.addCell(row, item, dataset.label))
                 tblBody.appendChild(row);
             })
         }
@@ -156,13 +159,15 @@ export class SerieChart {
         }
     }
 
-    addHeaderCell(row, contenido, secondfileLabel, colspan) {
+    addHeaderCell(row, contenido, anchor, secondfileLabel, colspan) {
         const headerCell = document.createElement('th');
         let cellText;
         if( secondfileLabel) {
-            const paragraph = document.createElement('div');
+            const paragraph = document.createElement(anchor ? 'a' : 'div');
             paragraph.insertAdjacentHTML('beforeend', `<div>${contenido}</div>`);
             paragraph.insertAdjacentHTML('beforeend', `<div class="secondFile">${secondfileLabel}</div>`);
+            paragraph.classList.add('table_header_link');
+            paragraph.href = anchor ? anchor : undefined;
             headerCell.appendChild(paragraph);
         } else {
             cellText = document.createTextNode(contenido);
@@ -172,20 +177,25 @@ export class SerieChart {
         row.appendChild(headerCell);
     }
 
-    addCell(row, contenido) {
+    addCell(row, contenido, datasetLabel) {
         const cell = document.createElement('td');
         const cellText = document.createTextNode(contenido);
         cell.appendChild(cellText);
         cell.classList.add('td');
+        let mediaRows = ['MEDIA', 'DESV. TÍP.'];
+        let totalRows = ['N', '(N)'];
+        if(mediaRows.includes(datasetLabel)){cell.classList.add('table_highlight_text')}
+        if(totalRows.includes(datasetLabel)){cell.classList.add('table_highlight_background')}
         row.appendChild(cell);
     }
 
-    addCellWithColumns(row, contenido) {
+    addCellWithColumns(row, contenido, datasetLabel) {
         contenido.forEach(item => {
             const cell = document.createElement('td');
             const cellText = document.createTextNode(item);
             cell.appendChild(cellText);
             cell.classList.add('td');
+            if(datasetLabel == '(N)'){cell.classList.add('table_highlight_background')}
             row.appendChild(cell);
         })
     }
@@ -197,8 +207,9 @@ export class SerieChart {
         table.insertAdjacentElement('beforeend', canvas);
         new Chart(canvas, {
         type: config && config.type ? config.type : 'line',
-        data: data,
+        data: this.removeTotalAndMediaRows(data),
         options: {
+            pointRadius: 0,
             indexAxis: config && config.axis ? config.axis : 'x',
             plugins: {
                 title: {
@@ -242,6 +253,17 @@ export class SerieChart {
         chart.insertAdjacentElement('afterend', buttonsContainer);
     }
 
+    removeTotalAndMediaRows(rawData){
+        const data = JSON.parse(JSON.stringify(rawData));
+        let media = ['MEDIA', 'DESV. TÍP.', 'N'];
+        let counter = 0;
+        for(let i = 0; i < 3; i++){counter += data.datasets[(data.datasets.length - i) -1].label == media[(media.length - i) -1] ? 1 : 0;}
+        if(counter == media.length){data.datasets = data.datasets.splice(0, data.datasets.length - media.length)}else{console.log('aa');}
+        let lastRow = data.datasets[data.datasets.length -1];
+        if(lastRow.label == '(N)'){data.datasets.pop()}
+        return data;
+    }
+
     removeContainer() {
         let container = document.getElementById('graph_container');
         if(container){container.remove()}
@@ -265,6 +287,18 @@ export class SerieChart {
     exportPdf(){
         if(this.data){
             this._exportUtils.exportToPDF(this.data.ficha);
+        }
+    }
+
+    getUrl(idEstudio, idPregunta, idVariable){
+        let url = 'https://webserver-cis-dev.lfr.cloud/es/web/cis/detalle-ficha-estudio?origen=estudio'
+        if(idEstudio || idPregunta || idVariable){
+            url += idEstudio ? `&idEstudio${idEstudio}` : '';
+            url += idPregunta ? `&idPregunta${idPregunta}` : '';
+            url += idVariable ? `&idVariable${idVariable}` : '';
+            return url;
+        }else{
+            return null;
         }
     }
 
