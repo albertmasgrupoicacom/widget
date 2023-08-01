@@ -1,5 +1,5 @@
 // const tipo = 'PREGUNTA'; //N
-// const numSerie = 2978;// 4797; //6010;
+// const numSerie = 2978;// 4797; //6010; //5356;
 // const codEstudio = 14695;
 // const cuestionarioSeleccionado = 17664;//17697
 // const preguntaSeleccionada = null;

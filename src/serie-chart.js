@@ -168,6 +168,7 @@ export class SerieChart {
             paragraph.insertAdjacentHTML('beforeend', `<div class="secondFile">${secondfileLabel}</div>`);
             paragraph.classList.add('table_header_link');
             paragraph.href = anchor ? anchor : undefined;
+            paragraph.target = "_blank";
             headerCell.appendChild(paragraph);
         } else {
             cellText = document.createTextNode(contenido);
@@ -293,9 +294,9 @@ export class SerieChart {
     getUrl(idEstudio, idPregunta, idVariable){
         let url = 'https://webserver-cis-dev.lfr.cloud/es/web/cis/detalle-ficha-estudio?origen=estudio'
         if(idEstudio || idPregunta || idVariable){
-            url += idEstudio ? `&idEstudio${idEstudio}` : '';
-            url += idPregunta ? `&idPregunta${idPregunta}` : '';
-            url += idVariable ? `&idVariable${idVariable}` : '';
+            url += idEstudio ? `&idEstudio=${idEstudio}` : '';
+            url += idPregunta ? `&idPregunta=${idPregunta}` : '';
+            url += idVariable ? `&idVariable=${idVariable}` : '';
             return url;
         }else{
             return null;
