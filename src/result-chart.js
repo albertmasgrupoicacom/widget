@@ -1,11 +1,15 @@
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { resultButtons, colors } from './utils/utils';
+import { resultButtons, colors, zoomButtonIcon } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
 import { DataService } from './services/data.service';
 import { Helpers } from './utils/helpers';
+
+function showPopUp(canvasId){
+  console.log(canvasId);
+}
 
 export class ResultChart {
   
@@ -24,7 +28,6 @@ export class ResultChart {
   }
   
   init(){
-    console.log('***** INIT *****');
     this.removeAllContainers();
     if( !this.loading ) {
       this.loading = true;
@@ -47,8 +50,6 @@ export class ResultChart {
     const cruceSelected = this.cruceSelectedTable;
     const data = JSON.parse(JSON.stringify(this.data));
     const tableData = JSON.parse(JSON.stringify(rawTableData));
-    console.log(data);
-    console.log(tableData);
     let result = {datasets: [], totals: [], medias: [], titulo: tableData.titulo, labels: [], tipo_variable: tableData.tipo_variable || 'N', tipo_resultado: tableData.tipo_resultado};
     let colorIndex = 0;
     let headers = [];
@@ -210,11 +211,10 @@ export class ResultChart {
   }
 
   printTable(tableData, tableIndex){
-    console.log('****** PRINT TABLE *******');
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;
-    tbl.classList.add('table', 'table-responsive', 'border-0');
+    tbl.classList.add('table', 'table-responsive', 'border-0', tableData.labels.length > 4 ? 'table-compressed' : 'table-expanded');
 
     const tblTable = document.createElement('table');
     tblTable.id = `table_${tableIndex}`;
@@ -417,6 +417,15 @@ export class ResultChart {
     const chart = document.getElementById(`graph_chart_${tableIndex}`);
     let buttonsContainer = document.createElement('div');
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
+
+    let zoomButton = document.createElement('button');
+      zoomButton.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
+      zoomButton.style.background = `url(${zoomButtonIcon}) no-repeat`;
+      zoomButton.onclick = () => {
+        showPopUp(`graph_chart_${tableIndex}`)
+      }
+      buttonsContainer.appendChild(zoomButton);
+
     const showButtons = resultButtons.filter(f => f.showCondition.includes(tableData.tipo_variable));
     showButtons.forEach(config => {
       let button = document.createElement('button');

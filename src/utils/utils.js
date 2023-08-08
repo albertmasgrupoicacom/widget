@@ -12,4 +12,6 @@ export const resultButtons = [
     // {type: 'doughnut', stacked: true, axis: 'y', icon: 'https://cdn-icons-png.flaticon.com/128/9246/9246009.png', showCondition:['MV','N']},
 ]
 
+export const zoomButtonIcon = 'https://cdn-icons-png.flaticon.com/128/1522/1522127.png';
+
 export const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
