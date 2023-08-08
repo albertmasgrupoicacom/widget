@@ -7,9 +7,9 @@ import { base_url } from './environments/environment.prod';
 import { DataService } from './services/data.service';
 import { Helpers } from './utils/helpers';
 
-function showPopUp(canvasId){
-  console.log(canvasId);
-}
+// function showPopUp(canvasId){
+//   console.log(canvasId);
+// }
 
 export class ResultChart {
   
@@ -214,7 +214,7 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const tbl = document.createElement('div');
     tbl.id = `graph_table_${tableIndex}`;
-    tbl.classList.add('table', 'table-responsive', 'border-0', tableData.labels.length > 4 ? 'table-compressed' : 'table-expanded');
+    tbl.classList.add('table', 'table-responsive', 'border-0', tableData.labels.length > 4 ? 'table-expanded' : 'table-compresed');
 
     const tblTable = document.createElement('table');
     tblTable.id = `table_${tableIndex}`;
@@ -419,12 +419,12 @@ export class ResultChart {
     buttonsContainer.id = `graph_chart_${tableIndex}_buttons`;
 
     let zoomButton = document.createElement('button');
-      zoomButton.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
-      zoomButton.style.background = `url(${zoomButtonIcon}) no-repeat`;
-      zoomButton.onclick = () => {
-        showPopUp(`graph_chart_${tableIndex}`)
-      }
-      buttonsContainer.appendChild(zoomButton);
+    zoomButton.classList.add('graphic_btn', `graph_chart_${tableIndex}_button`);
+    zoomButton.style.background = `url(${zoomButtonIcon}) no-repeat`;
+    zoomButton.onclick = () => {
+      showPopUp(`graph_chart_${tableIndex}`)
+    }
+    buttonsContainer.appendChild(zoomButton);
 
     const showButtons = resultButtons.filter(f => f.showCondition.includes(tableData.tipo_variable));
     showButtons.forEach(config => {

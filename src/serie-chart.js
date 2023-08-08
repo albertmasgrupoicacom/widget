@@ -5,6 +5,10 @@ import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
 import { DataService } from './services/data.service';
 
+// function showPopUp(canvasId){
+//   console.log(canvasId);
+// }
+
 export class SerieChart {
 
     constructor() {
@@ -238,6 +242,15 @@ export class SerieChart {
         const chart = document.getElementById(`graph_chart`);
         let buttonsContainer = document.createElement('div');
         buttonsContainer.id = `graph_chart_buttons`;
+
+        let zoomButton = document.createElement('button');
+        zoomButton.classList.add('graphic_btn', `graph_chart_button`);
+        zoomButton.style.background = `url(${zoomButtonIcon}) no-repeat`;
+        zoomButton.onclick = () => {
+          showPopUp(`graph_chart`)
+        }
+        buttonsContainer.appendChild(zoomButton);
+
         serieButtons.forEach(config => {
         let button = document.createElement('button');
         button.classList.add('graphic_btn', `graph_chart_button`);
