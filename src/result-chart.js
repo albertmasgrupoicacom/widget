@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { resultButtons, colors, zoomButtonIcon } from './utils/utils';
+import { resultButtons, colors, zoomButtonIcon, operations } from './utils/utils';
 import { ResultExport } from './utils/result-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
@@ -65,7 +65,7 @@ export class ResultChart {
           headers.forEach(header => {
             let row = [...result.labels].map((label, index) => header.porcentaje[index]  );
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            colorIndex = colorIndex == colors.length - 1 ? 0 : colorIndex +1;
           });
           result.totals.push({label: '(N)', data: [...result.labels].map(item => tableData.N)})
           if(tableData.haymedia && tableData.media){
@@ -85,7 +85,7 @@ export class ResultChart {
           headers.forEach(header => {
             let row = [header.n, header.porcentaje];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            colorIndex = colorIndex == colors.length - 1 ? 0 : colorIndex +1;
           })
           result.totals.push({label: '(N)', data: [tableData.N, '100%']})
           if(tableData.haymedia && tableData.media){
@@ -103,7 +103,7 @@ export class ResultChart {
           if(!this.checkNSNC(header.etiqueta)){
             let row = tableData[operationSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            colorIndex = colorIndex == colors.length - 1 ? 0 : colorIndex +1;
           }
         })
         result.totals.push({label: '(N)', data: tableData[operationSelected][tableData[operationSelected].length-1]})
@@ -121,7 +121,7 @@ export class ResultChart {
           if(!this.checkNSNC(header.etiqueta)){
             let row = tableData[operationSelected][cruceSelected][index];
             result.datasets.push({label: header.etiqueta, data: row, backgroundColor: colors[colorIndex]});
-            colorIndex = colorIndex == 5 ? 0 : colorIndex +1;
+            colorIndex = colorIndex == colors.length - 1 ? 0 : colorIndex +1;
           }
         })
         result.totals.push({label: `(N) ${tableData.etiqCruce2[cruceSelected].etiqueta}`, data: tableData[operationSelected][cruceSelected][tableData[operationSelected][cruceSelected].length-1]})
@@ -169,19 +169,10 @@ export class ResultChart {
     const container = document.getElementById(`graph_container_${tableIndex}`);
     const selector = document.createElement('select');
     selector.setAttribute('id', `graph_selector_operaciones_${tableIndex}`)
-    const array = [
-      {etiqueta:'Valores Absolutos', data: 'cruce'},
-      {etiqueta:'Mostrar % (columna)', data: 'cruceV'},
-      {etiqueta:'Mostrar % (columna - NS/NC)', data: 'cruceV_NSNC'},
-      {etiqueta:'Mostrar % (fila)', data: 'cruceH'},
-      {etiqueta:'Mostrar % (fila - NS/NC)', data: 'cruceH_NSNC'},
-      {etiqueta:'Mostrar % (total)', data: 'cruceT'},
-      {etiqueta:'Mostrar % (total - NS/NC)', data: 'cruceT_NSNC'}
-    ];
-    for (var i = 0; i < array.length; i++) {
+    for (var i = 0; i < operations.length; i++) {
       let option = document.createElement("option");
-      option.value = array[i].data;
-      option.text = array[i].etiqueta;
+      option.value = operations[i].data;
+      option.text = operations[i].etiqueta;
       selector.appendChild(option);
     }
     selector.addEventListener("change", e => {
@@ -278,6 +269,8 @@ export class ResultChart {
   }
 
   printChart(tableData, tableIndex, config){
+    console.log(this.operacionesSelectedTable);
+    
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;
@@ -300,6 +293,10 @@ export class ResultChart {
                 return label;
             }
             }
+          },
+          title: {
+            display: true,
+            text: tableData.titulo
           },
           // legend: {
           //   labels: {
@@ -360,7 +357,7 @@ export class ResultChart {
         radius: '70%',
         responsive: true,
         scales: {
-          x: {stacked: config && config.stacked != undefined ? config.stacked : false},
+          x: {stacked: config && config.stacked != undefined ? config.stacked : false, title: {display: true, text: tableData.totals[0].data[0] ? `${this.operacionesSelectedTable ? operations.find(operation => operation.data == this.operacionesSelectedTable).etiqueta : 'Valores en porcentaje sobre total'} ${tableData.totals[0].data[0]}` : ''}},
           y: {beginAtZero: true, stacked: config && config.stacked != undefined ? config.stacked : false},
         },
       },

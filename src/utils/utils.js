@@ -14,4 +14,14 @@ export const resultButtons = [
 
 export const zoomButtonIcon = 'https://cdn-icons-png.flaticon.com/128/1522/1522127.png';
 
-export const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ff9f40', '#9966ff', '#ffcd56', '#c9cbcf'];
+export const colors = ['#d92b30', '#0095ba', '#3cccb4', '#ab52b3', '#ffb259', '#ffdf3c', '#eb82eb', '#c27c30', '#a0d17d', '#f260a1'];
+
+export const operations = [
+    {etiqueta:'Valores Absolutos', data: 'cruce'},
+    {etiqueta:'Mostrar % (columna)', data: 'cruceV'},
+    {etiqueta:'Mostrar % (columna - NS/NC)', data: 'cruceV_NSNC'},
+    {etiqueta:'Mostrar % (fila)', data: 'cruceH'},
+    {etiqueta:'Mostrar % (fila - NS/NC)', data: 'cruceH_NSNC'},
+    {etiqueta:'Mostrar % (total)', data: 'cruceT'},
+    {etiqueta:'Mostrar % (total - NS/NC)', data: 'cruceT_NSNC'}
+];

@@ -43,7 +43,7 @@ export class SerieChart {
         if ( multiVariable) { //MULTIVARIABLE
             filas.forEach(fila => {
                 datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex],subLabels: []});
-                colorIndex == 6 ? colorIndex = 0 : colorIndex++;
+                colorIndex == colors.length - 1 ? colorIndex = 0 : colorIndex++;
             });
 
             
@@ -65,7 +65,6 @@ export class SerieChart {
                 datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex]});
                 colorIndex == 6 ? colorIndex = 0 : colorIndex++;
             });
-
             data.ficha.serie_temporal.map(x => {
                 filas.map ((fila, index) => {
                     let a = x.datos[index];
