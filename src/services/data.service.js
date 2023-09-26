@@ -9,7 +9,7 @@
 // const variableCruce2Seleccionada = 980773;
 
 const tipo = 'SERIE';  //MV
-const numSerie = 2978;
+const numSerie = 2776;
 const codEstudio = 3101; //14664;
 const cuestionarioSeleccionado = 17664; //17697; //17048; //17664;
 const preguntaSeleccionada = null; //630886;
