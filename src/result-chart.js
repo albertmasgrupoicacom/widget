@@ -132,7 +132,6 @@ export class ResultChart {
         }
         break;
     }
-    console.log(result);
     return result;
   }
 
@@ -268,9 +267,7 @@ export class ResultChart {
     row.appendChild(cell);
   }
 
-  printChart(tableData, tableIndex, config){
-    console.log(this.operacionesSelectedTable);
-    
+  printChart(tableData, tableIndex, config){    
     const table = document.getElementById(`graph_table_${tableIndex}`);
     let canvas = document.createElement("canvas");
     canvas.id = `graph_chart_${tableIndex}`;

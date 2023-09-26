@@ -60,24 +60,24 @@ export class SerieExport {
         const tbl = document.getElementById(`graph_table`).firstChild;
         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
 
-        let chart = document.getElementById(`graph_chart`);
-        if(chart){
-            this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
-                let inMemoryCanvas = document.createElement('canvas');
-                let ctx = inMemoryCanvas.getContext('2d');
-                inMemoryCanvas.width = chart.width;
-                inMemoryCanvas.height = chart.height;
-                ctx.fillStyle = 'rgb(255,255,255)';
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.drawImage(chart, 0, 0);
-                const base64Image = inMemoryCanvas.toDataURL("image/png");
-                this._helpers.addImageToWorkbook(workbook, ws1, offset, base64Image).then(() => {
-                    this.saveExcel(workbook, data)
+        this._helpers.addImageToWorkbook(workbook, ws1, 'logo', 0, 1, 6).then(() => {
+            let defaultBase64 = this._helpers.getBase64Canvas('default');
+            let mediaBase64 = this._helpers.getBase64Canvas('media');
+            if(defaultBase64){
+                this._helpers.addImageToWorkbook(workbook, ws1, defaultBase64, offset, 10).then((endRow) => {
+                    if(mediaBase64){
+                        offset = endRow + 2;
+                        this._helpers.addImageToWorkbook(workbook, ws1, mediaBase64, offset, 10).then(() => {
+                            this.saveExcel(workbook, data)
+                        })
+                    }else{
+                        this.saveExcel(workbook, data)
+                    }
                 });
-            });
-        }else{
-            this.saveExcel(workbook, data)
-        }
+            }else{
+                this.saveExcel(workbook, data)
+            }
+        })
     }
 
     saveExcel(workbook, data){

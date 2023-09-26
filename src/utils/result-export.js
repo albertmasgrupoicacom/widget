@@ -207,7 +207,7 @@ export class ResultExport {
             }
         
             //Logo
-            this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
+            this._helpers.addImageToWorkbook(workbook, ws1, 'logo', 0, 1, 6).then(() => {
                 if(rawData.ficha.tabla && rawData.ficha.tabla.length){
                     const dataCell = ws1.getCell(`A${offset}`);
                     dataCell.value = 'DATOS';
@@ -243,10 +243,14 @@ export class ResultExport {
                         const tbl = document.getElementById(`graph_table_${index}`).firstChild;
                         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
 
-                        const base64 = this._helpers.getBase64Canvas(index);
-                        this._helpers.addImageToWorkbook(workbook, ws1, offset, base64.img).then(() => {
+                        const canvasBase64 = this._helpers.getBase64Canvas(index);
+                        if(canvasBase64){
+                            this._helpers.addImageToWorkbook(workbook, ws1, canvasBase64, offset).then(() => {
+                                this.saveExcel(workbook);
+                            })
+                        }else{
                             this.saveExcel(workbook);
-                        })
+                        }
                     })
                 }else{
                     this.saveExcel(workbook);

@@ -22,33 +22,21 @@ export class Helpers {
         });
     }
     
-    async addLogoToWorkbook(workbook, worksheet) {
-        const base64Logo = await this.getLogoAsBase64();
-        const base64Data = base64Logo.split(',')[1];
-        const blob = this.b64toBlob(base64Data, 'image/png');
-        const buffer = await this.blobToArrayBuffer(blob);
-        const logoId = workbook.addImage({buffer: buffer, extension: 'png'});
-    
-        worksheet.addImage(logoId, {
-            tl: { col: 0, row: 0 },
-            br: { col: 1, row: 5 },
-            editAs: 'absolute',
-        });
-    }
-
-    async addImageToWorkbook(workbook, worksheet, startRow, image) {
-        const blob = this.b64toBlob(image.split(',')[1], 'image/png');
+    async addImageToWorkbook(workbook, worksheet, image, startRow = 0, sizeCols = 8, sizeRows = 20) {
+        if(image == 'logo'){image = {img: await this.getLogoAsBase64()}}
+        const blob = this.b64toBlob(image.img.split(',')[1], 'image/png');
         const buffer = await this.blobToArrayBuffer(blob);
         const imageId = workbook.addImage({buffer: buffer, extension: 'png'});
         
         const startRowChart = startRow;
-        const endRowChart = startRowChart + 19;
+        const endRowChart = startRowChart + sizeRows;
     
         worksheet.addImage(imageId, {
             tl: { col: 0, row: startRowChart },
-            br: { col: 5, row: endRowChart },
+            br: { col: sizeCols, row: endRowChart },
             editAs: 'absolute',
         });
+        return endRowChart;
     }
 
     addTableToWorksheet(table, worksheet, startRow, resizeCols) {
@@ -58,14 +46,15 @@ export class Helpers {
             const columns = [];
             const items = [];
             for(let item of child.children){
-                let cols = item.getAttribute('colspan') == 0 ? '1' : item.getAttribute('colspan');
+                let colspan = item.getAttribute('colspan');
+                let cols = !colspan || colspan == 0 ? '1' : colspan;
                 columns.push(cols)
                 for(let i = 0; i < cols; i++){
                     items.push({cols: cols, value: item.innerText});
                 }
             }
             const rowAdded = worksheet.addRow(items.map(item => item.value));
-            rowAdded.height = 40;
+            rowAdded.height = 50;
             let start = 1;
             columns.forEach(item => {
                 let startCol = Number(start);
@@ -94,14 +83,18 @@ export class Helpers {
 
     getBase64Canvas(index, maxWidth){
         const originalCanvas = document.getElementById(`graph_chart_${index}`);
-        let inMemoryCanvas = document.createElement('canvas');
-        let ctx = inMemoryCanvas.getContext('2d');
-        inMemoryCanvas.width = originalCanvas.width;
-        inMemoryCanvas.height = originalCanvas.height;
-        ctx.fillStyle = 'rgb(255,255,255)';
-        ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
-        ctx.drawImage(originalCanvas, 0, 0);
-        return {img: inMemoryCanvas.toDataURL("image/png"), size: this.calculateAspectRatioFit(inMemoryCanvas.width, inMemoryCanvas.height, maxWidth)}
+        if(originalCanvas){
+            let inMemoryCanvas = document.createElement('canvas');
+            let ctx = inMemoryCanvas.getContext('2d');
+            inMemoryCanvas.width = originalCanvas.width;
+            inMemoryCanvas.height = originalCanvas.height;
+            ctx.fillStyle = 'rgb(255,255,255)';
+            ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
+            ctx.drawImage(originalCanvas, 0, 0);
+            return {img: inMemoryCanvas.toDataURL("image/png"), size: this.calculateAspectRatioFit(inMemoryCanvas.width, inMemoryCanvas.height, maxWidth)}
+        }else{
+            return undefined;
+        }
     }
 
     calculateAspectRatioFit(srcWidth, srcHeight, maxWidth) {

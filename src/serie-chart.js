@@ -1,5 +1,5 @@
 import Chart from 'chart.js/auto';
-import { serieButtons, colors } from './utils/utils';
+import { serieButtons, colors, zoomButtonIcon } from './utils/utils';
 import { SerieExport } from './utils/serie-export';
 import { HttpClient } from './utils/http-client';
 import { base_url } from './environments/environment.prod';
@@ -36,27 +36,22 @@ export class SerieChart {
         let secondfileLabels = data.ficha.serie_temporal.map(sublabel => `${sublabel.estudio} ${sublabel.codigo}`);
         let anchors = data.ficha.serie_temporal.map(item => this.getUrl(item.idEstudio, item.idPregunta, item.idVariable));
         
-        let filas = data.ficha.filas; //.slice(0, -1);
+        let filas = data.ficha.filas;
         let columnas = data.ficha.columnas;
         let datasets = [];
         let colorIndex = 0;
-        if ( multiVariable) { //MULTIVARIABLE
+        if ( multiVariable) {
             filas.forEach(fila => {
                 datasets.push({label: fila, data: [], backgroundColor: colors[colorIndex], borderColor: colors[colorIndex],subLabels: []});
                 colorIndex == colors.length - 1 ? colorIndex = 0 : colorIndex++;
             });
-
-            
             data.ficha.serie_temporal.map(x => {
                 filas.map ((fila, index) => {
                     let variable = [];
-                    // columnas.slice(0,-1).map( (columna ,index_col) => {
                     columnas.map( (columna ,index_col) => {
                         variable.push(x.datos[index][index_col]);
-                        // datasets[index].data.push(x.datos[index][index_col])
                     })
                     datasets[index].data.push(variable);
-                    // datasets[index].subLabels = (columnas.slice(0,-1)) //TODO: (N) falta al quitar la ultima
                 });
             })
 
@@ -112,7 +107,6 @@ export class SerieChart {
         const headerrow = document.createElement('tr');
 
         this.addHeaderCell(headerrow, '');
-        console.log(data);
         data.labels.forEach((label,index) => this.addHeaderCell(headerrow, label, data.anchors[index], data.secondfileLabels[index], data.subLabels ? data.subLabels.length : 0))
         tThead.appendChild(headerrow);
 
@@ -130,8 +124,6 @@ export class SerieChart {
 
         tblTable.appendChild(tThead);
 
-        
-        
         const tblBody = document.createElement('tbody');
 
         if ( multivariable ) {  // MULTIVARIABLE
@@ -156,10 +148,24 @@ export class SerieChart {
         tblTable.appendChild(tblBody);
         tbl.appendChild(tblTable);
         container.appendChild(tbl);
-        let chartConfig = container.getAttribute('config')
+        let chartConfig = container.getAttribute('config') ? JSON.parse(container.getAttribute('config')) : serieButtons[0]
         if(!multivariable) {
-            this.printChart(data, chartConfig ? JSON.parse(chartConfig) : serieButtons[0]);
+            this.printChart('default', this.getSplitMediaData(data), chartConfig);
+            let medias = this.getMedia(data);
+            if(medias){
+                this.printChart('media', this.getSplitMediaData(data, medias), chartConfig);
+            }
         }
+    }
+
+    getMedia(data){
+        let medias = [];
+        let mediaIndex = data.datasets.findIndex(dataset => dataset.label == 'MEDIA');
+        if(mediaIndex && data.datasets[mediaIndex+1].label == 'DESV. TÍP.'){
+            medias.push(data.datasets[mediaIndex])
+            medias.push(data.datasets[mediaIndex+1])
+        }
+        return medias.length ? medias : undefined
     }
 
     addHeaderCell(row, contenido, anchor, secondfileLabel, colspan) {
@@ -204,14 +210,14 @@ export class SerieChart {
         })
     }
 
-    printChart(data, config){
+    printChart(type, data, config){
         const table = document.getElementById(`graph_table`);
         let canvas = document.createElement("canvas");
-        canvas.id = `graph_chart`;
+        canvas.id = `graph_chart_${type}`;
         table.insertAdjacentElement('beforeend', canvas);
         new Chart(canvas, {
         type: config && config.type ? config.type : 'line',
-        data: this.removeTotalAndMediaRows(data),
+        data: data,
         options: {
             pointRadius: 0,
             indexAxis: config && config.axis ? config.axis : 'x',
@@ -227,68 +233,52 @@ export class SerieChart {
             },
             responsive: true,
             scales: {
-                x: {stacked: config && config.stacked != undefined ? config.stacked : false},
+                x: {stacked: config && config.stacked != undefined ? config.stacked : false, title: {display: true, text: type == 'default' ? 'Valores en porcentaje sobre total' : 'Media'}},
                 y: {beginAtZero: true, stacked: config && config.stacked != undefined ? config.stacked : false},
             },
         },
         });
         const container = document.getElementById(`graph_container`);
         container.setAttribute('config', JSON.stringify(config));
-        this.printChartSelectionButtons(data);
+        this.printChartSelectionButtons(type);
     }
 
-    printChartSelectionButtons(data){
-        const chart = document.getElementById(`graph_chart`);
+    printChartSelectionButtons(type){
+        const chart = document.getElementById(`graph_chart_${type}`);
         let buttonsContainer = document.createElement('div');
-        buttonsContainer.id = `graph_chart_buttons`;
+        buttonsContainer.id = `graph_chart_${type}_buttons`;
 
         let zoomButton = document.createElement('button');
         zoomButton.classList.add('graphic_btn', `graph_chart_button`);
         zoomButton.style.background = `url(${zoomButtonIcon}) no-repeat`;
         zoomButton.onclick = () => {
-          showPopUp(`graph_chart`)
+          showPopUp(`graph_chart_${type}`)
         }
         buttonsContainer.appendChild(zoomButton);
-
-        serieButtons.forEach(config => {
-        let button = document.createElement('button');
-        button.classList.add('graphic_btn', `graph_chart_button`);
-        button.style.background = `url(${config.icon}) no-repeat`;
-        button.onclick = () => {
-            this.removeChart();
-            this.printChart(data, config);
-        }
-        buttonsContainer.appendChild(button);
-        });
         buttonsContainer.classList.add('my-3'); 
         buttonsContainer.classList.add('d-flex');
         buttonsContainer.classList.add('justify-content-end');
         chart.insertAdjacentElement('afterend', buttonsContainer);
     }
 
-    removeTotalAndMediaRows(rawData){
+    getSplitMediaData(rawData, medias){
         const data = JSON.parse(JSON.stringify(rawData));
-        let media = ['MEDIA', 'DESV. TÍP.', 'N'];
-        let counter = 0;
-        for(let i = 0; i < 3; i++){counter += data.datasets[(data.datasets.length - i) -1].label == media[(media.length - i) -1] ? 1 : 0;}
-        if(counter == media.length){data.datasets = data.datasets.splice(0, data.datasets.length - media.length)}else{console.log('aa');}
-        let lastRow = data.datasets[data.datasets.length -1];
-        if(lastRow.label == '(N)'){data.datasets.pop()}
+        if(medias){
+            data.datasets = medias;
+        }else{
+            let media = ['MEDIA', 'DESV. TÍP.', 'N'];
+            let counter = 0;
+            for(let i = 0; i < 3; i++){counter += data.datasets[(data.datasets.length - i) -1].label == media[(media.length - i) -1] ? 1 : 0;}
+            if(counter == media.length){data.datasets = data.datasets.splice(0, data.datasets.length - media.length)}
+            let lastRow = data.datasets[data.datasets.length -1];
+            if(lastRow.label == '(N)'){data.datasets.pop()}
+        }
         return data;
     }
 
     removeContainer() {
         let container = document.getElementById('graph_container');
         if(container){container.remove()}
-    }
-
-    removeTable() {
-        document.getElementById(`graph_table`).remove();
-    }
-
-    removeChart() {
-        document.getElementById(`graph_chart`).remove();
-        document.getElementById(`graph_chart_buttons`).remove();
     }
 
     exportExcel(){
