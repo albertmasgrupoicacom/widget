@@ -27,15 +27,13 @@ export class SerieExport {
         const workbook = new ExcelJS.Workbook();
         const ws1 = workbook.addWorksheet('Series');
         const columnA = ws1.getColumn('A');
-        const columnB = ws1.getColumn('B');
         columnA.width = 30;
-        columnB.width = 50;
         columnA.font = { bold: true };
         
-        const titleCell = ws1.getCell(`A${offset}`);
+        const titleCell = ws1.getCell(`B${offset}`);
         titleCell.value = `${data.codigo} - ${data.titulo}`;
         titleCell.font = { bold: true, size: 16 };
-        titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+        titleCell.alignment = { horizontal: 'left', vertical: 'middle' };
         offset++;
 
         if(data.muestra){
@@ -62,26 +60,34 @@ export class SerieExport {
         const tbl = document.getElementById(`graph_table`).firstChild;
         offset = this._helpers.addTableToWorksheet(tbl, ws1, offset);
 
-        this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
-            const originalCanvas = document.getElementById(`graph_chart`);
-            let inMemoryCanvas = document.createElement('canvas');
-            let ctx = inMemoryCanvas.getContext('2d');
-            inMemoryCanvas.width = originalCanvas.width;
-            inMemoryCanvas.height = originalCanvas.height;
-            ctx.fillStyle = 'rgb(255,255,255)';
-            ctx.fillRect(0, 0, originalCanvas.width, originalCanvas.height);
-            ctx.drawImage(originalCanvas, 0, 0);
-            const base64Image = inMemoryCanvas.toDataURL("image/png");
-            this._helpers.addImageToWorkbook(workbook, ws1, offset, base64Image).then(() => {
-                workbook.xlsx.writeBuffer().then(buffer => {
-                    const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    var blobUrl = URL.createObjectURL(excel);
-                    let link = document.createElement("a");
-                    link.href = blobUrl;
-                    link.download = `${data.codigo}.xlsx`;
-                    link.click();
+        let chart = document.getElementById(`graph_chart`);
+        if(chart){
+            this._helpers.addLogoToWorkbook(workbook, ws1).then(() => {
+                let inMemoryCanvas = document.createElement('canvas');
+                let ctx = inMemoryCanvas.getContext('2d');
+                inMemoryCanvas.width = chart.width;
+                inMemoryCanvas.height = chart.height;
+                ctx.fillStyle = 'rgb(255,255,255)';
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.drawImage(chart, 0, 0);
+                const base64Image = inMemoryCanvas.toDataURL("image/png");
+                this._helpers.addImageToWorkbook(workbook, ws1, offset, base64Image).then(() => {
+                    this.saveExcel(workbook, data)
                 });
             });
+        }else{
+            this.saveExcel(workbook, data)
+        }
+    }
+
+    saveExcel(workbook, data){
+        workbook.xlsx.writeBuffer().then(buffer => {
+            const excel = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            var blobUrl = URL.createObjectURL(excel);
+            let link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = `${data.codigo}.xlsx`;
+            link.click();
         });
     }
 
@@ -128,17 +134,19 @@ export class SerieExport {
         });
 
         // Chart
-        pdf.addPage();
         const chart = document.getElementById(`graph_chart`);
-        let canvas = document.createElement('canvas');
-        let ctx = canvas.getContext('2d');
-        canvas.width = chart.width;
-        canvas.height = chart.height;
-        ctx.fillStyle = 'rgb(255,255,255)';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.drawImage(chart, 0, 0);
-        let elementSize = this._helpers.calculateAspectRatioFit(canvas.width, canvas.height, pdf.internal.pageSize.width - (marginX * 2));
-        pdf.addImage(canvas, 'PNG', marginX, marginY, elementSize.width, elementSize.height);
+        if(chart){
+            pdf.addPage();
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            canvas.width = chart.width;
+            canvas.height = chart.height;
+            ctx.fillStyle = 'rgb(255,255,255)';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.drawImage(chart, 0, 0);
+            let elementSize = this._helpers.calculateAspectRatioFit(canvas.width, canvas.height, pdf.internal.pageSize.width - (marginX * 2));
+            pdf.addImage(canvas, 'PNG', marginX, marginY, elementSize.width, elementSize.height);
+        }
         
         // Save
         pdf.save(`${rawData.codigo}.pdf`);

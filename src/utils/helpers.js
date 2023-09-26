@@ -53,17 +53,41 @@ export class Helpers {
 
     addTableToWorksheet(table, worksheet, startRow, resizeCols) {
         const rows = table.getElementsByTagName('tr');
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            const cells = i === 0 ? row.getElementsByTagName('th') : row.getElementsByTagName('td');
-            const rowData = Array.from(cells).map(cell => cell.innerText);
-            const rowAdded = worksheet.addRow(rowData);
-            if (i === 0) {rowAdded.eachCell((cell) => {
+        const header = table.getElementsByTagName('thead')[0].getElementsByTagName('tr');
+        for (let child of header) {
+            const columns = [];
+            const items = [];
+            for(let item of child.children){
+                let cols = item.getAttribute('colspan') == 0 ? '1' : item.getAttribute('colspan');
+                columns.push(cols)
+                for(let i = 0; i < cols; i++){
+                    items.push({cols: cols, value: item.innerText});
+                }
+            }
+            const rowAdded = worksheet.addRow(items.map(item => item.value));
+            rowAdded.height = 40;
+            let start = 1;
+            columns.forEach(item => {
+                let startCol = Number(start);
+                let endCol = Number(startCol) + Number(item == 1 ? 0 : item - 1);
+                worksheet.mergeCells(rowAdded.number, startCol, rowAdded.number, endCol);
+                start = endCol + 1;
+            })
+            rowAdded.eachCell((cell) => {
+                cell.alignment = { wrapText: true, horizontal: 'center', vertical: 'middle' };
                 cell.fill = {type: 'pattern', pattern:'solid', fgColor:{ argb:'FFD3D3D3' }};
-                let columnId = cell._address.substring(0,1);
-                resizeCols ? worksheet.getColumn(columnId).width = columnId == 'A' ? 35 : 10 : null;
                 cell.font = { bold: true }
-            })}
+            })
+        }
+
+        const body = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (let child of body) {
+            const items = [];
+            for(let item of child.children){
+                items.push(item.innerText);
+            }
+            worksheet.addRow(items);
         }
         return startRow + rows.length;
     }
