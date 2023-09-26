@@ -250,7 +250,8 @@ export class ResultChart {
     container.appendChild(tbl);
     let chartConfig = container.getAttribute('config');
 
-    this.printChart(tableData, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[0]);
+    // this.printChart(tableData, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons[1]);
+    this.printChart(tableData, tableIndex, chartConfig ? JSON.parse(chartConfig) : resultButtons.find(button => button.id == 'h_var_ap'));
   }
 
   addHeaderCell(row, contenido) {
