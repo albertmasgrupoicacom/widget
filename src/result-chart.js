@@ -21,7 +21,7 @@ export class ResultChart {
     this.data;
     // this.operacionesSelectedTable = 'cruce';
     this.operacionesSelectedTable;
-    this.cruceSelectedTable = 0;
+    this.cruceSelectedTable = 1;
     this.pieSelectedDataset;
     this.legend = true;
     this.loading = false;
@@ -34,7 +34,7 @@ export class ResultChart {
       this._http.post(`${base_url}/resultados`, this._dataService.getParams()).then(data => {
         this.data = data;
         if( data.ficha.tabla[0].tipo_resultado == 'cruce1' || data.ficha.tabla[0].tipo_resultado == 'cruce2') {
-          this.operacionesSelectedTable = 'cruce';
+          this.operacionesSelectedTable = 'cruceV';
         }
         this.loading = false;
         if(data && data.ficha) {this.printContainers(data)};
@@ -174,6 +174,7 @@ export class ResultChart {
       option.text = operations[i].etiqueta;
       selector.appendChild(option);
     }
+    selector.selectedIndex = operations.findIndex(operation => operation.data == this.operacionesSelectedTable);
     selector.addEventListener("change", e => {
       this.operacionesSelectedTable = e.target.value;
       this.removeTable(tableIndex);
@@ -472,7 +473,7 @@ export class ResultChart {
     this.data = undefined;
     // this.operacionesSelectedTable = 'cruce';
     this.operacionesSelectedTable = undefined;
-    this.cruceSelectedTable = 0;
+    this.cruceSelectedTable = 1;
     this.pieSelectedDataset = undefined;
   }
 
