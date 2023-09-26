@@ -63,8 +63,12 @@ export class SerieChart {
             data.ficha.serie_temporal.map(x => {
                 filas.map ((fila, index) => {
                     let a = x.datos[index];
-                    a = a.replace('(', '')
-                    a = a.replace(')', '')
+                    if( a && a.replace) {
+                        a = a.replace('(', '')
+                        a = a.replace(')', '')
+                    } else {
+                        a= '-'
+                    }
                     datasets[index].data.push(a)
                 });
             })
