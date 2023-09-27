@@ -25,6 +25,7 @@ export class ResultChart {
     this.pieSelectedDataset;
     this.legend = true;
     this.loading = false;
+    this.variableGrupo = 1;
   }
   
   init(){
@@ -132,7 +133,28 @@ export class ResultChart {
         }
         break;
     }
+
+    if( this.variableGrupo) {
+      result.datasets = this.deleteOtherPositionsArray(result.datasets, this.variableGrupo);
+      result.totals = this.deleteOtherPositionsArray(result.totals, this.variableGrupo);
+      result.labels = this.deleteOtherPositions(result.labels, this.variableGrupo);
+    }
     return result;
+  }
+
+
+  deleteOtherPositionsArray(arr, index) {
+    const retorn = arr.map( (element) => {
+      const ele =  [element.data[index]];
+      element.data = ele;
+      return element; 
+    });
+    return retorn;
+  }
+
+  deleteOtherPositions(arr, index) {
+    const retorn = arr.filter((element, indexElement) => indexElement === index);
+    return retorn;
   }
 
   checkNSNC(label){
