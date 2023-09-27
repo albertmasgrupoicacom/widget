@@ -1,5 +1,5 @@
 // const tipo = 'PREGUNTA'; //N
-// const numSerie = 2978;// 4797; //6010; //5356;
+// const numSerie = 2978;// 4797; //6010; //5356; //2776; //6354;
 // const codEstudio = 14695;
 // const cuestionarioSeleccionado = 17664;//17697
 // const preguntaSeleccionada = null;
@@ -8,13 +8,13 @@
 // const variableCruce1Seleccionada = 980768;
 // const variableCruce2Seleccionada = 980773;
 
-const tipo = 'SERIE';  //MV
-const numSerie = 2776;
-const codEstudio = 3101; //14664;
-const cuestionarioSeleccionado = 17664; //17697; //17048; //17664;
-const preguntaSeleccionada = null; //630886;
-const muestraSeleccionada = null;
-const variableSeleccionada =  961452;//642626; //642626; //961602;
+const tipo = 'PREGUNTA';  //MV
+const numSerie = 6354;
+const codEstudio = 10784; //14664;
+const cuestionarioSeleccionado = 12838; //17697; //17048; //17664;
+const preguntaSeleccionada = 521219; //630886;
+const muestraSeleccionada = 18279;
+const variableSeleccionada =  null;//642626; //642626; //961602;
 const variableCruce1Seleccionada = null; //961618;
 const variableCruce2Seleccionada = null//961556;
 

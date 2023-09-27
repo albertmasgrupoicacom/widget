@@ -4,7 +4,7 @@ import 'jspdf-autotable'
 import * as ExcelJS from 'exceljs';
 import { Helpers } from './helpers';
 
-jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39', columnWidth: 100}, theme: "grid", styles: {overflow: 'linebreak', valign: 'middle'}, columnStyles: {0: {cellWidth: 200}}})
+jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39', cellWidth: 100}, theme: "grid", styles: {overflow: 'linebreak', valign: 'middle'}, columnStyles: {0: {cellWidth: 200}}})
 
 export class SerieExport {
 

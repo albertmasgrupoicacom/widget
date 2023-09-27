@@ -7,7 +7,7 @@ import { base_url } from '../environments/environment.prod';
 import { Helpers } from './helpers';
 import { DataService } from '../services/data.service';
 
-jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39'}, columnStyles: {0: {cellWidth: 10, fillColor: '#eeeeee'}}, theme: "grid"})
+jsPDF.autoTableSetDefaults({headStyles: {fillColor: '#EEEEEE', textColor: '#332C39', cellWidth: 100}, theme: "grid", styles: {overflow: 'linebreak', valign: 'middle'}, columnStyles: {0: {cellWidth: 200}}})
 
 export class ResultExport {
 
@@ -278,7 +278,7 @@ export class ResultExport {
             let study = data[0];
             let question = data[1];
             
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'pt', 'a4');
     
             //Logo
             const logoWidth = 50;  

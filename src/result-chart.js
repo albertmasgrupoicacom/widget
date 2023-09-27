@@ -297,11 +297,9 @@ export class ResultChart {
             display: true,
             text: tableData.titulo
           },
-          // legend: {
-          //   labels: {
-          //     padding: 10
-          //   }
-          // },
+          legend: {
+            position: 'bottom'
+          },
           datalabels: {
             labels: {
                 name: config.type !== 'bar' ? {  //PIE NAME
