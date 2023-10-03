@@ -8,15 +8,16 @@
 // const variableCruce1Seleccionada = 980768;
 // const variableCruce2Seleccionada = 980773;
 
-const tipo = 'PREGUNTA';  //MV
+const tipo = 'PREGUNTA'; //MV
 const numSerie = 6354;
-const codEstudio = 10784; //14664;
-const cuestionarioSeleccionado = 12838; //17697; //17048; //17664;
-const preguntaSeleccionada = 521219; //630886;
-const muestraSeleccionada = 18279;
-const variableSeleccionada =  null;//642626; //642626; //961602;
+const codEstudio = 14689; //14664;
+const cuestionarioSeleccionado = null; //17697; //17048; //17664;
+const preguntaSeleccionada = 614159; //630886;
+const muestraSeleccionada = 25088;
+const variableSeleccionada =  930172; //642626; //642626; //961602;
+const variableGrupoSeleccionada =  null; // 930232
 const variableCruce1Seleccionada = null; //961618;
-const variableCruce2Seleccionada = null//961556;
+const variableCruce2Seleccionada = null; //961556;
 
 //sexo: 980773
 //edad: 980774
@@ -39,7 +40,7 @@ export class DataService {
                 id_cuestionario: cuestionarioSeleccionado,
                 id_pregunta: preguntaSeleccionada,
                 id_muestra: muestraSeleccionada,
-                id_variable: variableSeleccionada,
+                id_variable: variableGrupoSeleccionada ? variableGrupoSeleccionada : variableSeleccionada,
                 id_cruce1: variableCruce1Seleccionada,
                 id_cruce2: variableCruce2Seleccionada
             }
